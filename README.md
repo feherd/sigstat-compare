@@ -1,1 +1,1 @@
-# sigstat-compare
+# SigStat Compare
