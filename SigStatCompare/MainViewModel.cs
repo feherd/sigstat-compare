@@ -84,13 +84,29 @@ public class MainViewModel : INotifyPropertyChanged
         }
     }
 
+    private object filePickerLock = new object();
+    private bool isFilePickerOpen = false;
+
     public Command LoadCommand => new(async () =>
     {
+        lock (filePickerLock)
+        {
+            if (isFilePickerOpen) return;
+            isFilePickerOpen = true;
+        }
+
         var databaseDir = Environment.GetEnvironmentVariable("SigStatDB");
+
         FileResult fileResult = await FilePicker.PickAsync();
-        var ctor = SelectedDatasetLoader.GetConstructor(new[] { typeof(string), typeof(bool) });
-        var loader = (IDataSetLoader)ctor.Invoke(new object[] { fileResult.FullPath, true });
-        Signers = await Task.Run(() => new ObservableCollection<Signer>(loader.EnumerateSigners().OrderBy(s => s.ID)));
+
+        if (fileResult is not null)
+        {
+            var ctor = SelectedDatasetLoader.GetConstructor(new[] { typeof(string), typeof(bool) });
+            var loader = (IDataSetLoader)ctor.Invoke(new object[] { fileResult.FullPath, true });
+            Signers = await Task.Run(() => new ObservableCollection<Signer>(loader.EnumerateSigners().OrderBy(s => s.ID)));
+        }
+
+        isFilePickerOpen = false;
     });
 
     public MainViewModel()
@@ -102,6 +118,6 @@ public class MainViewModel : INotifyPropertyChanged
         SelectedDatasetLoader = typeof(Svc2004Loader);
     }
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => 
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
