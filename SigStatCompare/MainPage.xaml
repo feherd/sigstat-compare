@@ -1,51 +1,71 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SigStatCompare.MainPage"
-             BackgroundColor="{DynamicResource SecondaryColor}">
+             xmlns:local="clr-namespace:SigStatCompare"
+             x:Class="SigStatCompare.MainPage">
+    <ContentPage.BindingContext>
+        <local:MainViewModel/>
+    </ContentPage.BindingContext>
 
-    <ScrollView>
-        <Grid RowSpacing="25" RowDefinitions="Auto,Auto,Auto,Auto,*"
-              Padding="{OnPlatform iOS='30,60,30,30', Default='30'}">
+    <ContentPage.Resources>
+        <local:TypeToNameConverter x:Key="typeToName" />
+    </ContentPage.Resources>
 
-            <Label 
-                Text="Hello, World!"
-                Grid.Row="0"
-                SemanticProperties.HeadingLevel="Level1"
-                FontSize="32"
-                HorizontalOptions="Center" />
+    <Grid RowDefinitions="Auto,*"
+          ColumnDefinitions="Auto,Auto,*">
 
-            <Label 
-                Text="Welcome to .NET Multi-platform App UI"
-                Grid.Row="1"
-                SemanticProperties.HeadingLevel="Level1"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I"
-                FontSize="18"
-                HorizontalOptions="Center" />
+        <StackLayout Orientation="Horizontal"
+                     Grid.ColumnSpan="3">
+            <Button Text="Load database..."
+                    HorizontalOptions="Start" VerticalOptions="Start"
+                    Command="{Binding LoadCommand}"/>
+            <Picker ItemsSource="{Binding DatasetLoaders}"
+                    SelectedItem="{Binding SelectedDatasetLoader}"
+                    ItemDisplayBinding="{Binding Converter={StaticResource typeToName}}"/>
 
-            <Label 
-                Text="Current count: 0"
-                Grid.Row="2"
-                FontSize="18"
-                FontAttributes="Bold"
-                x:Name="CounterLabel"
-                HorizontalOptions="Center" />
+        </StackLayout>
 
-            <Button 
-                Text="Click me"
-                FontAttributes="Bold"
-                Grid.Row="3"
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="OnCounterClicked"
-                HorizontalOptions="Center" />
+        <ListView Grid.Row="1" Grid.Column="0"
+                  WidthRequest="100"
+                  ItemsSource="{Binding Signers}"
+                  SelectedItem="{Binding SelectedSigner}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Vertical" >
+                            <local:SignatureVisualizer Signature="{Binding Signatures[0]}"
+                                                       HeightRequest="50"
+                                                       ShowAxes="False"/>
+                            <Label Text="{Binding}"/>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
 
-            <Image Grid.Row="4"
-                Source="dotnet_bot.png"
-                SemanticProperties.Description="Cute dot net bot waving hi to you!"
-                WidthRequest="250"
-                HeightRequest="310"
-                HorizontalOptions="Center" />
+        <ListView Grid.Row="1" Grid.Column="1"
+                  ItemsSource="{Binding SelectedSigner.Signatures}"
+                  WidthRequest="100"
+                  SelectedItem="{Binding SelectedSignature}" >
+            
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Vertical" >
+                            <local:SignatureVisualizer Signature="{Binding}"
+                                                       HeightRequest="50"
+                                                       ShowAxes="False"/>
+                            <Label Text="{Binding}"/>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
 
-        </Grid>
-    </ScrollView>
+        <local:SignatureVisualizer Grid.Row="1" Grid.Column="2"
+                                   BackgroundColor="#FFEEEEEE"
+                                   Background="#FFEEEEEE"
+                                   Signature="{Binding SelectedSignature}"/>
+
+
+    </Grid>
 </ContentPage>
