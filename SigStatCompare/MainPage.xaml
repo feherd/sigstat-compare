@@ -10,8 +10,10 @@
         <local:TypeToNameConverter x:Key="typeToName" />
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,*"
-          ColumnDefinitions="Auto,Auto,*">
+    <Grid RowDefinitions="Auto,*,*"
+          ColumnDefinitions="Auto,Auto,*,*"
+          RowSpacing="4"
+          ColumnSpacing="4">
 
         <StackLayout Orientation="Horizontal"
                      Grid.ColumnSpan="3">
@@ -25,6 +27,7 @@
         </StackLayout>
 
         <ListView Grid.Row="1" Grid.Column="0"
+                  Grid.RowSpan="2"
                   WidthRequest="100"
                   ItemsSource="{Binding Signers}"
                   SelectedItem="{Binding SelectedSigner}">
@@ -43,10 +46,11 @@
         </ListView>
 
         <ListView Grid.Row="1" Grid.Column="1"
+                  Grid.RowSpan="2" 
                   ItemsSource="{Binding SelectedSigner.Signatures}"
                   WidthRequest="100"
                   SelectedItem="{Binding SelectedSignature}" >
-            
+
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
@@ -63,9 +67,17 @@
 
         <local:SignatureVisualizer Grid.Row="1" Grid.Column="2"
                                    BackgroundColor="#FFEEEEEE"
-                                   Background="#FFEEEEEE"
                                    Signature="{Binding SelectedSignature}"/>
 
+        <local:SignatureVisualizer Grid.Row="2" Grid.Column="2"
+                                   BackgroundColor="#FFEEEEEE"
+                                   Signature="{Binding Signers[0].Signatures[0]}"/>
+
+        <local:DtwVisualizer Grid.Row="1" Grid.Column="3"
+                Grid.RowSpan="2"
+                BackgroundColor="#FFEEEEEE"
+                FirstSignature="{Binding SelectedSignature}"
+                SecondSignature="{Binding Signers[0].Signatures[0]}" />
 
     </Grid>
 </ContentPage>

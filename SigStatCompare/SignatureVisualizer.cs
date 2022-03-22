@@ -125,7 +125,7 @@ public class SignatureVisualizer : GraphicsView
             double scale = Math.Min(dirtyRect.Width / xRange, dirtyRect.Height / yRange);
 
             var matrix = new Matrix();
-            matrix.Scale(scale, -scale);
+            matrix.Scale(scale, scale);
             matrix.Translate(
                 dirtyRect.Width / 2 - xRange * scale / 2,
                 dirtyRect.Height / 2 - yRange * scale / 2
@@ -145,6 +145,7 @@ public class SignatureVisualizer : GraphicsView
 
             var originM = new Matrix();
             originM.Translate(-xt.Min(), -yt.Max());
+            originM.Scale(1, -1);
             originM.Append(transformMatrix);
 
             canvas.StrokeSize = (float)Math.Max(1, 20 * scale);
@@ -171,12 +172,12 @@ public class SignatureVisualizer : GraphicsView
             canvas.StrokeLineCap = LineCap.Square;
 
             canvas.DrawLine(
-                matrix.Transform(new Point(0, -1000)),
+                matrix.Transform(new Point(0, -100)),
                 matrix.Transform(new Point(0, +1000))
             );
 
             canvas.DrawLine(
-                matrix.Transform(new Point(-1000, 0)),
+                matrix.Transform(new Point(-100, 0)),
                 matrix.Transform(new Point(+1000, 0))
             );
         }
