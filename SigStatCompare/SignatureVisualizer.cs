@@ -1,4 +1,5 @@
-﻿using SigStat.Common;
+﻿using Microsoft.Maui.Controls.Shapes;
+using SigStat.Common;
 
 namespace SigStatCompare;
 
@@ -86,85 +87,98 @@ public class SignatureVisualizer : GraphicsView
                 break;
         }
     }
-}
 
-class SignatureDrawable : IDrawable
-{
-    private SignatureVisualizer signatureVisualizer;
-
-    public SignatureDrawable(SignatureVisualizer signatureVisualizer)
+    class SignatureDrawable : IDrawable
     {
-        this.signatureVisualizer = signatureVisualizer;
-    }
+        private readonly SignatureVisualizer signatureVisualizer;
 
-    private void DrawAxes(ICanvas canvas, double s, Point offset, double minX, double maxX, double minY, double maxY)
-    {
-        maxX = Math.Max(Math.Abs(minX), Math.Abs(maxX));
-        maxY = Math.Max(Math.Abs(minY), Math.Abs(maxY));
-        canvas.StrokeColor = Colors.Black;
-        canvas.StrokeSize = (float)Math.Max(1, 10 * s);
-        canvas.StrokeLineCap = LineCap.Square;
-        canvas.DrawLine(
-            (float)offset.X,
-            (float)(-maxY + offset.Y),
-            (float)offset.X,
-            (float)(maxY + offset.Y)
-        );
-        canvas.DrawLine(
-            (float)(-maxX + offset.X),
-            (float)(0 + offset.Y),
-            (float)(maxX + offset.X),
-            (float)(0 + offset.Y)
-        );
-    }
-
-    private void DrawSignature(ICanvas canvas, RectF dirtyRect)
-    {
-        var sig = signatureVisualizer.Signature;
-        if (sig == null)
-            return;
-        var strokes = sig.GetStrokes();
-        var xt = sig.GetFeature(Features.X); // .Select(x => x / 100).ToList();
-        var yt = sig.GetFeature(Features.Y); // .Select(x => x / 100).ToList();
-
-        double xr = xt.Max() - xt.Min();
-        double yr = yt.Max() - yt.Min();
-
-        double s = Math.Min(dirtyRect.Width / xr, dirtyRect.Height / yr);
-        var offset = new Point(
-            dirtyRect.Width / 2 - (xt.Max() - xt.Min()) * s / 2,
-            dirtyRect.Height / 2 - (yt.Max() - yt.Min()) * s / 2
-        );
-
-        foreach (var stroke in strokes)
+        public SignatureDrawable(SignatureVisualizer signatureVisualizer)
         {
-            var polyline = new PathF();
-            canvas.StrokeSize = (float)Math.Max(1, 20 * s);
-            canvas.StrokeLineJoin = LineJoin.Round;
-            canvas.StrokeColor = stroke.StrokeType == StrokeType.Down ? Colors.Blue : Colors.Red;
-            for (int i = stroke.StartIndex; i <= stroke.EndIndex; i++)
-            {
-                polyline.LineTo(new Point(
-                    (xt[i] - xt.Min()) * s + offset.X,
-                    (yt.Max() - yt[i]) * s + offset.Y
-                ));
-            }
-            canvas.DrawPath(polyline);
+            this.signatureVisualizer = signatureVisualizer;
         }
 
-        if (signatureVisualizer.ShowAxes)
-            DrawAxes(canvas, s, offset, xt.Min() * s, xt.Max() * s, yt.Min() * s, yt.Max() * s);
-    }
+        public void Draw(ICanvas canvas, RectF dirtyRect)
+        {
+            canvas.FillColor = signatureVisualizer.BackgroundColor;
+            canvas.FillRectangle(dirtyRect);
 
-    public void Draw(ICanvas canvas, RectF dirtyRect)
-    {
-        canvas.FillColor = signatureVisualizer.BackgroundColor;
-        canvas.FillRectangle(dirtyRect);
+            if (signatureVisualizer.Signature is null) return;
 
-        canvas.Translate((float)signatureVisualizer.Offset.X, (float)signatureVisualizer.Offset.Y);
 
-        DrawSignature(canvas, dirtyRect);
+            (var transformMatrix, var scale) = CalculateTransformation(dirtyRect, signatureVisualizer.Offset);
 
-        canvas.Translate((float)-signatureVisualizer.Offset.X, (float)-signatureVisualizer.Offset.Y);
+            DrawSignature(canvas, transformMatrix, scale);
+
+            if (signatureVisualizer.ShowAxes)
+                DrawAxes(canvas, transformMatrix, scale);
+        }
+
+        private (Matrix, double) CalculateTransformation(RectF dirtyRect, Point panOffset)
+        {
+            var sig = signatureVisualizer.Signature;
+            var xt = sig.GetFeature(Features.X);
+            var yt = sig.GetFeature(Features.Y);
+
+            double xRange = xt.Max() - xt.Min();
+            double yRange = yt.Max() - yt.Min();
+
+            double scale = Math.Min(dirtyRect.Width / xRange, dirtyRect.Height / yRange);
+
+            var matrix = new Matrix();
+            matrix.Scale(scale, -scale);
+            matrix.Translate(
+                dirtyRect.Width / 2 - xRange * scale / 2,
+                dirtyRect.Height / 2 - yRange * scale / 2
+            );
+            matrix.Translate(panOffset.X, panOffset.Y);
+
+            return (matrix, scale);
+        }
+
+        private void DrawSignature(ICanvas canvas, Matrix transformMatrix, double scale)
+        {
+            var sig = signatureVisualizer.Signature;
+            if (sig == null) return;
+            var strokes = sig.GetStrokes();
+            var xt = sig.GetFeature(Features.X);
+            var yt = sig.GetFeature(Features.Y);
+
+            var originM = new Matrix();
+            originM.Translate(-xt.Min(), -yt.Max());
+            originM.Append(transformMatrix);
+
+            canvas.StrokeSize = (float)Math.Max(1, 20 * scale);
+            canvas.StrokeLineJoin = LineJoin.Round;
+
+            foreach (var stroke in strokes)
+            {
+                canvas.StrokeColor = stroke.StrokeType == StrokeType.Down ? Colors.Blue : Colors.Red;
+
+                var polyline = new PathF();
+                var points = xt.Zip(yt, (x, y) => new Point(x, y));
+
+                foreach (var point in points)
+                    polyline.LineTo(originM.Transform(point));
+
+                canvas.DrawPath(polyline);
+            }
+        }
+
+        private static void DrawAxes(ICanvas canvas, Matrix matrix, double scale)
+        {
+            canvas.StrokeColor = Colors.Black;
+            canvas.StrokeSize = (float)Math.Max(1, 10 * scale);
+            canvas.StrokeLineCap = LineCap.Square;
+
+            canvas.DrawLine(
+                matrix.Transform(new Point(0, -1000)),
+                matrix.Transform(new Point(0, +1000))
+            );
+
+            canvas.DrawLine(
+                matrix.Transform(new Point(-1000, 0)),
+                matrix.Transform(new Point(+1000, 0))
+            );
+        }
     }
 }
