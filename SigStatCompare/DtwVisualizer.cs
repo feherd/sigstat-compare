@@ -105,7 +105,7 @@ public class DtwVisualizer : GraphicsView
     class DtwDrawable : IDrawable
     {
         private readonly DtwVisualizer dtwVisualizer;
-        double padding = 25;
+        private readonly double padding = 25;
 
         public DtwDrawable(DtwVisualizer dtwVisualizer)
         {
@@ -118,61 +118,54 @@ public class DtwVisualizer : GraphicsView
             canvas.FillRectangle(dirtyRect);
 
             if (dtwVisualizer.FirstSignature is null) return;
+            if (dtwVisualizer.SecondSignature is null) return;
 
-
-            (var transformMatrix, var scale) = CalculateTransformation(dirtyRect, dtwVisualizer.Offset);
+            (var transformMatrix, var firstTransformMatrix, var secondTransformMatrix) = CalculateTransformation(dirtyRect, dtwVisualizer.Offset);
 
             if (dtwVisualizer.ShowAxes)
-                DrawAxes(canvas, transformMatrix, scale);
+                DrawAxes(canvas, dirtyRect, transformMatrix);
 
-            DrawFeatureFunction(canvas, dtwVisualizer.FirstSignature, transformMatrix, scale);
-
-            transformMatrix.Translate(0, (dirtyRect.Height - padding) / 2);
-            DrawFeatureFunction(canvas, dtwVisualizer.SecondSignature, transformMatrix, scale);
+            DrawFeatureFunction(canvas, dtwVisualizer.FirstSignature, firstTransformMatrix);
+            DrawFeatureFunction(canvas, dtwVisualizer.SecondSignature, secondTransformMatrix);
         }
 
-        private (Matrix, double) CalculateTransformation(RectF dirtyRect, Point panOffset)
+        private (Matrix, Matrix, Matrix) CalculateTransformation(RectF dirtyRect, Point panOffset)
         {
-            var firstSignature = dtwVisualizer.FirstSignature;
-            var ftt = firstSignature.GetFeature(Features.T);
-            var fft = firstSignature.GetFeature(Features.Y);
-            double ftRange = ftt.Max() - ftt.Min();
-            double ffRange = fft.Max() - fft.Min();
-
-            var secondSignature = dtwVisualizer.SecondSignature;
-            var stt = secondSignature.GetFeature(Features.T);
-            var sft = secondSignature.GetFeature(Features.Y);
-            double stRange = stt.Max() - stt.Min();
-            double sfRange = sft.Max() - sft.Min();
-
-            double tRange = Math.Max(ftRange, stRange);
-            double fRange = Math.Max(ffRange, sfRange);
-
             double width = dirtyRect.Width - 2 * padding;
-            double height = dirtyRect.Height - 3 * padding;
-            double scale = Math.Sqrt((width / ftRange) * (height / ffRange));
+            double height = (dirtyRect.Height - 3 * padding) / 2;
 
             var matrix = new Matrix();
-            matrix.Scale(width / ftRange, height / 2 / ffRange);
             matrix.Translate(padding, padding);
             matrix.Translate(panOffset.X, panOffset.Y);
 
-            return (matrix, scale);
+            var firstTransformMatrix = new Matrix();
+            firstTransformMatrix.Scale(width, height);
+            firstTransformMatrix.Append(matrix);
+
+            var secondTransformMatrix = new Matrix();
+            secondTransformMatrix.Scale(width, height);
+            secondTransformMatrix.Translate(0, (dirtyRect.Height - padding) / 2);
+            secondTransformMatrix.Append(matrix);
+
+            return (matrix, firstTransformMatrix, secondTransformMatrix);
         }
 
-        private void DrawFeatureFunction(ICanvas canvas, Signature signature, Matrix transformMatrix, double scale)
+        private void DrawFeatureFunction(ICanvas canvas, Signature signature, Matrix transformMatrix)
         {
             if (signature == null) return;
             var strokes = signature.GetStrokes();
             var tt = signature.GetFeature(Features.T);
             var ft = signature.GetFeature(Features.Y);
 
+            double tRange = tt.Max() - tt.Min();
+            double fRange = ft.Max() - ft.Min();
+
             var originM = new Matrix();
             originM.Translate(-tt.Min(), -ft.Max());
-            originM.Scale(1, -1);
+            originM.Scale(1 / tRange, -1 / fRange);
             originM.Append(transformMatrix);
 
-            canvas.StrokeSize = (float)Math.Max(1, 20 * scale);
+            canvas.StrokeSize = 3;
             canvas.StrokeLineJoin = LineJoin.Round;
 
             foreach (var stroke in strokes)
@@ -189,10 +182,10 @@ public class DtwVisualizer : GraphicsView
             }
         }
 
-        private static void DrawAxes(ICanvas canvas, Matrix matrix, double scale)
+        private static void DrawAxes(ICanvas canvas, RectF dirtyRect, Matrix matrix)
         {
             canvas.StrokeColor = Colors.Black;
-            canvas.StrokeSize = (float)Math.Max(1, 10 * scale);
+            canvas.StrokeSize = 1;
             canvas.StrokeLineCap = LineCap.Square;
 
             canvas.DrawLine(
