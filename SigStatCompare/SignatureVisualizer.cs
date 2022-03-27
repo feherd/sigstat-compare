@@ -57,6 +57,20 @@ public class SignatureVisualizer : GraphicsView
         visualizer?.Invalidate();
     }
 
+    public static readonly BindableProperty ZoomProperty =
+        BindableProperty.Create(nameof(Zoom), typeof(double), typeof(SignatureVisualizer), defaultValue: 1.0, propertyChanged: ZoomChanged);
+    public double Zoom
+    {
+        get => (double)GetValue(ZoomProperty);
+        set => SetValue(ZoomProperty, value);
+    }
+
+    private static void ZoomChanged(BindableObject bindableObject, object oldValue, object newValue)
+    {
+        var visualizer = bindableObject as SignatureVisualizer;
+        visualizer?.Invalidate();
+    }
+
     public SignatureVisualizer()
     {
         Drawable = new SignatureDrawable(this);
@@ -131,6 +145,7 @@ public class SignatureVisualizer : GraphicsView
                 dirtyRect.Height / 2 - yRange * scale / 2
             );
             matrix.Translate(panOffset.X, panOffset.Y);
+            matrix.Scale(signatureVisualizer.Zoom, signatureVisualizer.Zoom);
 
             return (matrix, scale);
         }

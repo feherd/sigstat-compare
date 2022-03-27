@@ -75,7 +75,15 @@
             <local:SignatureVisualizer compat:RelativeLayout.WidthConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width}"
                                        compat:RelativeLayout.HeightConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Height}"
                                        BackgroundColor="#FFEEEEEE"
-                                       Signature="{Binding FirstSelectedSignature}" />
+                                       Signature="{Binding FirstSelectedSignature}"
+                                       x:Name="FirstSignature" />
+
+            <Slider compat:RelativeLayout.XConstraint="10"
+                    compat:RelativeLayout.WidthConstraint="200"
+                    Value="{Binding Source={x:Reference FirstSignature}, Path=Zoom}"
+                    Minimum="0.5"
+                    Maximum="3" />
+
             <Button Text="Select"
                     compat:RelativeLayout.XConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width, Constant=-70}"
                     compat:RelativeLayout.WidthConstraint="70"
@@ -86,7 +94,15 @@
             <local:SignatureVisualizer compat:RelativeLayout.WidthConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width}"
                                        compat:RelativeLayout.HeightConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Height}"
                                        BackgroundColor="#FFEEEEEE"
-                                       Signature="{Binding SecondSelectedSignature}" />
+                                       Signature="{Binding SecondSelectedSignature}"
+                                       x:Name="SecondSignature" />
+
+            <Slider compat:RelativeLayout.XConstraint="10"
+                    compat:RelativeLayout.WidthConstraint="200"
+                    Value="{Binding Source={x:Reference SecondSignature}, Path=Zoom}"
+                    Minimum="0.5"
+                    Maximum="3" />
+
             <Button Text="Select"
                     compat:RelativeLayout.XConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width, Constant=-70}"
                     compat:RelativeLayout.WidthConstraint="70"
