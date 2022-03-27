@@ -1,5 +1,6 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:compat="clr-namespace:Microsoft.Maui.Controls.Compatibility;assembly=Microsoft.Maui.Controls"
              xmlns:local="clr-namespace:SigStatCompare"
              x:Class="SigStatCompare.MainPage">
     <ContentPage.BindingContext>
@@ -70,20 +71,34 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <local:SignatureVisualizer Grid.Row="1" Grid.Column="2"
-                                   BackgroundColor="#FFEEEEEE"
-                                   Signature="{Binding SelectedSignature}"/>
+        <compat:RelativeLayout Grid.Row="1" Grid.Column="2">
+            <local:SignatureVisualizer compat:RelativeLayout.WidthConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width}"
+                                       compat:RelativeLayout.HeightConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Height}"
+                                       BackgroundColor="#FFEEEEEE"
+                                       Signature="{Binding FirstSelectedSignature}" />
+            <Button Text="Select"
+                    compat:RelativeLayout.XConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width, Constant=-70}"
+                    compat:RelativeLayout.WidthConstraint="70"
+                    Command="{Binding SelectFirstSignatureCommand}" />
+        </compat:RelativeLayout>
 
-        <local:SignatureVisualizer Grid.Row="2" Grid.Column="2"
-                                   BackgroundColor="#FFEEEEEE"
-                                   Signature="{Binding Signers[0].Signatures[0]}"/>
+        <compat:RelativeLayout Grid.Row="2" Grid.Column="2">
+            <local:SignatureVisualizer compat:RelativeLayout.WidthConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width}"
+                                       compat:RelativeLayout.HeightConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Height}"
+                                       BackgroundColor="#FFEEEEEE"
+                                       Signature="{Binding SecondSelectedSignature}" />
+            <Button Text="Select"
+                    compat:RelativeLayout.XConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width, Constant=-70}"
+                    compat:RelativeLayout.WidthConstraint="70"
+                    Command="{Binding SelectSecondSignatureCommand}" />
+        </compat:RelativeLayout>
 
         <local:DtwVisualizer Grid.Row="1" Grid.Column="3"
-                Grid.RowSpan="2"
-                BackgroundColor="#FFEEEEEE"
-                FirstSignature="{Binding SelectedSignature}"
-                SecondSignature="{Binding Signers[0].Signatures[0]}"
-                Feature="{Binding SelectedDtwFeature}" />
+                             Grid.RowSpan="2"
+                             BackgroundColor="#FFEEEEEE"
+                             FirstSignature="{Binding FirstSelectedSignature}"
+                             SecondSignature="{Binding SecondSelectedSignature}"
+                             Feature="{Binding SelectedDtwFeature}" />
 
     </Grid>
 </ContentPage>

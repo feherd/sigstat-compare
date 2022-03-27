@@ -8,6 +8,13 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
+enum SelectionState
+{
+    None,
+    SelectingFirstSignature,
+    SelectingSecondSignature
+}
+
 public class MainViewModel : INotifyPropertyChanged
 {
     private ObservableCollection<Type> datasetLoaders;
@@ -63,13 +70,12 @@ public class MainViewModel : INotifyPropertyChanged
                 selectedSigner = value;
                 OnPropertyChanged();
             }
-            SelectedSignature = selectedSigner?.Signatures[0];
         }
     }
 
-    private Signature selectedSignature;
-
     public event PropertyChangedEventHandler PropertyChanged;
+
+    private Signature selectedSignature;
 
     public Signature SelectedSignature
     {
@@ -79,6 +85,42 @@ public class MainViewModel : INotifyPropertyChanged
             if (value != selectedSignature)
             {
                 selectedSignature = value;
+                OnPropertyChanged();
+            }
+
+            if (selectionState == SelectionState.SelectingFirstSignature)
+                FirstSelectedSignature = SelectedSignature;
+            
+            if (selectionState == SelectionState.SelectingSecondSignature)
+                SecondSelectedSignature = SelectedSignature;
+        }
+    }
+
+    private Signature firstSelectedSignature;
+
+    public Signature FirstSelectedSignature
+    {
+        get { return firstSelectedSignature; }
+        set
+        {
+            if (value != firstSelectedSignature)
+            {
+                firstSelectedSignature = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private Signature secondSelectedSignature;
+
+    public Signature SecondSelectedSignature
+    {
+        get { return secondSelectedSignature; }
+        set
+        {
+            if (value != secondSelectedSignature)
+            {
+                secondSelectedSignature = value;
                 OnPropertyChanged();
             }
         }
@@ -136,6 +178,18 @@ public class MainViewModel : INotifyPropertyChanged
             }
         }
     }
+
+    private SelectionState selectionState = SelectionState.None;
+
+    public Command SelectFirstSignatureCommand => new(() =>
+    {
+        selectionState = SelectionState.SelectingFirstSignature;
+    });
+
+    public Command SelectSecondSignatureCommand => new(() =>
+    {
+        selectionState = SelectionState.SelectingSecondSignature;
+    });
 
     public MainViewModel()
     {
