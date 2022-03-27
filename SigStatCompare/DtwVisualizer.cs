@@ -128,6 +128,8 @@ public class DtwVisualizer : GraphicsView
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
+            canvas.ClipRectangle(dirtyRect);
+            
             canvas.FillColor = dtwVisualizer.BackgroundColor;
             canvas.FillRectangle(dirtyRect);
 
