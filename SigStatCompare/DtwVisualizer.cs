@@ -125,6 +125,8 @@ public class DtwVisualizer : GraphicsView
             if (dtwVisualizer.ShowAxes)
                 DrawAxes(canvas, dirtyRect, transformMatrix);
 
+            DrawDtwLines(canvas, firstTransformMatrix, secondTransformMatrix);
+
             DrawFeatureFunction(canvas, dtwVisualizer.FirstSignature, firstTransformMatrix);
             DrawFeatureFunction(canvas, dtwVisualizer.SecondSignature, secondTransformMatrix);
         }
@@ -135,17 +137,32 @@ public class DtwVisualizer : GraphicsView
             double height = (dirtyRect.Height - 3 * padding) / 2;
 
             var matrix = new Matrix();
+            matrix.Scale(width, height);
             matrix.Translate(padding, padding);
             matrix.Translate(panOffset.X, panOffset.Y);
 
+            var ftt = dtwVisualizer.FirstSignature.GetFeature(Features.T);
+            var fft = dtwVisualizer.FirstSignature.GetFeature(Features.Y);
+
+            var stt = dtwVisualizer.SecondSignature.GetFeature(Features.T);
+            var sft = dtwVisualizer.SecondSignature.GetFeature(Features.Y);
+
             var firstTransformMatrix = new Matrix();
-            firstTransformMatrix.Scale(width, height);
+            firstTransformMatrix.Translate(-ftt.Min(), -fft.Max());
+            firstTransformMatrix.Scale(
+                1 / (ftt.Max() - ftt.Min()),
+                -1 / (fft.Max() - fft.Min())
+            );
             firstTransformMatrix.Append(matrix);
 
             var secondTransformMatrix = new Matrix();
-            secondTransformMatrix.Scale(width, height);
-            secondTransformMatrix.Translate(0, (dirtyRect.Height - padding) / 2);
+            secondTransformMatrix.Translate(-stt.Min(), -sft.Max());
+            secondTransformMatrix.Scale(
+                1 / (stt.Max() - stt.Min()),
+                -1 / (sft.Max() - sft.Min())
+            );
             secondTransformMatrix.Append(matrix);
+            secondTransformMatrix.Translate(0, (dirtyRect.Height - padding) / 2);
 
             return (matrix, firstTransformMatrix, secondTransformMatrix);
         }
@@ -160,11 +177,6 @@ public class DtwVisualizer : GraphicsView
             double tRange = tt.Max() - tt.Min();
             double fRange = ft.Max() - ft.Min();
 
-            var originM = new Matrix();
-            originM.Translate(-tt.Min(), -ft.Max());
-            originM.Scale(1 / tRange, -1 / fRange);
-            originM.Append(transformMatrix);
-
             canvas.StrokeSize = 3;
             canvas.StrokeLineJoin = LineJoin.Round;
 
@@ -176,9 +188,28 @@ public class DtwVisualizer : GraphicsView
                 var points = tt.Zip(ft, (x, y) => new Point(x, y));
 
                 foreach (var point in points)
-                    polyline.LineTo(originM.Transform(point));
+                    polyline.LineTo(transformMatrix.Transform(point));
 
                 canvas.DrawPath(polyline);
+            }
+        }
+
+        private void DrawDtwLines(ICanvas canvas, Matrix firstTransformMatrix, Matrix secondTransformMatrix)
+        {
+            var ftt = dtwVisualizer.FirstSignature.GetFeature(Features.T);
+            var fft = dtwVisualizer.FirstSignature.GetFeature(Features.Y);
+
+            var stt = dtwVisualizer.SecondSignature.GetFeature(Features.T);
+            var sft = dtwVisualizer.SecondSignature.GetFeature(Features.Y);
+
+            var dtw = new Dtw<double>(fft, sft, (f, s) => Math.Abs(s - f));
+
+            foreach ((var firstIndex, var secondIndex) in dtw.GetPath())
+            {
+                canvas.DrawLine(
+                    firstTransformMatrix.Transform(new Point(ftt[firstIndex], fft[firstIndex])),
+                    secondTransformMatrix.Transform(new Point(stt[secondIndex], sft[secondIndex]))
+                );
             }
         }
 
