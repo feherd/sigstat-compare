@@ -109,6 +109,34 @@ public class MainViewModel : INotifyPropertyChanged
         isFilePickerOpen = false;
     });
 
+    private ObservableCollection<FeatureDescriptor<List<double>>> dtwFeatures;
+    public ObservableCollection<FeatureDescriptor<List<double>>> DtwFeatures
+    {
+        get { return dtwFeatures; }
+        set
+        {
+            if (value != dtwFeatures)
+            {
+                dtwFeatures = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private FeatureDescriptor<List<double>> selectedDtwFeature;
+    public FeatureDescriptor<List<double>> SelectedDtwFeature
+    {
+        get { return selectedDtwFeature; }
+        set
+        {
+            if (value != selectedDtwFeature)
+            {
+                selectedDtwFeature = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
     public MainViewModel()
     {
         DatasetLoaders = new ObservableCollection<Type>(
@@ -116,6 +144,13 @@ public class MainViewModel : INotifyPropertyChanged
             .Where(t => t.GetInterface(typeof(IDataSetLoader).FullName) != null));
 
         SelectedDatasetLoader = typeof(Svc2004Loader);
+
+        DtwFeatures = new ObservableCollection<FeatureDescriptor<List<double>>>{
+            Features.X,
+            Features.Y
+        };
+
+        SelectedDtwFeature = Features.X;
     }
 
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) =>

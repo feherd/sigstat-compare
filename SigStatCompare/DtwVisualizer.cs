@@ -71,6 +71,20 @@ public class DtwVisualizer : GraphicsView
         visualizer?.Invalidate();
     }
 
+    public static readonly BindableProperty FeatureProperty =
+        BindableProperty.Create(nameof(Feature), typeof(FeatureDescriptor<List<double>>), typeof(DtwVisualizer), defaultValue: Features.X, propertyChanged: FeatureChanged);
+    public FeatureDescriptor<List<double>> Feature
+    {
+        get => (FeatureDescriptor<List<double>>)GetValue(FeatureProperty);
+        set => SetValue(FeatureProperty, value);
+    }
+
+    private static void FeatureChanged(BindableObject bindableObject, object oldValue, object newValue)
+    {
+        var visualizer = bindableObject as DtwVisualizer;
+        visualizer?.Invalidate();
+    }
+
     public DtwVisualizer()
     {
         Drawable = new DtwDrawable(this);
@@ -142,10 +156,10 @@ public class DtwVisualizer : GraphicsView
             matrix.Translate(panOffset.X, panOffset.Y);
 
             var ftt = dtwVisualizer.FirstSignature.GetFeature(Features.T);
-            var fft = dtwVisualizer.FirstSignature.GetFeature(Features.Y);
+            var fft = dtwVisualizer.FirstSignature.GetFeature(dtwVisualizer.Feature);
 
             var stt = dtwVisualizer.SecondSignature.GetFeature(Features.T);
-            var sft = dtwVisualizer.SecondSignature.GetFeature(Features.Y);
+            var sft = dtwVisualizer.SecondSignature.GetFeature(dtwVisualizer.Feature);
 
             var firstTransformMatrix = new Matrix();
             firstTransformMatrix.Translate(-ftt.Min(), -fft.Max());
@@ -172,7 +186,7 @@ public class DtwVisualizer : GraphicsView
             if (signature == null) return;
             var strokes = signature.GetStrokes();
             var tt = signature.GetFeature(Features.T);
-            var ft = signature.GetFeature(Features.Y);
+            var ft = signature.GetFeature(dtwVisualizer.Feature);
 
             double tRange = tt.Max() - tt.Min();
             double fRange = ft.Max() - ft.Min();
@@ -197,10 +211,10 @@ public class DtwVisualizer : GraphicsView
         private void DrawDtwLines(ICanvas canvas, Matrix firstTransformMatrix, Matrix secondTransformMatrix)
         {
             var ftt = dtwVisualizer.FirstSignature.GetFeature(Features.T);
-            var fft = dtwVisualizer.FirstSignature.GetFeature(Features.Y);
+            var fft = dtwVisualizer.FirstSignature.GetFeature(dtwVisualizer.Feature);
 
             var stt = dtwVisualizer.SecondSignature.GetFeature(Features.T);
-            var sft = dtwVisualizer.SecondSignature.GetFeature(Features.Y);
+            var sft = dtwVisualizer.SecondSignature.GetFeature(dtwVisualizer.Feature);
 
             var dtw = new Dtw<double>(fft, sft, (f, s) => Math.Abs(s - f));
 

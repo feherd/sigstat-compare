@@ -17,12 +17,17 @@
 
         <StackLayout Orientation="Horizontal"
                      Grid.ColumnSpan="3">
+
             <Button Text="Load database..."
                     HorizontalOptions="Start" VerticalOptions="Start"
-                    Command="{Binding LoadCommand}"/>
+                    Command="{Binding LoadCommand}" />
+
             <Picker ItemsSource="{Binding DatasetLoaders}"
                     SelectedItem="{Binding SelectedDatasetLoader}"
-                    ItemDisplayBinding="{Binding Converter={StaticResource typeToName}}"/>
+                    ItemDisplayBinding="{Binding Converter={StaticResource typeToName}}" />
+
+            <Picker ItemsSource="{Binding DtwFeatures}"
+                    SelectedItem="{Binding SelectedDtwFeature}" />
 
         </StackLayout>
 
@@ -77,7 +82,8 @@
                 Grid.RowSpan="2"
                 BackgroundColor="#FFEEEEEE"
                 FirstSignature="{Binding SelectedSignature}"
-                SecondSignature="{Binding Signers[0].Signatures[0]}" />
+                SecondSignature="{Binding Signers[0].Signatures[0]}"
+                Feature="{Binding SelectedDtwFeature}" />
 
     </Grid>
 </ContentPage>
