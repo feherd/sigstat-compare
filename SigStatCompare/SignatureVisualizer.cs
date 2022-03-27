@@ -19,14 +19,6 @@ public class SignatureVisualizer : GraphicsView
         visualizer?.Invalidate();
     }
 
-    public static readonly BindableProperty DisplayModeProperty =
-        BindableProperty.Create(nameof(DisplayMode), typeof(DisplayMode), typeof(SignatureVisualizer), DisplayMode.Zoom);
-    public DisplayMode DisplayMode
-    {
-        get => (DisplayMode)GetValue(DisplayModeProperty);
-        set => SetValue(DisplayModeProperty, value);
-    }
-
     public static readonly BindableProperty ShowAxesProperty =
         BindableProperty.Create(nameof(ShowAxes), typeof(bool), typeof(SignatureVisualizer), true, propertyChanged: ShowAxesChanged);
     public bool ShowAxes
@@ -39,6 +31,14 @@ public class SignatureVisualizer : GraphicsView
     {
         var visualizer = bindableObject as SignatureVisualizer;
         visualizer?.Invalidate();
+    }
+
+    public static readonly BindableProperty InteractiveProperty =
+        BindableProperty.Create(nameof(Interactive), typeof(bool), typeof(SignatureVisualizer), true);
+    public bool Interactive
+    {
+        get => (bool)GetValue(InteractiveProperty);
+        set => SetValue(InteractiveProperty, value);
     }
 
     private Point lastOffset;
@@ -84,6 +84,8 @@ public class SignatureVisualizer : GraphicsView
 
     void OnPanUpdated(object sender, PanUpdatedEventArgs e)
     {
+        if (!Interactive) return;
+
         switch (e.StatusType)
         {
             case GestureStatus.Running:

@@ -36,15 +36,17 @@
                   Grid.RowSpan="2"
                   WidthRequest="100"
                   ItemsSource="{Binding Signers}"
-                  SelectedItem="{Binding SelectedSigner}">
+                  SelectedItem="{Binding SelectedSigner}"
+                  RowHeight="70" >
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
                         <StackLayout Orientation="Vertical" >
                             <local:SignatureVisualizer Signature="{Binding Signatures[0]}"
                                                        HeightRequest="50"
-                                                       ShowAxes="False"/>
-                            <Label Text="{Binding}"/>
+                                                       ShowAxes="False"
+                                                       Interactive="False" />
+                            <Label Text="{Binding}" />
                         </StackLayout>
                     </ViewCell>
                 </DataTemplate>
@@ -55,7 +57,8 @@
                   Grid.RowSpan="2" 
                   ItemsSource="{Binding SelectedSigner.Signatures}"
                   WidthRequest="100"
-                  SelectedItem="{Binding SelectedSignature}" >
+                  SelectedItem="{Binding SelectedSignature}"
+                  RowHeight="70" >
 
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -63,7 +66,8 @@
                         <StackLayout Orientation="Vertical" >
                             <local:SignatureVisualizer Signature="{Binding}"
                                                        HeightRequest="50"
-                                                       ShowAxes="False"/>
+                                                       ShowAxes="False"
+                                                       Interactive="False" />
                             <Label Text="{Binding}"/>
                         </StackLayout>
                     </ViewCell>
