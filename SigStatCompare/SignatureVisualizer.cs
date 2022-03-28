@@ -115,8 +115,6 @@ public class SignatureVisualizer : GraphicsView
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
-            canvas.ClipRectangle(dirtyRect);
-
             canvas.FillColor = signatureVisualizer.BackgroundColor;
             canvas.FillRectangle(dirtyRect);
 
