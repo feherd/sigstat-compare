@@ -173,10 +173,9 @@ public class SignatureVisualizer : GraphicsView
                 canvas.StrokeColor = stroke.StrokeType == StrokeType.Down ? Colors.Blue : Colors.Red;
 
                 var polyline = new PathF();
-                var points = xt.Zip(yt, (x, y) => new Point(x, y));
 
-                foreach (var point in points)
-                    polyline.LineTo(originM.Transform(point));
+                for (int i = stroke.StartIndex + 1; i <= stroke.EndIndex; i++)
+                    polyline.LineTo(originM.Transform(new Point(xt[i], yt[i])));
 
                 canvas.DrawPath(polyline);
             }
