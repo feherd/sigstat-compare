@@ -16,6 +16,7 @@ public class SignatureVisualizer : GraphicsView
     private static void SignatureChanged(BindableObject bindableObject, object oldValue, object newValue)
     {
         var visualizer = bindableObject as SignatureVisualizer;
+        visualizer.Zoom = 1.0;
         visualizer?.Invalidate();
     }
 
