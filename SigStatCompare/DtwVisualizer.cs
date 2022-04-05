@@ -1,5 +1,6 @@
 ﻿using Microsoft.Maui.Controls.Shapes;
 using SigStat.Common;
+using SigStat.Common.PipelineItems.Transforms.Preprocessing;
 
 namespace SigStatCompare;
 
@@ -118,6 +119,8 @@ public class DtwVisualizer : GraphicsView
 
     class DtwDrawable : IDrawable
     {
+        ZNormalization zNormalization = new ZNormalization();
+
         private readonly DtwVisualizer dtwVisualizer;
         private readonly double padding = 25;
 
@@ -133,6 +136,10 @@ public class DtwVisualizer : GraphicsView
 
             if (dtwVisualizer.FirstSignature is null) return;
             if (dtwVisualizer.SecondSignature is null) return;
+
+            zNormalization.InputFeature = dtwVisualizer.Feature;
+            zNormalization.Transform(dtwVisualizer.FirstSignature);
+            zNormalization.Transform(dtwVisualizer.SecondSignature);
 
             (var transformMatrix, var firstTransformMatrix, var secondTransformMatrix) = CalculateTransformation(dirtyRect, dtwVisualizer.Offset);
 
@@ -156,10 +163,10 @@ public class DtwVisualizer : GraphicsView
             matrix.Translate(panOffset.X, panOffset.Y);
 
             var ftt = dtwVisualizer.FirstSignature.GetFeature(Features.T);
-            var fft = dtwVisualizer.FirstSignature.GetFeature(dtwVisualizer.Feature);
+            var fft = dtwVisualizer.FirstSignature.GetFeature(zNormalization.OutputFeature);
 
             var stt = dtwVisualizer.SecondSignature.GetFeature(Features.T);
-            var sft = dtwVisualizer.SecondSignature.GetFeature(dtwVisualizer.Feature);
+            var sft = dtwVisualizer.SecondSignature.GetFeature(zNormalization.OutputFeature);
 
             var firstTransformMatrix = new Matrix();
             firstTransformMatrix.Translate(-ftt.Min(), -fft.Max());
@@ -186,7 +193,7 @@ public class DtwVisualizer : GraphicsView
             if (signature == null) return;
             var strokes = signature.GetStrokes();
             var tt = signature.GetFeature(Features.T);
-            var ft = signature.GetFeature(dtwVisualizer.Feature);
+            var ft = signature.GetFeature(zNormalization.OutputFeature);
 
             double tRange = tt.Max() - tt.Min();
             double fRange = ft.Max() - ft.Min();
@@ -211,10 +218,10 @@ public class DtwVisualizer : GraphicsView
         private void DrawDtwLines(ICanvas canvas, Matrix firstTransformMatrix, Matrix secondTransformMatrix)
         {
             var ftt = dtwVisualizer.FirstSignature.GetFeature(Features.T);
-            var fft = dtwVisualizer.FirstSignature.GetFeature(dtwVisualizer.Feature);
+            var fft = dtwVisualizer.FirstSignature.GetFeature(zNormalization.OutputFeature);
 
             var stt = dtwVisualizer.SecondSignature.GetFeature(Features.T);
-            var sft = dtwVisualizer.SecondSignature.GetFeature(dtwVisualizer.Feature);
+            var sft = dtwVisualizer.SecondSignature.GetFeature(zNormalization.OutputFeature);
 
             var dtw = new Dtw<double>(fft, sft, (f, s) => Math.Abs(s - f));
 
