@@ -88,11 +88,17 @@ public class MainViewModel : INotifyPropertyChanged
                 OnPropertyChanged();
             }
 
-            if (selectionState == SelectionState.SelectingFirstSignature)
+            if (SelectionState == SelectionState.SelectingFirstSignature)
+            {
                 FirstSelectedSignature = SelectedSignature;
-            
-            if (selectionState == SelectionState.SelectingSecondSignature)
+                SelectionState = SelectionState.None;
+            }
+
+            if (SelectionState == SelectionState.SelectingSecondSignature)
+            {
                 SecondSelectedSignature = SelectedSignature;
+                SelectionState = SelectionState.None;
+            }
         }
     }
 
@@ -181,15 +187,37 @@ public class MainViewModel : INotifyPropertyChanged
 
     private SelectionState selectionState = SelectionState.None;
 
-    public Command SelectFirstSignatureCommand => new(() =>
+    internal SelectionState SelectionState
     {
-        selectionState = SelectionState.SelectingFirstSignature;
-    });
+        get => selectionState;
+        set
+        {
+            selectionState = value;
+            OnPropertyChanged();
 
-    public Command SelectSecondSignatureCommand => new(() =>
-    {
-        selectionState = SelectionState.SelectingSecondSignature;
-    });
+            SelectFirstSignatureCommand.ChangeCanExecute();
+            SelectSecondSignatureCommand.ChangeCanExecute();
+        }
+    }
+
+    public Command SelectFirstSignatureCommand => new(
+        execute: () =>
+        {
+            SelectionState = SelectionState.SelectingFirstSignature;
+            FirstSelectedSignature = null;
+        },
+        canExecute: () => SelectionState != SelectionState.SelectingFirstSignature
+    );
+
+    public Command SelectSecondSignatureCommand => new(
+        execute: () =>
+        {
+            SelectionState = SelectionState.SelectingSecondSignature;
+            SecondSelectedSignature = null;
+        },
+        canExecute: () => SelectionState != SelectionState.SelectingSecondSignature
+    );
+
 
     public MainViewModel()
     {

@@ -9,6 +9,22 @@
 
     <ContentPage.Resources>
         <local:TypeToNameConverter x:Key="typeToName" />
+
+        <VisualStateGroup x:Key="buttonStates"
+                          x:Name="CommonStates">
+            <VisualState x:Name="Normal">
+                <VisualState.Setters>
+                    <Setter Property="BackgroundColor"
+                            Value="{DynamicResource PrimaryColor}" />
+                </VisualState.Setters>
+            </VisualState>
+            <VisualState x:Name="Pressed">
+                <VisualState.Setters>
+                    <Setter Property="BackgroundColor"
+                            Value="Gray" />
+                </VisualState.Setters>
+            </VisualState>
+        </VisualStateGroup>
     </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,*,*"
@@ -91,7 +107,8 @@
             <Button Text="Select"
                     compat:RelativeLayout.XConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width, Constant=-70}"
                     compat:RelativeLayout.WidthConstraint="70"
-                    Command="{Binding SelectFirstSignatureCommand}" />
+                    Command="{Binding SelectFirstSignatureCommand}"
+                    VisualStateManager.VisualStateGroups="{StaticResource buttonStates}" />
         </compat:RelativeLayout>
 
         <compat:RelativeLayout Grid.Row="2" Grid.Column="2">
@@ -110,7 +127,8 @@
             <Button Text="Select"
                     compat:RelativeLayout.XConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width, Constant=-70}"
                     compat:RelativeLayout.WidthConstraint="70"
-                    Command="{Binding SelectSecondSignatureCommand}" />
+                    Command="{Binding SelectSecondSignatureCommand}"
+                    VisualStateManager.VisualStateGroups="{StaticResource buttonStates}" />
         </compat:RelativeLayout>
 
         <local:DtwVisualizer Grid.Row="1" Grid.Column="3"
