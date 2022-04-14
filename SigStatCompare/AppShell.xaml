@@ -7,7 +7,7 @@
     Shell.FlyoutBehavior="Disabled">
 
     <ShellContent
-        Title="Hello, World!"
+        Title="SigStat Compare"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
 
