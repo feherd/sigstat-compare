@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>net6.0-android;net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
@@ -14,7 +14,7 @@
 
 		<!-- App Identifier -->
 		<ApplicationId>com.companyname.sigstatcompare</ApplicationId>
-		<ApplicationId Condition="$(TargetFramework.Contains('-windows'))">54438A41-029B-4F30-9361-E1239CB0A5C2</ApplicationId>
+		<ApplicationId Condition="$(TargetFramework.Contains('-windows'))">8A775BDF-B8DA-4ADD-9FC9-1165F4DC8F52</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -43,6 +43,10 @@
 
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="SigStat" Version="0.2.5" />
 	</ItemGroup>
 
 </Project>

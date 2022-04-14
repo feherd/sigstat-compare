@@ -1,20 +1,26 @@
 ﻿namespace SigStatCompare;
 
+using System;
+using System.Globalization;
+
 public partial class MainPage : ContentPage
 {
-	int count = 0;
-
-	public MainPage()
-	{
-		InitializeComponent();
-	}
-
-	private void OnCounterClicked(object sender, EventArgs e)
-	{
-		count++;
-		CounterLabel.Text = $"Current count: {count}";
-
-		SemanticScreenReader.Announce(CounterLabel.Text);
-	}
+    public MainPage()
+    {
+        InitializeComponent();
+    }
 }
 
+public class TypeToNameConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        return (value as Type)?.Name ?? "";
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        // TODO
+        return value;
+    }
+}

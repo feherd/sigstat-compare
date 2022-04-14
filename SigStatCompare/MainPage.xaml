@@ -1,45 +1,143 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:compat="clr-namespace:Microsoft.Maui.Controls.Compatibility;assembly=Microsoft.Maui.Controls"
+             xmlns:local="clr-namespace:SigStatCompare"
              x:Class="SigStatCompare.MainPage">
+    <ContentPage.BindingContext>
+        <local:MainViewModel/>
+    </ContentPage.BindingContext>
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="25" Padding="30">
+    <ContentPage.Resources>
+        <local:TypeToNameConverter x:Key="typeToName" />
 
-            <Label 
-                Text="Hello, World!"
-                SemanticProperties.HeadingLevel="Level1"
-                FontSize="32"
-                HorizontalOptions="Center" />
+        <VisualStateGroup x:Key="buttonStates"
+                          x:Name="CommonStates">
+            <VisualState x:Name="Normal">
+                <VisualState.Setters>
+                    <Setter Property="BackgroundColor"
+                            Value="{DynamicResource PrimaryColor}" />
+                </VisualState.Setters>
+            </VisualState>
+            <VisualState x:Name="Pressed">
+                <VisualState.Setters>
+                    <Setter Property="BackgroundColor"
+                            Value="Gray" />
+                </VisualState.Setters>
+            </VisualState>
+        </VisualStateGroup>
+    </ContentPage.Resources>
 
-            <Label 
-                Text="Welcome to .NET Multi-platform App UI"
-                SemanticProperties.HeadingLevel="Level1"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I"
-                FontSize="18"
-                HorizontalOptions="Center" />
+    <Grid RowDefinitions="Auto,*,*"
+          ColumnDefinitions="Auto,Auto,*,*"
+          RowSpacing="4"
+          ColumnSpacing="4">
 
-            <Label 
-                Text="Current count: 0"
-                FontSize="18"
-                FontAttributes="Bold"
-                x:Name="CounterLabel"
-                HorizontalOptions="Center" />
+        <StackLayout Orientation="Horizontal"
+                     Grid.ColumnSpan="3">
 
-            <Button 
-                Text="Click me"
-                FontAttributes="Bold"
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="OnCounterClicked"
-                HorizontalOptions="Center" />
+            <Button Text="Load database..."
+                    HorizontalOptions="Start" VerticalOptions="Start"
+                    Command="{Binding LoadCommand}" />
 
-            <Image
-                Source="dotnet_bot.png"
-                SemanticProperties.Description="Cute dot net bot waving hi to you!"
-                WidthRequest="250"
-                HeightRequest="310"
-                HorizontalOptions="Center" />
+            <Picker ItemsSource="{Binding DatasetLoaders}"
+                    SelectedItem="{Binding SelectedDatasetLoader}"
+                    ItemDisplayBinding="{Binding Converter={StaticResource typeToName}}" />
 
-        </VerticalStackLayout>
-    </ScrollView>
+            <Picker ItemsSource="{Binding DtwFeatures}"
+                    SelectedItem="{Binding SelectedDtwFeature}" />
+
+        </StackLayout>
+
+        <ListView Grid.Row="1" Grid.Column="0"
+                  Grid.RowSpan="2"
+                  WidthRequest="100"
+                  ItemsSource="{Binding Signers}"
+                  SelectedItem="{Binding SelectedSigner}"
+                  RowHeight="70" >
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Vertical" >
+                            <local:SignatureVisualizer Signature="{Binding Signatures[0]}"
+                                                       HeightRequest="50"
+                                                       ShowAxes="False"
+                                                       Interactive="False" />
+                            <Label Text="{Binding}" />
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <ListView Grid.Row="1" Grid.Column="1"
+                  Grid.RowSpan="2" 
+                  ItemsSource="{Binding SelectedSigner.Signatures}"
+                  WidthRequest="100"
+                  SelectedItem="{Binding SelectedSignature}"
+                  RowHeight="70" >
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Vertical" >
+                            <local:SignatureVisualizer Signature="{Binding}"
+                                                       HeightRequest="50"
+                                                       ShowAxes="False"
+                                                       Interactive="False" />
+                            <Label Text="{Binding}"/>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <compat:RelativeLayout Grid.Row="1" Grid.Column="2">
+            <local:SignatureVisualizer compat:RelativeLayout.WidthConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width}"
+                                       compat:RelativeLayout.HeightConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Height}"
+                                       BackgroundColor="#FFEEEEEE"
+                                       Signature="{Binding FirstSelectedSignature}"
+                                       x:Name="FirstSignature" />
+
+            <Slider compat:RelativeLayout.XConstraint="10"
+                    compat:RelativeLayout.WidthConstraint="200"
+                    Value="{Binding Source={x:Reference FirstSignature}, Path=Zoom, FallbackValue=1.0}"
+                    Minimum="0.5"
+                    Maximum="3" />
+
+            <Button Text="Select"
+                    compat:RelativeLayout.XConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width, Constant=-70}"
+                    compat:RelativeLayout.WidthConstraint="70"
+                    Command="{Binding SelectFirstSignatureCommand}"
+                    VisualStateManager.VisualStateGroups="{StaticResource buttonStates}" />
+        </compat:RelativeLayout>
+
+        <compat:RelativeLayout Grid.Row="2" Grid.Column="2">
+            <local:SignatureVisualizer compat:RelativeLayout.WidthConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width}"
+                                       compat:RelativeLayout.HeightConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Height}"
+                                       BackgroundColor="#FFEEEEEE"
+                                       Signature="{Binding SecondSelectedSignature}"
+                                       x:Name="SecondSignature" />
+
+            <Slider compat:RelativeLayout.XConstraint="10"
+                    compat:RelativeLayout.WidthConstraint="200"
+                    Value="{Binding Source={x:Reference SecondSignature}, Path=Zoom, FallbackValue=1.0}"
+                    Minimum="0.5"
+                    Maximum="3" />
+
+            <Button Text="Select"
+                    compat:RelativeLayout.XConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width, Constant=-70}"
+                    compat:RelativeLayout.WidthConstraint="70"
+                    Command="{Binding SelectSecondSignatureCommand}"
+                    VisualStateManager.VisualStateGroups="{StaticResource buttonStates}" />
+        </compat:RelativeLayout>
+
+        <local:DtwVisualizer Grid.Row="1" Grid.Column="3"
+                             Grid.RowSpan="2"
+                             BackgroundColor="#FFEEEEEE"
+                             FirstSignature="{Binding FirstSelectedSignature}"
+                             SecondSignature="{Binding SecondSelectedSignature}"
+                             Feature="{Binding SelectedDtwFeature}" />
+
+    </Grid>
 </ContentPage>
