@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:compat="clr-namespace:Microsoft.Maui.Controls.Compatibility;assembly=Microsoft.Maui.Controls"
@@ -9,22 +10,6 @@
 
     <ContentPage.Resources>
         <local:TypeToNameConverter x:Key="typeToName" />
-
-        <VisualStateGroup x:Key="buttonStates"
-                          x:Name="CommonStates">
-            <VisualState x:Name="Normal">
-                <VisualState.Setters>
-                    <Setter Property="BackgroundColor"
-                            Value="{DynamicResource PrimaryColor}" />
-                </VisualState.Setters>
-            </VisualState>
-            <VisualState x:Name="Pressed">
-                <VisualState.Setters>
-                    <Setter Property="BackgroundColor"
-                            Value="Gray" />
-                </VisualState.Setters>
-            </VisualState>
-        </VisualStateGroup>
     </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,*,*"
@@ -107,8 +92,7 @@
             <Button Text="Select"
                     compat:RelativeLayout.XConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width, Constant=-70}"
                     compat:RelativeLayout.WidthConstraint="70"
-                    Command="{Binding SelectFirstSignatureCommand}"
-                    VisualStateManager.VisualStateGroups="{StaticResource buttonStates}" />
+                    Command="{Binding SelectFirstSignatureCommand}" />
         </compat:RelativeLayout>
 
         <compat:RelativeLayout Grid.Row="2" Grid.Column="2">
@@ -127,8 +111,7 @@
             <Button Text="Select"
                     compat:RelativeLayout.XConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width, Constant=-70}"
                     compat:RelativeLayout.WidthConstraint="70"
-                    Command="{Binding SelectSecondSignatureCommand}"
-                    VisualStateManager.VisualStateGroups="{StaticResource buttonStates}" />
+                    Command="{Binding SelectSecondSignatureCommand}" />
         </compat:RelativeLayout>
 
         <local:DtwVisualizer Grid.Row="1" Grid.Column="3"

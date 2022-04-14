@@ -1,4 +1,6 @@
-﻿namespace SigStatCompare;
+﻿using Microsoft.Maui.Controls.Compatibility.Hosting;
+
+namespace SigStatCompare;
 
 public static class MauiProgram
 {
@@ -7,9 +9,11 @@ public static class MauiProgram
 		var builder = MauiApp.CreateBuilder();
 		builder
 			.UseMauiApp<App>()
+			.UseMauiCompatibility()
 			.ConfigureFonts(fonts =>
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 
 		return builder.Build();
