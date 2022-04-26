@@ -33,48 +33,44 @@
 
         </StackLayout>
 
-        <ListView Grid.Row="1" Grid.Column="0"
-                  Grid.RowSpan="2"
-                  WidthRequest="100"
-                  ItemsSource="{Binding Signers}"
-                  SelectedItem="{Binding SelectedSigner}"
-                  RowHeight="70" >
-            <ListView.ItemTemplate>
+        <CollectionView Grid.Row="1" Grid.Column="0"
+                        Grid.RowSpan="2"
+                        WidthRequest="100"
+                        ItemsSource="{Binding Signers}"
+                        SelectedItem="{Binding SelectedSigner}"
+                        SelectionMode="Single" >
+            <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <ViewCell>
-                        <StackLayout Orientation="Vertical" >
-                            <local:SignatureVisualizer Signature="{Binding Signatures[0]}"
+                    <StackLayout Orientation="Vertical" >
+                        <local:SignatureVisualizer Signature="{Binding Signatures[0]}"
                                                        HeightRequest="50"
                                                        ShowAxes="False"
                                                        Interactive="False" />
-                            <Label Text="{Binding}" />
-                        </StackLayout>
-                    </ViewCell>
+                        <Label Text="{Binding}" />
+                    </StackLayout>
                 </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
-        <ListView Grid.Row="1" Grid.Column="1"
-                  Grid.RowSpan="2" 
-                  ItemsSource="{Binding SelectedSigner.Signatures}"
-                  WidthRequest="100"
-                  SelectedItem="{Binding SelectedSignature}"
-                  RowHeight="70" >
+        <CollectionView Grid.Row="1" Grid.Column="1"
+                        Grid.RowSpan="2" 
+                        ItemsSource="{Binding SelectedSigner.Signatures}"
+                        WidthRequest="100"
+                        SelectedItem="{Binding SelectedSignature}"
+                        SelectionMode="Single" >
 
-            <ListView.ItemTemplate>
+            <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <ViewCell>
-                        <StackLayout Orientation="Vertical" >
-                            <local:SignatureVisualizer Signature="{Binding}"
-                                                       HeightRequest="50"
-                                                       ShowAxes="False"
-                                                       Interactive="False" />
-                            <Label Text="{Binding}"/>
-                        </StackLayout>
-                    </ViewCell>
+                    <StackLayout Orientation="Vertical" >
+                        <local:SignatureVisualizer Signature="{Binding}"
+                                                   HeightRequest="50"
+                                                   ShowAxes="False"
+                                                   Interactive="False" />
+                        <Label Text="{Binding}"/>
+                    </StackLayout>
                 </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
         <compat:RelativeLayout Grid.Row="1" Grid.Column="2">
             <local:SignatureVisualizer compat:RelativeLayout.WidthConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width}"
