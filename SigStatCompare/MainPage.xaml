@@ -14,59 +14,70 @@
 
     <Grid RowDefinitions="Auto,*,*"
           ColumnDefinitions="Auto,Auto,*,*"
+          Padding="4"
           RowSpacing="4"
-          ColumnSpacing="4">
+          ColumnSpacing="4" >
 
         <StackLayout Orientation="Horizontal"
-                     Grid.ColumnSpan="3">
+                     Grid.ColumnSpan="3"
+                     HorizontalOptions="FillAndExpand"
+                     Spacing="4" >
 
-            <Button Text="Load database..."
-                    HorizontalOptions="Start" VerticalOptions="Start"
+            <Button VerticalOptions="Center"
+                    Text="Load database..."
                     Command="{Binding LoadCommand}" />
 
-            <Picker ItemsSource="{Binding DatasetLoaders}"
+            <Picker VerticalOptions="Center"
+                    ItemsSource="{Binding DatasetLoaders}"
                     SelectedItem="{Binding SelectedDatasetLoader}"
                     ItemDisplayBinding="{Binding Converter={StaticResource typeToName}}" />
-
-            <Picker ItemsSource="{Binding DtwFeatures}"
-                    SelectedItem="{Binding SelectedDtwFeature}" />
-
         </StackLayout>
+
+        <Picker Grid.Column="3"
+                VerticalOptions="Center"
+                ItemsSource="{Binding DtwFeatures}"
+                SelectedItem="{Binding SelectedDtwFeature}" />
 
         <CollectionView Grid.Row="1" Grid.Column="0"
                         Grid.RowSpan="2"
-                        WidthRequest="100"
+                        WidthRequest="120"
                         ItemsSource="{Binding Signers}"
                         SelectedItem="{Binding SelectedSigner}"
                         SelectionMode="Single" >
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <StackLayout Orientation="Vertical" >
+                    <StackLayout Orientation="Vertical"
+                                 MinimumWidthRequest="120"
+                                 Padding="2" >
                         <local:SignatureVisualizer Signature="{Binding Signatures[0]}"
-                                                       HeightRequest="50"
-                                                       ShowAxes="False"
-                                                       Interactive="False" />
-                        <Label Text="{Binding}" />
+                                                   HeightRequest="50"
+                                                   ShowAxes="False"
+                                                   Interactive="False" />
+                        <Label Text="{Binding}"
+                               Padding="4,2"/>
                     </StackLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
 
         <CollectionView Grid.Row="1" Grid.Column="1"
-                        Grid.RowSpan="2" 
+                        Grid.RowSpan="2"
+                        WidthRequest="120"
                         ItemsSource="{Binding SelectedSigner.Signatures}"
-                        WidthRequest="100"
                         SelectedItem="{Binding SelectedSignature}"
                         SelectionMode="Single" >
 
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <StackLayout Orientation="Vertical" >
+                    <StackLayout Orientation="Vertical"
+                                 MinimumWidthRequest="120"
+                                 Padding="2" >
                         <local:SignatureVisualizer Signature="{Binding}"
                                                    HeightRequest="50"
                                                    ShowAxes="False"
                                                    Interactive="False" />
-                        <Label Text="{Binding}"/>
+                        <Label Text="{Binding}"
+                               Padding="4,2" />
                     </StackLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
@@ -75,7 +86,6 @@
         <compat:RelativeLayout Grid.Row="1" Grid.Column="2">
             <local:SignatureVisualizer compat:RelativeLayout.WidthConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width}"
                                        compat:RelativeLayout.HeightConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Height}"
-                                       BackgroundColor="#FFEEEEEE"
                                        Signature="{Binding FirstSelectedSignature}"
                                        x:Name="FirstSignature" />
 
@@ -94,7 +104,6 @@
         <compat:RelativeLayout Grid.Row="2" Grid.Column="2">
             <local:SignatureVisualizer compat:RelativeLayout.WidthConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width}"
                                        compat:RelativeLayout.HeightConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Height}"
-                                       BackgroundColor="#FFEEEEEE"
                                        Signature="{Binding SecondSelectedSignature}"
                                        x:Name="SecondSignature" />
 
@@ -112,7 +121,6 @@
 
         <local:DtwVisualizer Grid.Row="1" Grid.Column="3"
                              Grid.RowSpan="2"
-                             BackgroundColor="#FFEEEEEE"
                              FirstSignature="{Binding FirstSelectedSignature}"
                              SecondSignature="{Binding SecondSelectedSignature}"
                              Feature="{Binding SelectedDtwFeature}" />
