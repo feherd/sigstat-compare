@@ -26,7 +26,7 @@ public partial class MainPage : ContentPage
         }
 
         {
-            var menuBarItem = MenuBarItems.First(i => i.Text == "DTW");
+            var menuBarItem = MenuBarItems.First(i => i.Text == "Dtw");
             foreach (var feature in viewModel.DtwFeatures)
             {
                 var menuFlyoutItem = new MenuFlyoutItem();
