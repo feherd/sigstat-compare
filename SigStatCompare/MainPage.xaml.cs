@@ -8,6 +8,34 @@ public partial class MainPage : ContentPage
     public MainPage()
     {
         InitializeComponent();
+
+        var viewModel = BindingContext as MainViewModel;
+
+        {
+            var menuBarItem = MenuBarItems.First(i => i.Text == "File");
+            var menuFlyoutSubItem = new MenuFlyoutSubItem() { Text = "Load" };
+            foreach (var dataSetLoader in viewModel.DatasetLoaders)
+            {
+                var menuFlyoutItem = new MenuFlyoutItem();
+                menuFlyoutItem.Text = dataSetLoader.Name;
+                menuFlyoutItem.CommandParameter = dataSetLoader;
+                menuFlyoutItem.Command = viewModel.LoadCommand;
+                menuFlyoutSubItem.Add(menuFlyoutItem);
+            }
+            menuBarItem.Insert(0, menuFlyoutSubItem);
+        }
+
+        {
+            var menuBarItem = MenuBarItems.First(i => i.Text == "DTW");
+            foreach (var feature in viewModel.DtwFeatures)
+            {
+                var menuFlyoutItem = new MenuFlyoutItem();
+                menuFlyoutItem.Text = feature.Name;
+                menuFlyoutItem.CommandParameter = feature;
+                menuFlyoutItem.Command = viewModel.SelectDtwFeature;
+                menuBarItem.Add(menuFlyoutItem);
+            }
+        }
     }
 }
 

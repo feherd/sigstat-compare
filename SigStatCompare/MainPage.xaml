@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:compat="clr-namespace:Microsoft.Maui.Controls.Compatibility;assembly=Microsoft.Maui.Controls"
              xmlns:local="clr-namespace:SigStatCompare"
-             x:Class="SigStatCompare.MainPage">
+             x:Class="SigStatCompare.MainPage"
+             Title="SigStat Compare" >
     <ContentPage.BindingContext>
         <local:MainViewModel/>
     </ContentPage.BindingContext>
@@ -12,31 +13,16 @@
         <local:TypeToNameConverter x:Key="typeToName" />
     </ContentPage.Resources>
 
+    <ContentPage.MenuBarItems>
+        <MenuBarItem Text="File"></MenuBarItem>
+        <MenuBarItem Text="Dtw"></MenuBarItem>
+    </ContentPage.MenuBarItems>
+
     <Grid RowDefinitions="Auto,*,*"
           ColumnDefinitions="Auto,Auto,*,*"
           Padding="4"
           RowSpacing="4"
           ColumnSpacing="4" >
-
-        <StackLayout Orientation="Horizontal"
-                     Grid.ColumnSpan="3"
-                     HorizontalOptions="FillAndExpand"
-                     Spacing="4" >
-
-            <Button VerticalOptions="Center"
-                    Text="Load database..."
-                    Command="{Binding LoadCommand}" />
-
-            <Picker VerticalOptions="Center"
-                    ItemsSource="{Binding DatasetLoaders}"
-                    SelectedItem="{Binding SelectedDatasetLoader}"
-                    ItemDisplayBinding="{Binding Converter={StaticResource typeToName}}" />
-        </StackLayout>
-
-        <Picker Grid.Column="3"
-                VerticalOptions="Center"
-                ItemsSource="{Binding DtwFeatures}"
-                SelectedItem="{Binding SelectedDtwFeature}" />
 
         <CollectionView Grid.Row="1" Grid.Column="0"
                         Grid.RowSpan="2"

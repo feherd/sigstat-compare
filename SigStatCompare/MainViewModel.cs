@@ -31,20 +31,6 @@ public class MainViewModel : INotifyPropertyChanged
         }
     }
 
-    private Type selectedDatasetLoader;
-    public Type SelectedDatasetLoader
-    {
-        get { return selectedDatasetLoader; }
-        set
-        {
-            if (value != selectedDatasetLoader)
-            {
-                selectedDatasetLoader = value;
-                OnPropertyChanged();
-            }
-        }
-    }
-
     private ObservableCollection<Signer> signers;
     public ObservableCollection<Signer> Signers
     {
@@ -135,7 +121,7 @@ public class MainViewModel : INotifyPropertyChanged
     private object filePickerLock = new object();
     private bool isFilePickerOpen = false;
 
-    public Command LoadCommand => new(async () =>
+    public Command<Type> LoadCommand => new(async (dataSetLoaderType) =>
     {
         lock (filePickerLock)
         {
@@ -149,7 +135,12 @@ public class MainViewModel : INotifyPropertyChanged
 
         if (fileResult is not null)
         {
-            var ctor = SelectedDatasetLoader.GetConstructor(new[] { typeof(string), typeof(bool) });
+            var ctor = dataSetLoaderType.GetConstructor(new[] { typeof(string), typeof(bool) });
+
+            // TODO
+            if (ctor is null) ;
+
+
             var loader = (IDataSetLoader)ctor.Invoke(new object[] { fileResult.FullPath, true });
             Signers = await Task.Run(() => new ObservableCollection<Signer>(loader.EnumerateSigners().OrderBy(s => s.ID)));
         }
@@ -184,6 +175,11 @@ public class MainViewModel : INotifyPropertyChanged
             }
         }
     }
+
+    public Command<FeatureDescriptor<List<double>>> SelectDtwFeature => new((feature) =>
+    {
+        SelectedDtwFeature = feature;
+    });
 
     private SelectionState selectionState = SelectionState.None;
 
@@ -224,8 +220,6 @@ public class MainViewModel : INotifyPropertyChanged
         DatasetLoaders = new ObservableCollection<Type>(
             typeof(Svc2004Loader).Assembly.GetTypes()
             .Where(t => t.GetInterface(typeof(IDataSetLoader).FullName) != null));
-
-        SelectedDatasetLoader = typeof(Svc2004Loader);
 
         DtwFeatures = new ObservableCollection<FeatureDescriptor<List<double>>>{
             Features.X,
