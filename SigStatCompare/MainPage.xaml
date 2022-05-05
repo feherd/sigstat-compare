@@ -41,6 +41,17 @@
                                                    Interactive="False" />
                         <Label Text="{Binding}"
                                Padding="4,2"/>
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup Name="CommonStates">
+                                <VisualState Name="Normal" />
+                                <VisualState Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter Property="BackgroundColor" Value="#512BD4" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                     </StackLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
@@ -64,6 +75,17 @@
                                                    Interactive="False" />
                         <Label Text="{Binding}"
                                Padding="4,2" />
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup Name="CommonStates">
+                                <VisualState Name="Normal" />
+                                <VisualState Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter Property="BackgroundColor" Value="#512BD4" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                     </StackLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
