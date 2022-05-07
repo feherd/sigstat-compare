@@ -42,7 +42,7 @@ public class SignatureVisualizer : GraphicsView
         set => SetValue(InteractiveProperty, value);
     }
 
-    private Point lastOffset;
+    private Point startOffset;
 
     public static readonly BindableProperty OffsetProperty =
         BindableProperty.Create(nameof(Offset), typeof(Point), typeof(SignatureVisualizer), propertyChanged: OffsetChanged);
@@ -76,33 +76,28 @@ public class SignatureVisualizer : GraphicsView
     {
         Drawable = new SignatureDrawable(this);
 
-        // Set PanGestureRecognizer.TouchPoints to control the
-        // number of touch points needed to pan
-        PanGestureRecognizer panGesture = new PanGestureRecognizer();
-        panGesture.PanUpdated += OnPanUpdated;
-        GestureRecognizers.Add(panGesture);
-    }
-
-    void OnPanUpdated(object sender, PanUpdatedEventArgs e)
-    {
-        if (!Interactive) return;
-
-        switch (e.StatusType)
+        StartInteraction += (object sender, TouchEventArgs e) =>
         {
-            case GestureStatus.Running:
-                // Translate and ensure we don't pan beyond the wrapped user interface element bounds.
-                var x = lastOffset.X + e.TotalX;
-                var y = lastOffset.Y + e.TotalY;
+            var t = e.Touches.First();
 
-                Offset = new Point(x, y);
+            startOffset = new Point(
+                t.X - Offset.X,
+                t.Y - Offset.Y
+            );
 
-                break;
+            return;
+        };
+        DragInteraction += (object sender, TouchEventArgs e) =>
+        {
+            var t = e.Touches.First();
 
-            case GestureStatus.Completed:
-                // Store the translation applied during the pan
-                lastOffset = Offset;
-                break;
-        }
+            Offset = new Point(
+                t.X - startOffset.X,
+                t.Y - startOffset.Y
+            );
+
+            return;
+        };
     }
 
     class SignatureDrawable : IDrawable
@@ -147,8 +142,8 @@ public class SignatureVisualizer : GraphicsView
                 dirtyRect.Width / 2 - xRange * scale / 2,
                 dirtyRect.Height / 2 - yRange * scale / 2
             );
-            matrix.Translate(panOffset.X, panOffset.Y);
             matrix.Scale(signatureVisualizer.Zoom, signatureVisualizer.Zoom);
+            matrix.Translate(panOffset.X, panOffset.Y);
 
             return (matrix, scale);
         }
