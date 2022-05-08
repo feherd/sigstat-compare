@@ -96,6 +96,7 @@
         <compat:RelativeLayout Grid.Row="1" Grid.Column="2">
             <local:SignatureVisualizer compat:RelativeLayout.WidthConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width}"
                                        compat:RelativeLayout.HeightConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Height}"
+                                       Padding="80"
                                        Signature="{Binding FirstSelectedSignature}"
                                        x:Name="FirstSignature" />
 
@@ -103,7 +104,7 @@
                     compat:RelativeLayout.WidthConstraint="200"
                     Value="{Binding Source={x:Reference FirstSignature}, Path=Zoom, FallbackValue=1.0}"
                     Minimum="0.5"
-                    Maximum="3" />
+                    Maximum="10" />
 
             <Button Text="Select"
                     compat:RelativeLayout.XConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width, Constant=-70}"
@@ -114,6 +115,7 @@
         <compat:RelativeLayout Grid.Row="2" Grid.Column="2">
             <local:SignatureVisualizer compat:RelativeLayout.WidthConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width}"
                                        compat:RelativeLayout.HeightConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Height}"
+                                       Padding="80"
                                        Signature="{Binding SecondSelectedSignature}"
                                        x:Name="SecondSignature" />
 
@@ -121,7 +123,7 @@
                     compat:RelativeLayout.WidthConstraint="200"
                     Value="{Binding Source={x:Reference SecondSignature}, Path=Zoom, FallbackValue=1.0}"
                     Minimum="0.5"
-                    Maximum="3" />
+                    Maximum="10" />
 
             <Button Text="Select"
                     compat:RelativeLayout.XConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width, Constant=-70}"
