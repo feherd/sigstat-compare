@@ -3,7 +3,7 @@ using SigStat.Common;
 
 namespace SigStatCompare;
 
-public class SignatureVisualizer : GraphicsView
+public partial class SignatureVisualizer : GraphicsView
 {
     private double xRange;
     private double yRange;
@@ -34,6 +34,11 @@ public class SignatureVisualizer : GraphicsView
 
         visualizer?.Invalidate();
     }
+
+    double SignatureScale => Math.Max(0.01, Math.Min(
+                (Width - Padding) / xRange,
+                (Height - Padding) / yRange
+            ));
 
     public static readonly BindableProperty ShowAxesProperty =
         BindableProperty.Create(nameof(ShowAxes), typeof(bool), typeof(SignatureVisualizer), true, propertyChanged: ShowAxesChanged);
@@ -73,12 +78,15 @@ public class SignatureVisualizer : GraphicsView
         visualizer?.Invalidate();
     }
 
+    const double MinZoom = 0.5;
+    const double MaxZoom = 10.0;
+
     public static readonly BindableProperty ZoomProperty =
         BindableProperty.Create(nameof(Zoom), typeof(double), typeof(SignatureVisualizer), defaultValue: 1.0, propertyChanged: ZoomChanged);
     public double Zoom
     {
         get => (double)GetValue(ZoomProperty);
-        set => SetValue(ZoomProperty, value);
+        set => SetValue(ZoomProperty, Math.Clamp(value, MinZoom, MaxZoom));
     }
 
     private static void ZoomChanged(BindableObject bindableObject, object oldValue, object newValue)
@@ -110,8 +118,8 @@ public class SignatureVisualizer : GraphicsView
             var t = e.Touches.First();
 
             startOffset = new Point(
-                1 / Zoom * t.X - Offset.X,
-                1 / Zoom * t.Y - Offset.Y
+                t.X / Zoom / SignatureScale - Offset.X,
+                t.Y / Zoom / SignatureScale - Offset.Y
             );
 
             return;
@@ -121,13 +129,17 @@ public class SignatureVisualizer : GraphicsView
             var t = e.Touches.First();
 
             Offset = new Point(
-                1 / Zoom * t.X - startOffset.X,
-                1 / Zoom * t.Y - startOffset.Y
+                t.X / Zoom / SignatureScale - startOffset.X,
+                t.Y / Zoom / SignatureScale - startOffset.Y
             );
 
             return;
         };
+
+        HandlerChanged += OnHandlerChanged;
     }
+
+    partial void OnHandlerChanged(object sender, EventArgs e);
 
     class SignatureDrawable : IDrawable
     {
@@ -146,40 +158,33 @@ public class SignatureVisualizer : GraphicsView
             if (signatureVisualizer.Signature is null) return;
 
 
-            (var transformMatrix, var scale) = CalculateTransformation(dirtyRect, signatureVisualizer.Offset);
+            var transformMatrix = CalculateTransformation(dirtyRect, signatureVisualizer.Offset);
 
-            DrawSignature(canvas, transformMatrix, scale);
+            DrawSignature(canvas, transformMatrix);
 
             if (signatureVisualizer.ShowAxes)
-                DrawAxes(canvas, transformMatrix, scale);
+                DrawAxes(canvas, transformMatrix);
         }
 
-        private (Matrix, double) CalculateTransformation(RectF dirtyRect, Point panOffset)
+        private Matrix CalculateTransformation(RectF dirtyRect, Point panOffset)
         {
-            double scale = Math.Min(
-                (dirtyRect.Width - signatureVisualizer.Padding) / signatureVisualizer.xRange,
-                (dirtyRect.Height - signatureVisualizer.Padding) / signatureVisualizer.yRange
-            );
-
-            scale = Math.Max(0.01, scale);
-
             var matrix = new Matrix();
             matrix.Translate(
                 -signatureVisualizer.xRange / 2,
                 -signatureVisualizer.yRange / 2
             );
-            matrix.Scale(scale, scale);
             matrix.Translate(panOffset.X, panOffset.Y);
             matrix.Scale(signatureVisualizer.Zoom, signatureVisualizer.Zoom);
+            matrix.Scale(signatureVisualizer.SignatureScale, signatureVisualizer.SignatureScale);
             matrix.Translate(
                 dirtyRect.Width / 2,
                 dirtyRect.Height / 2
             );
 
-            return (matrix, scale);
+            return matrix;
         }
 
-        private void DrawSignature(ICanvas canvas, Matrix transformMatrix, double scale)
+        private void DrawSignature(ICanvas canvas, Matrix transformMatrix)
         {
             var sig = signatureVisualizer.Signature;
             if (sig == null) return;
@@ -192,7 +197,7 @@ public class SignatureVisualizer : GraphicsView
             originM.Scale(1, -1);
             originM.Append(transformMatrix);
 
-            canvas.StrokeSize = (float)Math.Max(1, 20 * signatureVisualizer.Zoom * scale);
+            canvas.StrokeSize = (float)Math.Clamp(20 * signatureVisualizer.Zoom * signatureVisualizer.SignatureScale, 1, 10);
             canvas.StrokeLineJoin = LineJoin.Round;
 
             foreach (var stroke in strokes)
@@ -208,10 +213,10 @@ public class SignatureVisualizer : GraphicsView
             }
         }
 
-        private void DrawAxes(ICanvas canvas, Matrix matrix, double scale)
+        private void DrawAxes(ICanvas canvas, Matrix matrix)
         {
             canvas.StrokeColor = Colors.Black;
-            canvas.StrokeSize = (float)Math.Max(1, 10 * signatureVisualizer.Zoom * scale);
+            canvas.StrokeSize = (float)Math.Clamp(10 * signatureVisualizer.Zoom * signatureVisualizer.SignatureScale, 1, 10);
             canvas.StrokeLineCap = LineCap.Square;
 
             canvas.DrawLine(
