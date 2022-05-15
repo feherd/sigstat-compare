@@ -11,29 +11,26 @@ public partial class SignatureVisualizer : GraphicsView
 
             int mouseWheelDelta = currentPoint.Properties.MouseWheelDelta;
             var relativeZoom = Math.Exp(mouseWheelDelta / 1000.0);
-            
-            if (Zoom == MinZoom && relativeZoom < 1) return;
-            if (Zoom == MaxZoom && relativeZoom > 1) return;
 
-            var position = currentPoint.Position;
-            var relativeMousePosition = new Point(
-               position.X - Width / 2,
-               position.Y - Height / 2
-            );
-            var relativeMouseOffset = new Point(
-                relativeMousePosition.X / SignatureScale / Zoom,
-                relativeMousePosition.Y / SignatureScale / Zoom
-            );
-            var relativeOffset = new Point(
-               (1 - relativeZoom) * relativeMouseOffset.X,
-               (1 - relativeZoom) * relativeMouseOffset.Y
+            var zoomAfterZoom = Math.Clamp(Zoom * relativeZoom, MinZoom, MaxZoom);
+
+            var mousePosition = currentPoint.Position;
+
+            var mouseOffset = new Point(
+                (mousePosition.X - Width / 2) / SignatureScale / Zoom,
+                (mousePosition.Y - Height / 2) / SignatureScale / Zoom
             );
 
-            Zoom *= relativeZoom;
+            var mouseOffsetAfterZoom = new Point(
+                (mousePosition.X - Width / 2) / SignatureScale / zoomAfterZoom,
+                (mousePosition.Y - Height / 2) / SignatureScale / zoomAfterZoom
+            );
+
+            Zoom = zoomAfterZoom;
 
             Offset = new Point(
-                Offset.X + relativeOffset.X,
-                Offset.Y + relativeOffset.Y
+                Offset.X - mouseOffset.X + mouseOffsetAfterZoom.X,
+                Offset.Y - mouseOffset.Y + mouseOffsetAfterZoom.Y
             );
         };
     }

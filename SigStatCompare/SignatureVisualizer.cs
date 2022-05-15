@@ -78,8 +78,8 @@ public partial class SignatureVisualizer : GraphicsView
         visualizer?.Invalidate();
     }
 
-    const double MinZoom = 0.5;
-    const double MaxZoom = 10.0;
+    const double MinZoom = 0.25;
+    const double MaxZoom = 100.0;
 
     public static readonly BindableProperty ZoomProperty =
         BindableProperty.Create(nameof(Zoom), typeof(double), typeof(SignatureVisualizer), defaultValue: 1.0, propertyChanged: ZoomChanged);
@@ -166,14 +166,14 @@ public partial class SignatureVisualizer : GraphicsView
                 DrawAxes(canvas, transformMatrix);
         }
 
-        private Matrix CalculateTransformation(RectF dirtyRect, Point panOffset)
+        private Matrix CalculateTransformation(RectF dirtyRect, Point offset)
         {
             var matrix = new Matrix();
             matrix.Translate(
                 -signatureVisualizer.xRange / 2,
                 -signatureVisualizer.yRange / 2
             );
-            matrix.Translate(panOffset.X, panOffset.Y);
+            matrix.Translate(offset.X, offset.Y);
             matrix.Scale(signatureVisualizer.Zoom, signatureVisualizer.Zoom);
             matrix.Scale(signatureVisualizer.SignatureScale, signatureVisualizer.SignatureScale);
             matrix.Translate(
