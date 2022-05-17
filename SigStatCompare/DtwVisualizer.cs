@@ -34,14 +34,6 @@ public class DtwVisualizer : GraphicsView
         visualizer?.Invalidate();
     }
 
-    public static readonly BindableProperty DisplayModeProperty =
-        BindableProperty.Create(nameof(DisplayMode), typeof(DisplayMode), typeof(DtwVisualizer), DisplayMode.Zoom);
-    public DisplayMode DisplayMode
-    {
-        get => (DisplayMode)GetValue(DisplayModeProperty);
-        set => SetValue(DisplayModeProperty, value);
-    }
-
     public static readonly BindableProperty ShowAxesProperty =
         BindableProperty.Create(nameof(ShowAxes), typeof(bool), typeof(DtwVisualizer), true, propertyChanged: ShowAxesChanged);
     public bool ShowAxes
