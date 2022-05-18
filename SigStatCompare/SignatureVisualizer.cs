@@ -41,7 +41,7 @@ public partial class SignatureVisualizer : GraphicsView
             ));
 
     public static readonly BindableProperty ShowAxesProperty =
-        BindableProperty.Create(nameof(ShowAxes), typeof(bool), typeof(SignatureVisualizer), true, propertyChanged: ShowAxesChanged);
+        BindableProperty.Create(nameof(ShowAxes), typeof(bool), typeof(SignatureVisualizer), false, propertyChanged: ShowAxesChanged);
     public bool ShowAxes
     {
         get => (bool)GetValue(ShowAxesProperty);

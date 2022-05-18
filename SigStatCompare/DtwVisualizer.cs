@@ -109,16 +109,67 @@ public class DtwVisualizer : GraphicsView
         }
     }
 
+    class Plot
+    {
+        public Rect rect;
+        public Signature signature;
+        public bool flippedAxes;
+        private readonly FeatureDescriptor<List<double>> outputFeature;
+
+        public Rect SignatureRect
+        {
+            get
+            {
+                var tt = signature.GetFeature(Features.T);
+                var ft = signature.GetFeature(outputFeature);
+                return new Rect(
+                    tt.Min(), ft.Min(),
+                    tt.Max() - tt.Min(), ft.Max() - ft.Min()
+                );
+            }
+        }
+
+        public Matrix Transformation
+        {
+            get
+            {
+                var sr = SignatureRect;
+
+                var transformation = new Matrix();
+                transformation.Translate(-sr.X, -sr.Y);
+                transformation.Scale(1 / sr.Width, -1 / sr.Height);
+                transformation.Scale(rect.Width, rect.Height);
+                transformation.Translate(rect.Left, rect.Bottom);
+
+                return transformation;
+            }
+        }
+
+
+        public Plot(FeatureDescriptor<List<double>> outputFeature)
+        {
+            this.outputFeature = outputFeature;
+        }
+    }
+
     class DtwDrawable : IDrawable
     {
-        ZNormalization zNormalization = new ZNormalization();
+        private readonly ZNormalization zNormalization = new();
 
         private readonly DtwVisualizer dtwVisualizer;
         private readonly double padding = 25;
+        private readonly Plot firstPlot;
+        private readonly Plot secondPlot;
 
         public DtwDrawable(DtwVisualizer dtwVisualizer)
         {
             this.dtwVisualizer = dtwVisualizer;
+
+            firstPlot = new Plot(zNormalization.OutputFeature);
+            secondPlot = new Plot(zNormalization.OutputFeature)
+            {
+                flippedAxes = true
+            };
         }
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
@@ -133,51 +184,38 @@ public class DtwVisualizer : GraphicsView
             zNormalization.Transform(dtwVisualizer.FirstSignature);
             zNormalization.Transform(dtwVisualizer.SecondSignature);
 
-            (var transformMatrix, var firstTransformMatrix, var secondTransformMatrix) = CalculateTransformation(dirtyRect, dtwVisualizer.Offset);
+            firstPlot.signature = dtwVisualizer.FirstSignature;
+            secondPlot.signature = dtwVisualizer.SecondSignature;
+
+            CalculateTransformation(dirtyRect);
 
             if (dtwVisualizer.ShowAxes)
-                DrawAxes(canvas, dirtyRect, transformMatrix);
+            {
+                DrawAxes(canvas, firstPlot);
+                DrawAxes(canvas, secondPlot);
+            }
 
-            DrawDtwLines(canvas, firstTransformMatrix, secondTransformMatrix);
+            var firstTransformation = firstPlot.Transformation;
+            var secondTransformation = secondPlot.Transformation;
 
-            DrawFeatureFunction(canvas, dtwVisualizer.FirstSignature, firstTransformMatrix);
-            DrawFeatureFunction(canvas, dtwVisualizer.SecondSignature, secondTransformMatrix);
+            DrawDtwLines(canvas, firstTransformation, secondTransformation);
+
+            DrawFeatureFunction(canvas, dtwVisualizer.FirstSignature, firstTransformation);
+            DrawFeatureFunction(canvas, dtwVisualizer.SecondSignature, secondTransformation);
         }
 
-        private (Matrix, Matrix, Matrix) CalculateTransformation(RectF dirtyRect, Point panOffset)
+        private void CalculateTransformation(RectF dirtyRect)
         {
-            double width = dirtyRect.Width - 2 * padding;
-            double height = (dirtyRect.Height - 3 * padding) / 2;
-
-            var matrix = new Matrix();
-            matrix.Scale(width, height);
-            matrix.Translate(padding, padding);
-            matrix.Translate(panOffset.X, panOffset.Y);
-
-            var ftt = dtwVisualizer.FirstSignature.GetFeature(Features.T);
-            var fft = dtwVisualizer.FirstSignature.GetFeature(zNormalization.OutputFeature);
-
-            var stt = dtwVisualizer.SecondSignature.GetFeature(Features.T);
-            var sft = dtwVisualizer.SecondSignature.GetFeature(zNormalization.OutputFeature);
-
-            var firstTransformMatrix = new Matrix();
-            firstTransformMatrix.Translate(-ftt.Min(), -fft.Max());
-            firstTransformMatrix.Scale(
-                1 / (ftt.Max() - ftt.Min()),
-                -1 / (fft.Max() - fft.Min())
+            var size = new Size(
+                dirtyRect.Width - 2 * padding,
+                (dirtyRect.Height - 4 * padding) / 2
             );
-            firstTransformMatrix.Append(matrix);
 
-            var secondTransformMatrix = new Matrix();
-            secondTransformMatrix.Translate(-stt.Min(), -sft.Max());
-            secondTransformMatrix.Scale(
-                1 / (stt.Max() - stt.Min()),
-                -1 / (sft.Max() - sft.Min())
-            );
-            secondTransformMatrix.Append(matrix);
-            secondTransformMatrix.Translate(0, (dirtyRect.Height - padding) / 2);
+            firstPlot.rect.Size = size;
+            secondPlot.rect.Size = size;
 
-            return (matrix, firstTransformMatrix, secondTransformMatrix);
+            firstPlot.rect.Location = new Point(padding, padding);
+            secondPlot.rect.Location = new Point(padding, 3 * padding + size.Height);
         }
 
         private void DrawFeatureFunction(ICanvas canvas, Signature signature, Matrix transformMatrix)
@@ -226,20 +264,24 @@ public class DtwVisualizer : GraphicsView
             }
         }
 
-        private static void DrawAxes(ICanvas canvas, RectF dirtyRect, Matrix matrix)
+        private static void DrawAxes(ICanvas canvas, Plot plot)
         {
             canvas.StrokeColor = Colors.Black;
             canvas.StrokeSize = 1;
             canvas.StrokeLineCap = LineCap.Square;
 
+            var transformation = plot.Transformation;
+
+            var sr = plot.SignatureRect;
+
             canvas.DrawLine(
-                matrix.Transform(new Point(0, -100)),
-                matrix.Transform(new Point(0, +1000))
+                transformation.Transform(new Point(sr.Left, sr.Bottom)) + new Size(0, -10),
+                transformation.Transform(new Point(sr.Left, sr.Top)) + new Size(0, +10)
             );
 
             canvas.DrawLine(
-                matrix.Transform(new Point(-100, 0)),
-                matrix.Transform(new Point(+1000, 0))
+                transformation.Transform(new Point(sr.Left, plot.flippedAxes ? sr.Top : sr.Bottom)) + new Size(-10, 0),
+                transformation.Transform(new Point(sr.Right, plot.flippedAxes ? sr.Top : sr.Bottom)) + new Size(+10, 0)
             );
         }
     }
