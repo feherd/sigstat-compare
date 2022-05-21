@@ -157,7 +157,7 @@ public class DtwVisualizer : GraphicsView
         private readonly ZNormalization zNormalization = new();
 
         private readonly DtwVisualizer dtwVisualizer;
-        private readonly double padding = 25;
+        private readonly double padding = 40;
         private readonly Plot firstPlot;
         private readonly Plot secondPlot;
 
@@ -165,11 +165,11 @@ public class DtwVisualizer : GraphicsView
         {
             this.dtwVisualizer = dtwVisualizer;
 
-            firstPlot = new Plot(zNormalization.OutputFeature);
-            secondPlot = new Plot(zNormalization.OutputFeature)
+            firstPlot = new Plot(zNormalization.OutputFeature)
             {
                 flippedAxes = true
             };
+            secondPlot = new Plot(zNormalization.OutputFeature);
         }
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
@@ -177,31 +177,42 @@ public class DtwVisualizer : GraphicsView
             canvas.FillColor = dtwVisualizer.BackgroundColor;
             canvas.FillRectangle(dirtyRect);
 
-            if (dtwVisualizer.FirstSignature is null) return;
-            if (dtwVisualizer.SecondSignature is null) return;
+            if (dirtyRect.Width <= 2 * padding || dirtyRect.Height <= 4 * padding) return;
 
             zNormalization.InputFeature = dtwVisualizer.Feature;
-            zNormalization.Transform(dtwVisualizer.FirstSignature);
-            zNormalization.Transform(dtwVisualizer.SecondSignature);
-
-            firstPlot.signature = dtwVisualizer.FirstSignature;
-            secondPlot.signature = dtwVisualizer.SecondSignature;
 
             CalculateTransformation(dirtyRect);
 
-            if (dtwVisualizer.ShowAxes)
+            if (dtwVisualizer.FirstSignature is not null)
             {
-                DrawAxes(canvas, firstPlot);
-                DrawAxes(canvas, secondPlot);
+                zNormalization.Transform(dtwVisualizer.FirstSignature);
+                firstPlot.signature = dtwVisualizer.FirstSignature;
             }
 
-            var firstTransformation = firstPlot.Transformation;
-            var secondTransformation = secondPlot.Transformation;
+            if (dtwVisualizer.SecondSignature is not null)
+            {
+                zNormalization.Transform(dtwVisualizer.SecondSignature);
+                secondPlot.signature = dtwVisualizer.SecondSignature;
+            }
 
-            DrawDtwLines(canvas, firstTransformation, secondTransformation);
+            if (dtwVisualizer.FirstSignature is not null && dtwVisualizer.SecondSignature is not null)
+                DrawDtwLines(canvas, firstPlot.Transformation, secondPlot.Transformation);
 
-            DrawFeatureFunction(canvas, dtwVisualizer.FirstSignature, firstTransformation);
-            DrawFeatureFunction(canvas, dtwVisualizer.SecondSignature, secondTransformation);
+            if (dtwVisualizer.FirstSignature is not null)
+            {
+                if (dtwVisualizer.ShowAxes)
+                    DrawAxes(canvas, firstPlot);
+
+                DrawFeatureFunction(canvas, dtwVisualizer.FirstSignature, firstPlot.Transformation);
+            }
+
+            if (dtwVisualizer.SecondSignature is not null)
+            {
+                if (dtwVisualizer.ShowAxes)
+                    DrawAxes(canvas, secondPlot);
+
+                DrawFeatureFunction(canvas, dtwVisualizer.SecondSignature, secondPlot.Transformation);
+            }
         }
 
         private void CalculateTransformation(RectF dirtyRect)
@@ -247,6 +258,10 @@ public class DtwVisualizer : GraphicsView
 
         private void DrawDtwLines(ICanvas canvas, Matrix firstTransformMatrix, Matrix secondTransformMatrix)
         {
+            canvas.StrokeColor = Colors.Black;
+            canvas.StrokeSize = 1;
+            canvas.StrokeLineCap = LineCap.Square;
+
             var ftt = dtwVisualizer.FirstSignature.GetFeature(Features.T);
             var fft = dtwVisualizer.FirstSignature.GetFeature(zNormalization.OutputFeature);
 
@@ -278,11 +293,53 @@ public class DtwVisualizer : GraphicsView
                 transformation.Transform(new Point(sr.Left, sr.Bottom)) + new Size(0, -10),
                 transformation.Transform(new Point(sr.Left, sr.Top)) + new Size(0, +10)
             );
+            canvas.DrawLine(
+                transformation.Transform(new Point(sr.Left, sr.Bottom)) + new Size(0, -10),
+                transformation.Transform(new Point(sr.Left, sr.Bottom)) + new Size(+4, -5)
+            );
+            canvas.DrawLine(
+                transformation.Transform(new Point(sr.Left, sr.Bottom)) + new Size(0, -10),
+                transformation.Transform(new Point(sr.Left, sr.Bottom)) + new Size(-4, -5)
+            );
+
+            for (var v = sr.Top; v <= sr.Bottom; v += sr.Height / (plot.rect.Height / 50))
+            {
+                var point = transformation.Transform(new Point(sr.Left, v));
+                canvas.DrawLine(point, point + new Size(-5, 0));
+                canvas.DrawString(
+                    v.ToString("+0.0;-0.0;0"),
+                    (float)point.X - 50 - 10, (float)point.Y - 10,
+                    50, 20,
+                    HorizontalAlignment.Right,
+                    VerticalAlignment.Center
+                );
+            }
 
             canvas.DrawLine(
-                transformation.Transform(new Point(sr.Left, plot.flippedAxes ? sr.Top : sr.Bottom)) + new Size(-10, 0),
-                transformation.Transform(new Point(sr.Right, plot.flippedAxes ? sr.Top : sr.Bottom)) + new Size(+10, 0)
+                transformation.Transform(new Point(sr.Left, plot.flippedAxes ? sr.Bottom : sr.Top)) + new Size(-10, 0),
+                transformation.Transform(new Point(sr.Right, plot.flippedAxes ? sr.Bottom : sr.Top)) + new Size(+10, 0)
             );
+            canvas.DrawLine(
+                transformation.Transform(new Point(sr.Right, plot.flippedAxes ? sr.Bottom : sr.Top)) + new Size(+10, 0),
+                transformation.Transform(new Point(sr.Right, plot.flippedAxes ? sr.Bottom : sr.Top)) + new Size(+5, +4)
+            );
+            canvas.DrawLine(
+                transformation.Transform(new Point(sr.Right, plot.flippedAxes ? sr.Bottom : sr.Top)) + new Size(+10, 0),
+                transformation.Transform(new Point(sr.Right, plot.flippedAxes ? sr.Bottom : sr.Top)) + new Size(+5, -4)
+            );
+
+            for (var v = sr.Left; v <= sr.Right; v += sr.Width / (plot.rect.Width / 50))
+            {
+                var point = transformation.Transform(new Point(v, plot.flippedAxes ? sr.Bottom : sr.Top));
+                canvas.DrawLine(point, point + new Size(0, plot.flippedAxes ? -5 : +5));
+                canvas.DrawString(
+                    (v - sr.Left).ToString("+0;-0;0"),
+                    (float)point.X - 25, (float)point.Y + (plot.flippedAxes ? -20 : +20) - 10,
+                    50, 20,
+                    HorizontalAlignment.Center,
+                    plot.flippedAxes ? VerticalAlignment.Bottom : VerticalAlignment.Top
+                );
+            }
         }
     }
 }
