@@ -4,7 +4,8 @@ public partial class SignatureVisualizer : GraphicsView
 {
     partial void OnHandlerChanged(object sender, EventArgs e)
     {
-        var platformView = (sender as SignatureVisualizer).Handler.PlatformView as Microsoft.Maui.Platform.PlatformTouchGraphicsView;
+        var signatureVisualizer = sender as SignatureVisualizer;
+        var platformView = signatureVisualizer.Handler.PlatformView as Microsoft.Maui.Platform.PlatformTouchGraphicsView;
         platformView.PointerWheelChanged += (sender, e) =>
         {
             var currentPoint = e.GetCurrentPoint(sender as Microsoft.Maui.Platform.PlatformTouchGraphicsView);

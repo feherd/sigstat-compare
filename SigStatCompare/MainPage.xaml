@@ -4,7 +4,7 @@
              xmlns:compat="clr-namespace:Microsoft.Maui.Controls.Compatibility;assembly=Microsoft.Maui.Controls"
              xmlns:local="clr-namespace:SigStatCompare"
              x:Class="SigStatCompare.MainPage"
-             Title="SigStat Compare" >
+             Title="{OnIdiom Default='SigStat Compare', Desktop=''}" >
     <ContentPage.BindingContext>
         <local:MainViewModel/>
     </ContentPage.BindingContext>
