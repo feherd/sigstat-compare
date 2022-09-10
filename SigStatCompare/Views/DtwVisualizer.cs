@@ -1,6 +1,7 @@
 ﻿using Microsoft.Maui.Controls.Shapes;
 using SigStat.Common;
 using SigStat.Common.PipelineItems.Transforms.Preprocessing;
+using SigStatCompare.Models;
 
 namespace SigStatCompare.Views;
 

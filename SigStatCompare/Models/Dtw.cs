@@ -1,6 +1,6 @@
 ﻿using SigStat.Common;
 
-namespace SigStatCompare;
+namespace SigStatCompare.Models;
 
 public class Dtw<P>
 {
