@@ -2,6 +2,7 @@
 
 using System;
 using System.Globalization;
+using SigStatCompare.ViewModels;
 
 public partial class MainPage : ContentPage
 {

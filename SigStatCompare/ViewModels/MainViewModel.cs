@@ -1,4 +1,4 @@
-﻿namespace SigStatCompare;
+﻿namespace SigStatCompare.ViewModels;
 
 using SigStat.Common;
 using SigStat.Common.Loaders;

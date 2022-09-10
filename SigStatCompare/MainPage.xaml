@@ -6,7 +6,7 @@
              x:Class="SigStatCompare.MainPage"
              Title="{OnIdiom Default='SigStat Compare', Desktop=''}" >
     <ContentPage.BindingContext>
-        <local:MainViewModel/>
+        <local:ViewModels.MainViewModel/>
     </ContentPage.BindingContext>
 
     <ContentPage.Resources>
