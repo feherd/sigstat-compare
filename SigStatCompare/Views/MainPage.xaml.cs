@@ -1,4 +1,4 @@
-﻿namespace SigStatCompare;
+﻿namespace SigStatCompare.Views;
 
 using System;
 using System.Globalization;

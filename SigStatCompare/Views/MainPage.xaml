@@ -3,14 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:compat="clr-namespace:Microsoft.Maui.Controls.Compatibility;assembly=Microsoft.Maui.Controls"
              xmlns:local="clr-namespace:SigStatCompare"
-             x:Class="SigStatCompare.MainPage"
+             x:Class="SigStatCompare.Views.MainPage"
              Title="{OnIdiom Default='SigStat Compare', Desktop=''}" >
     <ContentPage.BindingContext>
         <local:ViewModels.MainViewModel/>
     </ContentPage.BindingContext>
 
     <ContentPage.Resources>
-        <local:TypeToNameConverter x:Key="typeToName" />
+        <local:Views.TypeToNameConverter x:Key="typeToName" />
     </ContentPage.Resources>
 
     <ContentPage.MenuBarItems>
