@@ -458,7 +458,7 @@
         <Setter Property="SelectedTabColor" Value="{AppThemeBinding Light={StaticResource DarkGray}, Dark={StaticResource LightGray}}" />
     </Style>
 
-    <Style TargetType="local:SignatureVisualizer">
+    <Style TargetType="views:SignatureVisualizer">
         <Setter Property="BackgroundColor" Value="{StaticResource VeryLightGray}" />
     </Style>
 

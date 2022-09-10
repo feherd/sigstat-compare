@@ -1,7 +1,7 @@
 ﻿using Microsoft.Maui.Controls.Shapes;
 using SigStat.Common;
 
-namespace SigStatCompare;
+namespace SigStatCompare.Views;
 
 public partial class SignatureVisualizer : GraphicsView
 {

@@ -37,7 +37,7 @@
                     <StackLayout Orientation="Vertical"
                                  MinimumWidthRequest="120"
                                  Padding="2" >
-                        <local:SignatureVisualizer Signature="{Binding Signatures[0]}"
+                        <views:SignatureVisualizer Signature="{Binding Signatures[0]}"
                                                    HeightRequest="50"
                                                    Interactive="False"
                                                    InputTransparent="True" />
@@ -71,7 +71,7 @@
                     <StackLayout Orientation="Vertical"
                                  MinimumWidthRequest="120"
                                  Padding="2" >
-                        <local:SignatureVisualizer Signature="{Binding}"
+                        <views:SignatureVisualizer Signature="{Binding}"
                                                    HeightRequest="50"
                                                    Interactive="False"
                                                    InputTransparent="True" />
@@ -94,7 +94,7 @@
         </CollectionView>
 
         <compat:RelativeLayout Grid.Row="1" Grid.Column="2">
-            <local:SignatureVisualizer compat:RelativeLayout.WidthConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width}"
+            <views:SignatureVisualizer compat:RelativeLayout.WidthConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width}"
                                        compat:RelativeLayout.HeightConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Height}"
                                        Padding="80"
                                        Signature="{Binding FirstSelectedSignature}"
@@ -113,7 +113,7 @@
         </compat:RelativeLayout>
 
         <compat:RelativeLayout Grid.Row="2" Grid.Column="2">
-            <local:SignatureVisualizer compat:RelativeLayout.WidthConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width}"
+            <views:SignatureVisualizer compat:RelativeLayout.WidthConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width}"
                                        compat:RelativeLayout.HeightConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Height}"
                                        Padding="80"
                                        Signature="{Binding SecondSelectedSignature}"

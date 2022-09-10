@@ -1,4 +1,4 @@
-namespace SigStatCompare;
+namespace SigStatCompare.Views;
 
 public partial class SignatureVisualizer : GraphicsView
 {
