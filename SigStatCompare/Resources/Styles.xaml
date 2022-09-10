@@ -3,7 +3,9 @@
 <ResourceDictionary 
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:SigStatCompare">
+    xmlns:local="clr-namespace:SigStatCompare"
+    xmlns:views="clr-namespace:SigStatCompare.Views"
+    xmlns:viewmodels="clr-namespace:SigStatCompare.ViewModels">
 
     <Color x:Key="Primary">#512BD4</Color>
     <Color x:Key="Light">#DFD8F7</Color>
@@ -460,7 +462,7 @@
         <Setter Property="BackgroundColor" Value="{StaticResource VeryLightGray}" />
     </Style>
 
-    <Style TargetType="local:DtwVisualizer">
+    <Style TargetType="views:DtwVisualizer">
         <Setter Property="BackgroundColor" Value="{StaticResource VeryLightGray}" />
     </Style>
 

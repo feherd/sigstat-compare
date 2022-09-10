@@ -3,14 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:compat="clr-namespace:Microsoft.Maui.Controls.Compatibility;assembly=Microsoft.Maui.Controls"
              xmlns:local="clr-namespace:SigStatCompare"
+             xmlns:views="clr-namespace:SigStatCompare.Views"
+             xmlns:viewmodels="clr-namespace:SigStatCompare.ViewModels"
              x:Class="SigStatCompare.Views.MainPage"
              Title="{OnIdiom Default='SigStat Compare', Desktop=''}" >
     <ContentPage.BindingContext>
-        <local:ViewModels.MainViewModel/>
+        <viewmodels:MainViewModel/>
     </ContentPage.BindingContext>
 
     <ContentPage.Resources>
-        <local:Views.TypeToNameConverter x:Key="typeToName" />
+        <views:TypeToNameConverter x:Key="typeToName" />
     </ContentPage.Resources>
 
     <ContentPage.MenuBarItems>
@@ -129,7 +131,7 @@
                     Command="{Binding SelectSecondSignatureCommand}" />
         </compat:RelativeLayout>
 
-        <local:DtwVisualizer Grid.Row="1" Grid.Column="3"
+        <views:DtwVisualizer Grid.Row="1" Grid.Column="3"
                              Grid.RowSpan="2"
                              FirstSignature="{Binding FirstSelectedSignature}"
                              SecondSignature="{Binding SecondSelectedSignature}"

@@ -2,7 +2,7 @@
 using SigStat.Common;
 using SigStat.Common.PipelineItems.Transforms.Preprocessing;
 
-namespace SigStatCompare;
+namespace SigStatCompare.Views;
 
 public class DtwVisualizer : GraphicsView
 {

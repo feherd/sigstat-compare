@@ -4,11 +4,13 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SigStatCompare"
+    xmlns:views="clr-namespace:SigStatCompare.Views"
+    xmlns:viewmodels="clr-namespace:SigStatCompare.ViewModels"
     Shell.FlyoutBehavior="Disabled"
     Title="SigStat Compare" >
 
     <ShellContent
-        ContentTemplate="{DataTemplate local:Views.MainPage}"
+        ContentTemplate="{DataTemplate views:MainPage}"
         Route="MainPage" />
 
 </Shell>
