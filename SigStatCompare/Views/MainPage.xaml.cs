@@ -6,6 +6,11 @@ using SigStatCompare.ViewModels;
 
 public partial class MainPage : ContentPage
 {
+    public async void OnNavigateClick(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("deepsigndb");
+    }
+
     public MainPage()
     {
         InitializeComponent();

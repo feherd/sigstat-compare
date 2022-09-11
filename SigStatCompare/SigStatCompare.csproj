@@ -49,4 +49,10 @@
 		<PackageReference Include="SigStat" Version="0.2.5" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <MauiXaml Update="Views\DeepSignDBPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>

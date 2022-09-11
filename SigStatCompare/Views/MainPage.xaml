@@ -18,6 +18,9 @@
     <ContentPage.MenuBarItems>
         <MenuBarItem Text="File"></MenuBarItem>
         <MenuBarItem Text="Dtw"></MenuBarItem>
+        <MenuBarItem Text="View">
+            <MenuFlyoutItem Text="DeepSignDB" Clicked="OnNavigateClick"></MenuFlyoutItem>
+        </MenuBarItem>
     </ContentPage.MenuBarItems>
 
     <Grid RowDefinitions="Auto,*,*"
