@@ -11,7 +11,7 @@
     </ContentPage.BindingContext>
     
     <ContentPage.MenuBarItems>
-        <MenuBarItem Text="File" BindingContext="{Binding Path=BindingContext, Source={x:Reference this}}">
+        <MenuBarItem Text="File">
             <MenuFlyoutItem Text="Load" Clicked="LoadDeepSignDB"/>
         </MenuBarItem>
     </ContentPage.MenuBarItems>
