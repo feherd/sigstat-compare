@@ -18,7 +18,18 @@
 
     <VerticalStackLayout Margin="8">
         <Label Text="{Binding SignatureCount, StringFormat='Loaded {0} signatures'}"/>
-        <Picker Title="Split" SelectedItem="{Binding SelectedSplitCategory}" ItemsSource="{Binding SplitCategories}" ItemDisplayBinding="{Binding Name}"/>
+        <Picker Title="DB"
+                ItemsSource="{Binding DBCategories}"
+                SelectedItem="{Binding SelectedDBCategory}"
+                ItemDisplayBinding="{Binding Name}"/>
+        <Picker Title="InputDevice"
+                ItemsSource="{Binding InputDeviceCategories}"
+                SelectedItem="{Binding SelectedInputDeviceCategory}"
+                ItemDisplayBinding="{Binding Name}"/>
+        <Picker Title="Split"
+                ItemsSource="{Binding SplitCategories}"
+                SelectedItem="{Binding SelectedSplitCategory}"
+                ItemDisplayBinding="{Binding Name}"/>
         <Label Text="{Binding MatchingSignatureCount, StringFormat='{0} matching signatures'}"/>
     </VerticalStackLayout>
 </ContentPage>

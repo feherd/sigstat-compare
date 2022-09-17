@@ -6,6 +6,37 @@ using System.Runtime.CompilerServices;
 using SigStat.Common;
 using SVC2021;
 
+
+public class DBCategory
+{
+    private string name;
+    private HashSet<DB> dbs;
+
+    public string Name { get => name; set => name = value; }
+    public HashSet<DB> DBs { get => dbs; set => dbs = value; }
+
+    public DBCategory(string name, HashSet<DB> dbs)
+    {
+        this.name = name;
+        this.dbs = dbs;
+    }
+}
+
+public class InputDeviceCategory
+{
+    private string name;
+    private HashSet<InputDevice> inputDevices;
+
+    public string Name { get => name; set => name = value; }
+    public HashSet<InputDevice> InputDevices { get => inputDevices; set => inputDevices = value; }
+
+    public InputDeviceCategory(string name, HashSet<InputDevice> inputDevices)
+    {
+        this.name = name;
+        this.inputDevices = inputDevices;
+    }
+}
+
 public class SplitCategory
 {
     private readonly string name;
@@ -26,12 +57,64 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler PropertyChanged;
 
+    private readonly List<DBCategory> dbCategories = new()
+    {
+        new DBCategory("All", Enum.GetValues<DB>().ToHashSet()),
+        new DBCategory(DB.Mcyt.ToString(), new HashSet<DB>{DB.Mcyt}),
+        new DBCategory(DB.eBioSignDS1.ToString(), new HashSet<DB>{DB.eBioSignDS1}),
+        new DBCategory(DB.eBioSignDS2.ToString(), new HashSet<DB>{DB.eBioSignDS2}),
+        new DBCategory(DB.BiosecurID.ToString(), new HashSet<DB>{DB.BiosecurID}),
+        new DBCategory(DB.BiosecureDS2.ToString(), new HashSet<DB>{DB.BiosecureDS2}),
+        new DBCategory(DB.EvalDB.ToString(), new HashSet<DB>{DB.EvalDB})
+    };
+
+    public List<DBCategory> DBCategories => dbCategories;
+
+    private DBCategory selectedDBCategory;
+    public DBCategory SelectedDBCategory
+    {
+        get { return selectedDBCategory; }
+        set
+        {
+            if (value != selectedDBCategory)
+            {
+                selectedDBCategory = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(MatchingSignatureCount));
+            }
+        }
+    }
+    
+    private readonly List<InputDeviceCategory> inputDeviceCategories = new()
+    {
+        new InputDeviceCategory("All", Enum.GetValues<InputDevice>().ToHashSet()),
+        new InputDeviceCategory(InputDevice.Unkown.ToString(), new HashSet<InputDevice>{InputDevice.Unkown}),
+        new InputDeviceCategory(InputDevice.Finger.ToString(), new HashSet<InputDevice>{InputDevice.Finger}),
+        new InputDeviceCategory(InputDevice.Stylus.ToString(), new HashSet<InputDevice>{InputDevice.Stylus})
+    };
+    public List<InputDeviceCategory> InputDeviceCategories => inputDeviceCategories;
+
+    private InputDeviceCategory selectedInputDeviceCategory;
+    public InputDeviceCategory SelectedInputDeviceCategory
+    {
+        get { return selectedInputDeviceCategory; }
+        set
+        {
+            if (value != selectedInputDeviceCategory)
+            {
+                selectedInputDeviceCategory = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(MatchingSignatureCount));
+            }
+        }
+    }
+
     private readonly List<SplitCategory> splitCategories = new()
     {
-        new SplitCategory("All", new HashSet<Split>{Split.Unkonwn, Split.Development, Split.Evaluation}),
-        new SplitCategory("Unkonwn", new HashSet<Split>{Split.Unkonwn}),
-        new SplitCategory("Development", new HashSet<Split>{Split.Development}),
-        new SplitCategory("Evaluation", new HashSet<Split>{Split.Evaluation})
+        new SplitCategory("All", Enum.GetValues<Split>().ToHashSet()),
+        new SplitCategory(Split.Unkonwn.ToString(), new HashSet<Split>{Split.Unkonwn}),
+        new SplitCategory(Split.Development.ToString(), new HashSet<Split>{Split.Development}),
+        new SplitCategory(Split.Evaluation.ToString(), new HashSet<Split>{Split.Evaluation})
     };
     public List<SplitCategory> SplitCategories => splitCategories;
 
@@ -92,7 +175,10 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
                 count += signer.Signatures.Count((signature) =>
                 {
                     var svc2021Signature = signature as SVC2021.Entities.Svc2021Signature;
-                    return selectedSplitCategory.Splits.Contains(svc2021Signature.Split);
+                    return 
+                        selectedDBCategory.DBs.Contains(svc2021Signature.DB)
+                        && selectedInputDeviceCategory.InputDevices.Contains(svc2021Signature.InputDevice)
+                        && selectedSplitCategory.Splits.Contains(svc2021Signature.Split);
                 });
             }
             return count;
@@ -118,7 +204,7 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
         {
             Console.WriteLine(fileResult.FullPath);
 
-            var loader = new SVC2021.Svc2021Loader(fileResult.FullPath, false);
+            var loader = new Svc2021Loader(fileResult.FullPath, false);
             Signers = await Task.Run(() => new ObservableCollection<Signer>(loader.EnumerateSigners().OrderBy(s => s.ID)));
             SignatureCount = await Task.Run(() =>
             {
@@ -136,7 +222,9 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
 
     public DeepSignDBViewModel()
     {
-
+        SelectedDBCategory = dbCategories.First();
+        SelectedInputDeviceCategory = inputDeviceCategories.First();
+        SelectedSplitCategory = splitCategories.First();
     }
 
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
