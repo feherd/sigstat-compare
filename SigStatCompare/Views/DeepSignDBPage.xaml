@@ -1,12 +1,22 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:SigStatCompare"
+             xmlns:views="clr-namespace:SigStatCompare.Views"
+             xmlns:viewmodels="clr-namespace:SigStatCompare.ViewModels"
              x:Class="SigStatCompare.Views.DeepSignDBPage"
-             Title="DeepSignDBPage">
+             Title="{OnIdiom Default='DeepSignDBPage', Desktop=''}">
+    <ContentPage.BindingContext>
+        <viewmodels:DeepSignDBViewModel/>
+    </ContentPage.BindingContext>
+    
+    <ContentPage.MenuBarItems>
+        <MenuBarItem Text="File" BindingContext="{Binding Path=BindingContext, Source={x:Reference this}}">
+            <MenuFlyoutItem Text="Load" Clicked="LoadDeepSignDB"/>
+        </MenuBarItem>
+    </ContentPage.MenuBarItems>
+
     <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+        <Label Text="{Binding SignatureCount, StringFormat='Loaded {0} signatures'}"/>
     </VerticalStackLayout>
 </ContentPage>
