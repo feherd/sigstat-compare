@@ -16,7 +16,9 @@
         </MenuBarItem>
     </ContentPage.MenuBarItems>
 
-    <VerticalStackLayout>
+    <VerticalStackLayout Margin="8">
         <Label Text="{Binding SignatureCount, StringFormat='Loaded {0} signatures'}"/>
+        <Picker Title="Split" SelectedItem="{Binding SelectedSplitCategory}" ItemsSource="{Binding SplitCategories}" ItemDisplayBinding="{Binding Name}"/>
+        <Label Text="{Binding MatchingSignatureCount, StringFormat='{0} matching signatures'}"/>
     </VerticalStackLayout>
 </ContentPage>

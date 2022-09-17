@@ -4,11 +4,53 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using SigStat.Common;
+using SVC2021;
+
+public class SplitCategory
+{
+    private readonly string name;
+    private readonly HashSet<Split> splits;
+
+    public string Name => name;
+    public HashSet<Split> Splits => splits;
+
+    public SplitCategory(string name, HashSet<Split> splits)
+    {
+        this.name = name;
+        this.splits = splits;
+    }
+}
 
 public class DeepSignDBViewModel : INotifyPropertyChanged
 {
 
     public event PropertyChangedEventHandler PropertyChanged;
+
+    private readonly List<SplitCategory> splitCategories = new()
+    {
+        new SplitCategory("All", new HashSet<Split>{Split.Unkonwn, Split.Development, Split.Evaluation}),
+        new SplitCategory("Unkonwn", new HashSet<Split>{Split.Unkonwn}),
+        new SplitCategory("Development", new HashSet<Split>{Split.Development}),
+        new SplitCategory("Evaluation", new HashSet<Split>{Split.Evaluation})
+    };
+    public List<SplitCategory> SplitCategories => splitCategories;
+
+    private SplitCategory selectedSplitCategory;
+    public SplitCategory SelectedSplitCategory
+    {
+        get { return selectedSplitCategory; }
+        set
+        {
+            if (value != selectedSplitCategory)
+            {
+                selectedSplitCategory = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(MatchingSignatureCount));
+            }
+        }
+    }
+
+
 
     private ObservableCollection<Signer> signers;
     public ObservableCollection<Signer> Signers
@@ -35,6 +77,25 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
                 signatureCount = value;
                 OnPropertyChanged();
             }
+        }
+    }
+
+    public int MatchingSignatureCount
+    {
+        get
+        {
+            if (signers == null) return 0;
+
+            int count = 0;
+            foreach (var signer in signers)
+            {
+                count += signer.Signatures.Count((signature) =>
+                {
+                    var svc2021Signature = signature as SVC2021.Entities.Svc2021Signature;
+                    return selectedSplitCategory.Splits.Contains(svc2021Signature.Split);
+                });
+            }
+            return count;
         }
     }
 
