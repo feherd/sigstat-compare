@@ -174,15 +174,15 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
         }
     }
 
-    private int matchingSignatureCount;
-    public int MatchingSignatureCount
+    private (int min, int max) matchingSignaturesPerSigner;
+    public (int min, int max) MatchingSignaturesPerSigner
     {
-        get => matchingSignatureCount;
+        get => matchingSignaturesPerSigner;
         set
         {
-            if (value != matchingSignatureCount)
+            if (value != matchingSignaturesPerSigner)
             {
-                matchingSignatureCount = value;
+                matchingSignaturesPerSigner = value;
                 OnPropertyChanged();
             }
         }
@@ -226,28 +226,32 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
 
     private void UpdateStatistics()
     {
-        if (signers == null) return;
+        if (signers == null || signers.Count == 1) return;
 
         int signerCount = 0;
-        int signatureCount = 0;
+        (int min, int max) signatureCount = (int.MaxValue, int.MinValue);
         foreach (var signer in signers)
         {
-            bool match = false;
-            signatureCount += signer.Signatures.Count((signature) =>
+            int count = signer.Signatures.Count((signature) =>
             {
                 var svc2021Signature = signature as SVC2021.Entities.Svc2021Signature;
                 bool v =
                     selectedDBCategory.DBs.Contains(svc2021Signature.DB)
                     && selectedInputDeviceCategory.InputDevices.Contains(svc2021Signature.InputDevice)
                     && selectedSplitCategory.Splits.Contains(svc2021Signature.Split);
-                if (v) match = true;
                 return v;
             });
-            if (match) signerCount++;
+
+            if (count == 0) continue;
+            
+            signerCount++;
+
+            if (count < signatureCount.min) signatureCount.min = count;
+            if (count > signatureCount.max) signatureCount.max = count;
         }
 
         MatchingSignerCount = signerCount;
-        MatchingSignatureCount = signatureCount;
+        MatchingSignaturesPerSigner = signatureCount != (int.MaxValue, int.MinValue) ? signatureCount : (0, 0);
     }
 
     public DeepSignDBViewModel()

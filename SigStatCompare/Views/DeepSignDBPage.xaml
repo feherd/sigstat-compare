@@ -9,6 +9,10 @@
     <ContentPage.BindingContext>
         <viewmodels:DeepSignDBViewModel/>
     </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <views:TupleToStringConverter x:Key="tupleToString" />
+    </ContentPage.Resources>
     
     <ContentPage.MenuBarItems>
         <MenuBarItem Text="File">
@@ -31,6 +35,6 @@
                 SelectedItem="{Binding SelectedSplitCategory}"
                 ItemDisplayBinding="{Binding Name}"/>
         <Label Text="{Binding MatchingSignerCount, StringFormat='{0} matching signers'}"/>
-        <Label Text="{Binding MatchingSignatureCount, StringFormat='{0} matching signatures'}"/>
+        <Label Text="{Binding MatchingSignaturesPerSigner, StringFormat='Signatures per signer: {0}', Converter={StaticResource tupleToString}}"/>
     </VerticalStackLayout>
 </ContentPage>
