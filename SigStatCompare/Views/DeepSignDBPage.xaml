@@ -30,6 +30,7 @@
                 ItemsSource="{Binding SplitCategories}"
                 SelectedItem="{Binding SelectedSplitCategory}"
                 ItemDisplayBinding="{Binding Name}"/>
+        <Label Text="{Binding MatchingSignerCount, StringFormat='{0} matching signers'}"/>
         <Label Text="{Binding MatchingSignatureCount, StringFormat='{0} matching signatures'}"/>
     </VerticalStackLayout>
 </ContentPage>

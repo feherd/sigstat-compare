@@ -67,7 +67,6 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
         new DBCategory(DB.BiosecureDS2.ToString(), new HashSet<DB>{DB.BiosecureDS2}),
         new DBCategory(DB.EvalDB.ToString(), new HashSet<DB>{DB.EvalDB})
     };
-
     public List<DBCategory> DBCategories => dbCategories;
 
     private DBCategory selectedDBCategory;
@@ -80,11 +79,11 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
             {
                 selectedDBCategory = value;
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(MatchingSignatureCount));
+                UpdateStatistics();
             }
         }
     }
-    
+
     private readonly List<InputDeviceCategory> inputDeviceCategories = new()
     {
         new InputDeviceCategory("All", Enum.GetValues<InputDevice>().ToHashSet()),
@@ -104,7 +103,7 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
             {
                 selectedInputDeviceCategory = value;
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(MatchingSignatureCount));
+                UpdateStatistics();
             }
         }
     }
@@ -128,12 +127,10 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
             {
                 selectedSplitCategory = value;
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(MatchingSignatureCount));
+                UpdateStatistics();
             }
         }
     }
-
-
 
     private ObservableCollection<Signer> signers;
     public ObservableCollection<Signer> Signers
@@ -144,6 +141,20 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
             if (value != signers)
             {
                 signers = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private int matchingSignerCount;
+    public int MatchingSignerCount
+    {
+        get { return matchingSignerCount; }
+        set
+        {
+            if (value != matchingSignerCount)
+            {
+                matchingSignerCount = value;
                 OnPropertyChanged();
             }
         }
@@ -163,25 +174,17 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
         }
     }
 
+    private int matchingSignatureCount;
     public int MatchingSignatureCount
     {
-        get
+        get => matchingSignatureCount;
+        set
         {
-            if (signers == null) return 0;
-
-            int count = 0;
-            foreach (var signer in signers)
+            if (value != matchingSignatureCount)
             {
-                count += signer.Signatures.Count((signature) =>
-                {
-                    var svc2021Signature = signature as SVC2021.Entities.Svc2021Signature;
-                    return 
-                        selectedDBCategory.DBs.Contains(svc2021Signature.DB)
-                        && selectedInputDeviceCategory.InputDevices.Contains(svc2021Signature.InputDevice)
-                        && selectedSplitCategory.Splits.Contains(svc2021Signature.Split);
-                });
+                matchingSignatureCount = value;
+                OnPropertyChanged();
             }
-            return count;
         }
     }
 
@@ -215,10 +218,37 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
                 }
                 return count;
             });
+            UpdateStatistics();
         }
 
         isFilePickerOpen = false;
     });
+
+    private void UpdateStatistics()
+    {
+        if (signers == null) return;
+
+        int signerCount = 0;
+        int signatureCount = 0;
+        foreach (var signer in signers)
+        {
+            bool match = false;
+            signatureCount += signer.Signatures.Count((signature) =>
+            {
+                var svc2021Signature = signature as SVC2021.Entities.Svc2021Signature;
+                bool v =
+                    selectedDBCategory.DBs.Contains(svc2021Signature.DB)
+                    && selectedInputDeviceCategory.InputDevices.Contains(svc2021Signature.InputDevice)
+                    && selectedSplitCategory.Splits.Contains(svc2021Signature.Split);
+                if (v) match = true;
+                return v;
+            });
+            if (match) signerCount++;
+        }
+
+        MatchingSignerCount = signerCount;
+        MatchingSignatureCount = signatureCount;
+    }
 
     public DeepSignDBViewModel()
     {
