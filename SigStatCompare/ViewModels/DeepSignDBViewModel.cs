@@ -160,15 +160,15 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
         }
     }
 
-    private int signatureCount;
-    public int SignatureCount
+    private int loadedSignatures;
+    public int LoadedSignatures
     {
-        get { return signatureCount; }
+        get { return loadedSignatures; }
         set
         {
-            if (value != signatureCount)
+            if (value != loadedSignatures)
             {
-                signatureCount = value;
+                loadedSignatures = value;
                 OnPropertyChanged();
             }
         }
@@ -238,6 +238,20 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
         }
     }
 
+    private int loadedSigners;
+    public int LoadedSigners
+    {
+        get => loadedSigners;
+        set
+        {
+            if (value != loadedSigners)
+            {
+                loadedSigners = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
     private object filePickerLock = new object();
     private bool isFilePickerOpen = false;
 
@@ -258,15 +272,17 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
             Console.WriteLine(fileResult.FullPath);
 
             var loader = new Svc2021Loader(fileResult.FullPath, false);
-            Signers = await Task.Run(() => new ObservableCollection<Signer>(loader.EnumerateSigners().OrderBy(s => s.ID)));
-            SignatureCount = await Task.Run(() =>
+            Signers = await Task.Run(() =>
             {
-                int count = 0;
-                foreach (var signer in signers)
-                {
-                    count += signer.Signatures.Count;
-                }
-                return count;
+                var signers = loader.EnumerateSigners()
+                    .Select((signer, i) =>
+                    {
+                        LoadedSigners = i + 1;
+                        LoadedSignatures += signer.Signatures.Count;
+                        return signer;
+                    })
+                    .OrderBy(s => s.ID);
+                return new ObservableCollection<Signer>(signers);
             });
             UpdateStatistics();
         }

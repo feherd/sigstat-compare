@@ -21,7 +21,8 @@
     </ContentPage.MenuBarItems>
 
     <VerticalStackLayout Margin="8">
-        <Label Text="{Binding SignatureCount, StringFormat='Loaded {0} signatures'}"/>
+        <Label Text="{Binding LoadedSigners, StringFormat='Loaded {0} signers'}"/>
+        <Label Text="{Binding LoadedSignatures, StringFormat='Loaded {0} signatures'}"/>
         <Picker Title="DB"
                 ItemsSource="{Binding DBCategories}"
                 SelectedItem="{Binding SelectedDBCategory}"
