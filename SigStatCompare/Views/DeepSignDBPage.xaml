@@ -36,5 +36,7 @@
                 ItemDisplayBinding="{Binding Name}"/>
         <Label Text="{Binding MatchingSignerCount, StringFormat='{0} matching signers'}"/>
         <Label Text="{Binding MatchingSignaturesPerSigner, StringFormat='Signatures per signer: {0}', Converter={StaticResource tupleToString}}"/>
+        <Label Text="{Binding MatchingGenuineSignaturesPerSigner, StringFormat='Genuine signatures per signer: {0}', Converter={StaticResource tupleToString}}"/>
+        <Label Text="{Binding MatchingForgedSignaturesPerSigner, StringFormat='Forged signatures per signer: {0}', Converter={StaticResource tupleToString}}"/>
     </VerticalStackLayout>
 </ContentPage>

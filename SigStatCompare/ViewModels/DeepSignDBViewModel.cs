@@ -188,6 +188,34 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
         }
     }
 
+    private (int min, int max) matchingGenuineSignaturesPerSigner;
+    public (int min, int max) MatchingGenuineSignaturesPerSigner
+    {
+        get => matchingGenuineSignaturesPerSigner;
+        set
+        {
+            if (value != matchingGenuineSignaturesPerSigner)
+            {
+                matchingGenuineSignaturesPerSigner = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private (int min, int max) matchingForgedSignaturesPerSigner;
+    public (int min, int max) MatchingForgedSignaturesPerSigner
+    {
+        get => matchingForgedSignaturesPerSigner;
+        set
+        {
+            if (value != matchingForgedSignaturesPerSigner)
+            {
+                matchingForgedSignaturesPerSigner = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
     private object filePickerLock = new object();
     private bool isFilePickerOpen = false;
 
@@ -224,34 +252,47 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
         isFilePickerOpen = false;
     });
 
+    private void Update(ref (int min, int max) signatureCount, int count)
+    {
+        if (count < signatureCount.min) signatureCount.min = count;
+        if (count > signatureCount.max) signatureCount.max = count;
+    }
+
     private void UpdateStatistics()
     {
         if (signers == null || signers.Count == 1) return;
 
         int signerCount = 0;
         (int min, int max) signatureCount = (int.MaxValue, int.MinValue);
+        (int min, int max) genuineSignatureCount = (int.MaxValue, int.MinValue);
+        (int min, int max) forgedSignatureCount = (int.MaxValue, int.MinValue);
         foreach (var signer in signers)
         {
-            int count = signer.Signatures.Count((signature) =>
+            var signatures = signer.Signatures.Where((signature) =>
             {
                 var svc2021Signature = signature as SVC2021.Entities.Svc2021Signature;
-                bool v =
-                    selectedDBCategory.DBs.Contains(svc2021Signature.DB)
+                return selectedDBCategory.DBs.Contains(svc2021Signature.DB)
                     && selectedInputDeviceCategory.InputDevices.Contains(svc2021Signature.InputDevice)
                     && selectedSplitCategory.Splits.Contains(svc2021Signature.Split);
-                return v;
             });
 
+            int count = signatures.Count();
+            int genuine = signatures.Count(signature => signature.Origin == Origin.Genuine);
+            int forged = signatures.Count(signature => signature.Origin == Origin.Forged);
+
             if (count == 0) continue;
-            
+
             signerCount++;
 
-            if (count < signatureCount.min) signatureCount.min = count;
-            if (count > signatureCount.max) signatureCount.max = count;
+            Update(ref signatureCount, count);
+            Update(ref genuineSignatureCount, genuine);
+            Update(ref forgedSignatureCount, forged);
         }
 
         MatchingSignerCount = signerCount;
         MatchingSignaturesPerSigner = signatureCount != (int.MaxValue, int.MinValue) ? signatureCount : (0, 0);
+        MatchingGenuineSignaturesPerSigner = genuineSignatureCount != (int.MaxValue, int.MinValue) ? genuineSignatureCount : (0, 0);
+        MatchingForgedSignaturesPerSigner = forgedSignatureCount != (int.MaxValue, int.MinValue) ? forgedSignatureCount : (0, 0);
     }
 
     public DeepSignDBViewModel()
