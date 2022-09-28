@@ -198,7 +198,18 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
             {
                 matchingGenuineSignaturesPerSigner = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(MaxGenuinePairCountPerSigner));
+                OnPropertyChanged(nameof(MaxForgedPairCountPerSigner));
             }
+        }
+    }
+
+    public int MaxGenuinePairCountPerSigner
+    {
+        get
+        {
+            int min = MatchingGenuineSignaturesPerSigner.min;
+            return min * (min - 1) / 2;
         }
     }
 
@@ -212,7 +223,18 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
             {
                 matchingForgedSignaturesPerSigner = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(MaxForgedPairCountPerSigner));
             }
+        }
+    }
+
+    public int MaxForgedPairCountPerSigner
+    {
+        get
+        {
+            int genuineMin = MatchingGenuineSignaturesPerSigner.min;
+            int forgedMin = MatchingForgedSignaturesPerSigner.min;
+            return genuineMin * forgedMin / 2;
         }
     }
 

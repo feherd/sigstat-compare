@@ -34,9 +34,11 @@
                 ItemsSource="{Binding SplitCategories}"
                 SelectedItem="{Binding SelectedSplitCategory}"
                 ItemDisplayBinding="{Binding Name}"/>
-        <Label Text="{Binding MatchingSignerCount, StringFormat='{0} matching signers'}"/>
+        <Label Text="{Binding MatchingSignerCount, StringFormat='Signers: {0}'}"/>
         <Label Text="{Binding MatchingSignaturesPerSigner, StringFormat='Signatures per signer: {0}', Converter={StaticResource tupleToString}}"/>
         <Label Text="{Binding MatchingGenuineSignaturesPerSigner, StringFormat='Genuine signatures per signer: {0}', Converter={StaticResource tupleToString}}"/>
         <Label Text="{Binding MatchingForgedSignaturesPerSigner, StringFormat='Forged signatures per signer: {0}', Converter={StaticResource tupleToString}}"/>
+        <Label Text="{Binding MaxGenuinePairCountPerSigner, StringFormat='Max genuine pair count per signer: {0}'}"/>
+        <Label Text="{Binding MaxForgedPairCountPerSigner, StringFormat='Max forged pair count per signer: {0}'}"/>
     </VerticalStackLayout>
 </ContentPage>
