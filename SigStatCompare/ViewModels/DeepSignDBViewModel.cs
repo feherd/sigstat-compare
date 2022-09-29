@@ -1,8 +1,7 @@
 ﻿namespace SigStatCompare.ViewModels;
 
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using CommunityToolkit.Mvvm.ComponentModel;
 using SigStat.Common;
 using SVC2021;
 
@@ -52,11 +51,8 @@ public class SplitCategory
     }
 }
 
-public class DeepSignDBViewModel : INotifyPropertyChanged
+public partial class DeepSignDBViewModel : ObservableObject
 {
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
     private readonly List<DBCategory> dbCategories = new()
     {
         new DBCategory("All", Enum.GetValues<DB>().ToHashSet()),
@@ -69,20 +65,9 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
     };
     public List<DBCategory> DBCategories => dbCategories;
 
+    [ObservableProperty]
     private DBCategory selectedDBCategory;
-    public DBCategory SelectedDBCategory
-    {
-        get { return selectedDBCategory; }
-        set
-        {
-            if (value != selectedDBCategory)
-            {
-                selectedDBCategory = value;
-                OnPropertyChanged();
-                UpdateStatistics();
-            }
-        }
-    }
+    partial void OnSelectedDBCategoryChanged(DBCategory _) => UpdateStatistics();
 
     private readonly List<InputDeviceCategory> inputDeviceCategories = new()
     {
@@ -93,20 +78,9 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
     };
     public List<InputDeviceCategory> InputDeviceCategories => inputDeviceCategories;
 
+    [ObservableProperty]
     private InputDeviceCategory selectedInputDeviceCategory;
-    public InputDeviceCategory SelectedInputDeviceCategory
-    {
-        get { return selectedInputDeviceCategory; }
-        set
-        {
-            if (value != selectedInputDeviceCategory)
-            {
-                selectedInputDeviceCategory = value;
-                OnPropertyChanged();
-                UpdateStatistics();
-            }
-        }
-    }
+    partial void OnSelectedInputDeviceCategoryChanged(InputDeviceCategory _) => UpdateStatistics();
 
     private readonly List<SplitCategory> splitCategories = new()
     {
@@ -117,92 +91,26 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
     };
     public List<SplitCategory> SplitCategories => splitCategories;
 
+    [ObservableProperty]
     private SplitCategory selectedSplitCategory;
-    public SplitCategory SelectedSplitCategory
-    {
-        get { return selectedSplitCategory; }
-        set
-        {
-            if (value != selectedSplitCategory)
-            {
-                selectedSplitCategory = value;
-                OnPropertyChanged();
-                UpdateStatistics();
-            }
-        }
-    }
+    partial void OnSelectedSplitCategoryChanged(SplitCategory _) => UpdateStatistics();
 
+    [ObservableProperty]
     private ObservableCollection<Signer> signers;
-    public ObservableCollection<Signer> Signers
-    {
-        get { return signers; }
-        set
-        {
-            if (value != signers)
-            {
-                signers = value;
-                OnPropertyChanged();
-            }
-        }
-    }
 
+    [ObservableProperty]
     private int matchingSignerCount;
-    public int MatchingSignerCount
-    {
-        get { return matchingSignerCount; }
-        set
-        {
-            if (value != matchingSignerCount)
-            {
-                matchingSignerCount = value;
-                OnPropertyChanged();
-            }
-        }
-    }
 
+    [ObservableProperty]
     private int loadedSignatures;
-    public int LoadedSignatures
-    {
-        get { return loadedSignatures; }
-        set
-        {
-            if (value != loadedSignatures)
-            {
-                loadedSignatures = value;
-                OnPropertyChanged();
-            }
-        }
-    }
 
+    [ObservableProperty]
     private (int min, int max) matchingSignaturesPerSigner;
-    public (int min, int max) MatchingSignaturesPerSigner
-    {
-        get => matchingSignaturesPerSigner;
-        set
-        {
-            if (value != matchingSignaturesPerSigner)
-            {
-                matchingSignaturesPerSigner = value;
-                OnPropertyChanged();
-            }
-        }
-    }
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(MaxGenuinePairCountPerSigner))]
+    [NotifyPropertyChangedFor(nameof(MaxForgedPairCountPerSigner))]
     private (int min, int max) matchingGenuineSignaturesPerSigner;
-    public (int min, int max) MatchingGenuineSignaturesPerSigner
-    {
-        get => matchingGenuineSignaturesPerSigner;
-        set
-        {
-            if (value != matchingGenuineSignaturesPerSigner)
-            {
-                matchingGenuineSignaturesPerSigner = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(MaxGenuinePairCountPerSigner));
-                OnPropertyChanged(nameof(MaxForgedPairCountPerSigner));
-            }
-        }
-    }
 
     public int MaxGenuinePairCountPerSigner
     {
@@ -213,20 +121,9 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
         }
     }
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(MaxForgedPairCountPerSigner))]
     private (int min, int max) matchingForgedSignaturesPerSigner;
-    public (int min, int max) MatchingForgedSignaturesPerSigner
-    {
-        get => matchingForgedSignaturesPerSigner;
-        set
-        {
-            if (value != matchingForgedSignaturesPerSigner)
-            {
-                matchingForgedSignaturesPerSigner = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(MaxForgedPairCountPerSigner));
-            }
-        }
-    }
 
     public int MaxForgedPairCountPerSigner
     {
@@ -238,21 +135,10 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
         }
     }
 
+    [ObservableProperty]
     private int loadedSigners;
-    public int LoadedSigners
-    {
-        get => loadedSigners;
-        set
-        {
-            if (value != loadedSigners)
-            {
-                loadedSigners = value;
-                OnPropertyChanged();
-            }
-        }
-    }
 
-    private object filePickerLock = new object();
+    private readonly object filePickerLock = new();
     private bool isFilePickerOpen = false;
 
     public Command LoadCommand => new(async () =>
@@ -290,7 +176,7 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
         isFilePickerOpen = false;
     });
 
-    private void Update(ref (int min, int max) signatureCount, int count)
+    private static void Update(ref (int min, int max) signatureCount, int count)
     {
         if (count < signatureCount.min) signatureCount.min = count;
         if (count > signatureCount.max) signatureCount.max = count;
@@ -298,13 +184,13 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
 
     private void UpdateStatistics()
     {
-        if (signers == null || signers.Count == 1) return;
+        if (Signers == null || Signers.Count == 1) return;
 
         int signerCount = 0;
         (int min, int max) signatureCount = (int.MaxValue, int.MinValue);
         (int min, int max) genuineSignatureCount = (int.MaxValue, int.MinValue);
         (int min, int max) forgedSignatureCount = (int.MaxValue, int.MinValue);
-        foreach (var signer in signers)
+        foreach (var signer in Signers)
         {
             var signatures = signer.Signatures.Where((signature) =>
             {
@@ -335,11 +221,8 @@ public class DeepSignDBViewModel : INotifyPropertyChanged
 
     public DeepSignDBViewModel()
     {
-        SelectedDBCategory = dbCategories.First();
-        SelectedInputDeviceCategory = inputDeviceCategories.First();
-        SelectedSplitCategory = splitCategories.First();
+        SelectedDBCategory = DBCategories.First();
+        SelectedInputDeviceCategory = InputDeviceCategories.First();
+        SelectedSplitCategory = SplitCategories.First();
     }
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
