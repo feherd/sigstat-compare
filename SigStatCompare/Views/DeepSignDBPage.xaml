@@ -10,10 +10,6 @@
         <viewmodels:DeepSignDBViewModel/>
     </ContentPage.BindingContext>
 
-    <ContentPage.Resources>
-        <views:TupleToStringConverter x:Key="tupleToString" />
-    </ContentPage.Resources>
-    
     <ContentPage.MenuBarItems>
         <MenuBarItem Text="File">
             <MenuFlyoutItem Text="Load" Clicked="LoadDeepSignDB"/>

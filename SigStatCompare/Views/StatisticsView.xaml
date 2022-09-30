@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <VerticalStackLayout xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                     xmlns:local="clr-namespace:SigStatCompare"
+                     xmlns:views="clr-namespace:SigStatCompare.Views"
+                     xmlns:viewmodels="clr-namespace:SigStatCompare.ViewModels"
                      x:Class="SigStatCompare.Views.StatisticsView">
-    <Label Text="Statistics:"
-           FontSize="Medium"/>
 
-    <Label Text="{Binding SignerCount, StringFormat='Signers: {0}'}"/>
-    <Label Text="{Binding SignatureCountPerSigner, StringFormat='Signatures per signer: {0}', Converter={StaticResource tupleToString}}"/>
-    <Label Text="{Binding GenuineSignatureCountPerSigner, StringFormat='Genuine signatures per signer: {0}', Converter={StaticResource tupleToString}}"/>
-    <Label Text="{Binding ForgedSignatureCountPerSigner, StringFormat='Forged signatures per signer: {0}', Converter={StaticResource tupleToString}}"/>
-    <Label Text="{Binding MaxGenuinePairCountPerSigner, StringFormat='Max genuine pair count per signer: {0}'}"/>
-    <Label Text="{Binding MaxForgedPairCountPerSigner, StringFormat='Max forged pair count per signer: {0}'}"/>
+    <VerticalStackLayout.Resources>
+        <views:TupleToStringConverter x:Key="tupleToString" />
+    </VerticalStackLayout.Resources>
+
+    <Label Text="Statistics:"
+           FontSize="Medium" />
+
+    <Label Text="{Binding SignerCount, StringFormat='Signers: {0}'}" />
+    <Label Text="{Binding SignatureCountPerSigner, StringFormat='Signatures per signer: {0}', Converter={StaticResource tupleToString}}" />
+    <Label Text="{Binding GenuineSignatureCountPerSigner, StringFormat='Genuine signatures per signer: {0}', Converter={StaticResource tupleToString}}" />
+    <Label Text="{Binding ForgedSignatureCountPerSigner, StringFormat='Forged signatures per signer: {0}', Converter={StaticResource tupleToString}}" />
+    <Label Text="{Binding MaxGenuinePairCountPerSigner, StringFormat='Max genuine pair count per signer: {0}'}" />
+    <Label Text="{Binding MaxForgedPairCountPerSigner, StringFormat='Max forged pair count per signer: {0}'}" />
+
 </VerticalStackLayout>
