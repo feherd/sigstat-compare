@@ -7,6 +7,15 @@ using SVC2021;
 
 public partial class DeepSignDBViewModel : ObservableObject
 {
+    [ObservableProperty]
+    private int loadedSignatures;
+
+    [ObservableProperty]
+    private int loadedSigners;
+
+    [ObservableProperty]
+    private ObservableCollection<Signer> signers;
+
     private readonly List<DBCategory> dbCategories = new()
     {
         new DBCategory("All", Enum.GetValues<DB>().ToHashSet()),
@@ -49,48 +58,8 @@ public partial class DeepSignDBViewModel : ObservableObject
     private SplitCategory selectedSplitCategory;
     partial void OnSelectedSplitCategoryChanged(SplitCategory _) => UpdateStatistics();
 
-    [ObservableProperty]
-    private ObservableCollection<Signer> signers;
-
-    [ObservableProperty]
-    private int matchingSignerCount;
-
-    [ObservableProperty]
-    private int loadedSignatures;
-
-    [ObservableProperty]
-    private (int min, int max) matchingSignaturesPerSigner;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(MaxGenuinePairCountPerSigner))]
-    [NotifyPropertyChangedFor(nameof(MaxForgedPairCountPerSigner))]
-    private (int min, int max) matchingGenuineSignaturesPerSigner;
-
-    public int MaxGenuinePairCountPerSigner
-    {
-        get
-        {
-            int min = MatchingGenuineSignaturesPerSigner.min;
-            return min * (min - 1) / 2;
-        }
-    }
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(MaxForgedPairCountPerSigner))]
-    private (int min, int max) matchingForgedSignaturesPerSigner;
-
-    public int MaxForgedPairCountPerSigner
-    {
-        get
-        {
-            int genuineMin = MatchingGenuineSignaturesPerSigner.min;
-            int forgedMin = MatchingForgedSignaturesPerSigner.min;
-            return genuineMin * forgedMin / 2;
-        }
-    }
-
-    [ObservableProperty]
-    private int loadedSigners;
+    private readonly DeepSignDbStatisticsViewModel statistics = new();
+    public DeepSignDbStatisticsViewModel Statistics => statistics;
 
     private readonly object filePickerLock = new();
     private bool isFilePickerOpen = false;
@@ -167,10 +136,10 @@ public partial class DeepSignDBViewModel : ObservableObject
             Update(ref forgedSignatureCount, forged);
         }
 
-        MatchingSignerCount = signerCount;
-        MatchingSignaturesPerSigner = signatureCount != (int.MaxValue, int.MinValue) ? signatureCount : (0, 0);
-        MatchingGenuineSignaturesPerSigner = genuineSignatureCount != (int.MaxValue, int.MinValue) ? genuineSignatureCount : (0, 0);
-        MatchingForgedSignaturesPerSigner = forgedSignatureCount != (int.MaxValue, int.MinValue) ? forgedSignatureCount : (0, 0);
+        Statistics.SignerCount = signerCount;
+        Statistics.SignatureCountPerSigner = signatureCount != (int.MaxValue, int.MinValue) ? signatureCount : (0, 0);
+        Statistics.GenuineSignatureCountPerSigner = genuineSignatureCount != (int.MaxValue, int.MinValue) ? genuineSignatureCount : (0, 0);
+        Statistics.ForgedSignatureCountPerSigner = forgedSignatureCount != (int.MaxValue, int.MinValue) ? forgedSignatureCount : (0, 0);
     }
 
     public DeepSignDBViewModel()
