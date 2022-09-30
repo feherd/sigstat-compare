@@ -13,10 +13,10 @@
     <Label Text="Statistics:"
            FontSize="Medium" />
 
-    <Label Text="{Binding SignerCount, StringFormat='Signers: {0}'}" />
-    <Label Text="{Binding SignatureCountPerSigner, StringFormat='Signatures per signer: {0}', Converter={StaticResource tupleToString}}" />
-    <Label Text="{Binding GenuineSignatureCountPerSigner, StringFormat='Genuine signatures per signer: {0}', Converter={StaticResource tupleToString}}" />
-    <Label Text="{Binding ForgedSignatureCountPerSigner, StringFormat='Forged signatures per signer: {0}', Converter={StaticResource tupleToString}}" />
+    <Label Text="{Binding SignerCount, StringFormat='Signer count: {0}'}" />
+    <Label Text="{Binding SignatureCountPerSigner, StringFormat='Signature count per signer: {0}', Converter={StaticResource tupleToString}}" />
+    <Label Text="{Binding GenuineSignatureCountPerSigner, StringFormat='Genuine signature count per signer: {0}', Converter={StaticResource tupleToString}}" />
+    <Label Text="{Binding ForgedSignatureCountPerSigner, StringFormat='Forged signature count per signer: {0}', Converter={StaticResource tupleToString}}" />
     <Label Text="{Binding MaxGenuinePairCountPerSigner, StringFormat='Max genuine pair count per signer: {0}'}" />
     <Label Text="{Binding MaxForgedPairCountPerSigner, StringFormat='Max forged pair count per signer: {0}'}" />
 
