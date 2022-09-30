@@ -5,52 +5,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using SigStat.Common;
 using SVC2021;
 
-
-public class DBCategory
-{
-    private string name;
-    private HashSet<DB> dbs;
-
-    public string Name { get => name; set => name = value; }
-    public HashSet<DB> DBs { get => dbs; set => dbs = value; }
-
-    public DBCategory(string name, HashSet<DB> dbs)
-    {
-        this.name = name;
-        this.dbs = dbs;
-    }
-}
-
-public class InputDeviceCategory
-{
-    private string name;
-    private HashSet<InputDevice> inputDevices;
-
-    public string Name { get => name; set => name = value; }
-    public HashSet<InputDevice> InputDevices { get => inputDevices; set => inputDevices = value; }
-
-    public InputDeviceCategory(string name, HashSet<InputDevice> inputDevices)
-    {
-        this.name = name;
-        this.inputDevices = inputDevices;
-    }
-}
-
-public class SplitCategory
-{
-    private readonly string name;
-    private readonly HashSet<Split> splits;
-
-    public string Name => name;
-    public HashSet<Split> Splits => splits;
-
-    public SplitCategory(string name, HashSet<Split> splits)
-    {
-        this.name = name;
-        this.splits = splits;
-    }
-}
-
 public partial class DeepSignDBViewModel : ObservableObject
 {
     private readonly List<DBCategory> dbCategories = new()
