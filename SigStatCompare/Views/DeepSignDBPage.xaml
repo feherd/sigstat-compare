@@ -20,15 +20,15 @@
         <Label Text="{Binding LoadedSigners, StringFormat='Loaded {0} signers'}"/>
         <Label Text="{Binding LoadedSignatures, StringFormat='Loaded {0} signatures'}"/>
         <Picker Title="DB"
-                ItemsSource="{Binding DBCategories}"
+                ItemsSource="{x:Static viewmodels:DeepSignDBViewModel.dbCategories}"
                 SelectedItem="{Binding SelectedDBCategory}"
                 ItemDisplayBinding="{Binding Name}"/>
         <Picker Title="InputDevice"
-                ItemsSource="{Binding InputDeviceCategories}"
+                ItemsSource="{x:Static viewmodels:DeepSignDBViewModel.inputDeviceCategories}"
                 SelectedItem="{Binding SelectedInputDeviceCategory}"
                 ItemDisplayBinding="{Binding Name}"/>
         <Picker Title="Split"
-                ItemsSource="{Binding SplitCategories}"
+                ItemsSource="{x:Static viewmodels:DeepSignDBViewModel.splitCategories}"
                 SelectedItem="{Binding SelectedSplitCategory}"
                 ItemDisplayBinding="{Binding Name}"/>
         <views:StatisticsView BindingContext="{Binding Statistics}"/>

@@ -16,7 +16,7 @@ public partial class DeepSignDBViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<Signer> signers;
 
-    private readonly List<DBCategory> dbCategories = new()
+    public static readonly List<DBCategory> dbCategories = new()
     {
         new DBCategory("All", Enum.GetValues<DB>().ToHashSet()),
         new DBCategory(DB.Mcyt.ToString(), new HashSet<DB>{DB.Mcyt}),
@@ -26,36 +26,33 @@ public partial class DeepSignDBViewModel : ObservableObject
         new DBCategory(DB.BiosecureDS2.ToString(), new HashSet<DB>{DB.BiosecureDS2}),
         new DBCategory(DB.EvalDB.ToString(), new HashSet<DB>{DB.EvalDB})
     };
-    public List<DBCategory> DBCategories => dbCategories;
 
     [ObservableProperty]
-    private DBCategory selectedDBCategory;
+    private DBCategory selectedDBCategory = dbCategories.First();
     partial void OnSelectedDBCategoryChanged(DBCategory _) => UpdateStatistics();
 
-    private readonly List<InputDeviceCategory> inputDeviceCategories = new()
+    public static readonly List<InputDeviceCategory> inputDeviceCategories = new()
     {
         new InputDeviceCategory("All", Enum.GetValues<InputDevice>().ToHashSet()),
         new InputDeviceCategory(InputDevice.Unkown.ToString(), new HashSet<InputDevice>{InputDevice.Unkown}),
         new InputDeviceCategory(InputDevice.Finger.ToString(), new HashSet<InputDevice>{InputDevice.Finger}),
         new InputDeviceCategory(InputDevice.Stylus.ToString(), new HashSet<InputDevice>{InputDevice.Stylus})
     };
-    public List<InputDeviceCategory> InputDeviceCategories => inputDeviceCategories;
 
     [ObservableProperty]
-    private InputDeviceCategory selectedInputDeviceCategory;
+    private InputDeviceCategory selectedInputDeviceCategory = inputDeviceCategories.First();
     partial void OnSelectedInputDeviceCategoryChanged(InputDeviceCategory _) => UpdateStatistics();
 
-    private readonly List<SplitCategory> splitCategories = new()
+    public static readonly List<SplitCategory> splitCategories = new()
     {
         new SplitCategory("All", Enum.GetValues<Split>().ToHashSet()),
         new SplitCategory(Split.Unkonwn.ToString(), new HashSet<Split>{Split.Unkonwn}),
         new SplitCategory(Split.Development.ToString(), new HashSet<Split>{Split.Development}),
         new SplitCategory(Split.Evaluation.ToString(), new HashSet<Split>{Split.Evaluation})
     };
-    public List<SplitCategory> SplitCategories => splitCategories;
 
     [ObservableProperty]
-    private SplitCategory selectedSplitCategory;
+    private SplitCategory selectedSplitCategory = splitCategories.First();
     partial void OnSelectedSplitCategoryChanged(SplitCategory _) => UpdateStatistics();
 
     private readonly DeepSignDbStatisticsViewModel statistics = new();
@@ -140,12 +137,5 @@ public partial class DeepSignDBViewModel : ObservableObject
         Statistics.SignatureCountPerSigner = signatureCount != (int.MaxValue, int.MinValue) ? signatureCount : (0, 0);
         Statistics.GenuineSignatureCountPerSigner = genuineSignatureCount != (int.MaxValue, int.MinValue) ? genuineSignatureCount : (0, 0);
         Statistics.ForgedSignatureCountPerSigner = forgedSignatureCount != (int.MaxValue, int.MinValue) ? forgedSignatureCount : (0, 0);
-    }
-
-    public DeepSignDBViewModel()
-    {
-        SelectedDBCategory = DBCategories.First();
-        SelectedInputDeviceCategory = InputDeviceCategories.First();
-        SelectedSplitCategory = SplitCategories.First();
     }
 }
