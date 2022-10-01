@@ -2,7 +2,7 @@ namespace SigStatCompare.ViewModels;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
-public partial class DeepSignDbStatisticsViewModel : ObservableObject
+public partial class StatisticsViewModel : ObservableObject
 {
     [ObservableProperty]
     private int signerCount;

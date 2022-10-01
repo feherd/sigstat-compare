@@ -55,8 +55,8 @@ public partial class DeepSignDBViewModel : ObservableObject
     private SplitCategory selectedSplitCategory = splitCategories.First();
     partial void OnSelectedSplitCategoryChanged(SplitCategory _) => UpdateStatistics();
 
-    private readonly DeepSignDbStatisticsViewModel statistics = new();
-    public DeepSignDbStatisticsViewModel Statistics => statistics;
+    private readonly StatisticsViewModel statistics = new();
+    public StatisticsViewModel Statistics => statistics;
 
     private readonly object filePickerLock = new();
     private bool isFilePickerOpen = false;
