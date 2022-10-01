@@ -11,30 +11,24 @@ public partial class StatisticsViewModel : ObservableObject
     private (int min, int max) signatureCountPerSigner;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(MaxGenuinePairCountPerSigner))]
-    [NotifyPropertyChangedFor(nameof(MaxForgedPairCountPerSigner))]
     private (int min, int max) genuineSignatureCountPerSigner;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(MaxForgedPairCountPerSigner))]
     private (int min, int max) forgedSignatureCountPerSigner;
 
-    public int MaxGenuinePairCountPerSigner
-    {
-        get
-        {
-            int min = GenuineSignatureCountPerSigner.min;
-            return min * (min - 1) / 2;
-        }
-    }
+    [ObservableProperty]
+    private int maxGenuinePairCountPerSigner;
 
-    public int MaxForgedPairCountPerSigner
+    [ObservableProperty]
+    private int maxForgedPairCountPerSigner;
+
+    public void SetStatistics(Models.Statistics statistics)
     {
-        get
-        {
-            int genuineMin = GenuineSignatureCountPerSigner.min;
-            int forgedMin = ForgedSignatureCountPerSigner.min;
-            return genuineMin * forgedMin / 2;
-        }
+        SignerCount = statistics.SignerCount;
+        SignatureCountPerSigner = statistics.SignatureCountPerSigner;
+        GenuineSignatureCountPerSigner = statistics.GenuineSignatureCountPerSigner;
+        ForgedSignatureCountPerSigner = statistics.ForgedSignatureCountPerSigner;
+        MaxGenuinePairCountPerSigner = statistics.MaxGenuinePairCountPerSigner;
+        MaxForgedPairCountPerSigner = statistics.MaxForgedPairCountPerSigner;
     }
 }

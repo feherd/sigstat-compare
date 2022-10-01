@@ -31,6 +31,6 @@
                 ItemsSource="{x:Static viewmodels:DeepSignDBViewModel.splitCategories}"
                 SelectedItem="{Binding SelectedSplitCategory}"
                 ItemDisplayBinding="{Binding Name}"/>
-        <views:StatisticsView BindingContext="{Binding Statistics}"/>
+        <views:StatisticsView BindingContext="{Binding StatisticsViewModel}"/>
     </VerticalStackLayout>
 </ContentPage>

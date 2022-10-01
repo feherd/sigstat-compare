@@ -3,10 +3,13 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SigStat.Common;
+using SigStatCompare.Models;
 using SVC2021;
 
 public partial class DeepSignDBViewModel : ObservableObject
 {
+    private readonly SignerService signerService = new SignerService();
+
     [ObservableProperty]
     private int loadedSignatures;
 
@@ -55,8 +58,8 @@ public partial class DeepSignDBViewModel : ObservableObject
     private SplitCategory selectedSplitCategory = splitCategories.First();
     partial void OnSelectedSplitCategoryChanged(SplitCategory _) => UpdateStatistics();
 
-    private readonly StatisticsViewModel statistics = new();
-    public StatisticsViewModel Statistics => statistics;
+    private readonly StatisticsViewModel statisticsViewModel = new();
+    public StatisticsViewModel StatisticsViewModel => statisticsViewModel;
 
     private readonly object filePickerLock = new();
     private bool isFilePickerOpen = false;
@@ -73,69 +76,34 @@ public partial class DeepSignDBViewModel : ObservableObject
 
         FileResult fileResult = await FilePicker.PickAsync();
 
+        lock (filePickerLock)
+        {
+            isFilePickerOpen = false;
+        }
+
         if (fileResult is not null)
         {
-            Console.WriteLine(fileResult.FullPath);
-
-            var loader = new Svc2021Loader(fileResult.FullPath, false);
-            Signers = await Task.Run(() =>
+            var enumerable = signerService.LoadSignatures(fileResult.FullPath);
+            await Task.Run(() =>
             {
-                var signers = loader.EnumerateSigners()
-                    .Select((signer, i) =>
-                    {
-                        LoadedSigners = i + 1;
-                        LoadedSignatures += signer.Signatures.Count;
-                        return signer;
-                    })
-                    .OrderBy(s => s.ID);
-                return new ObservableCollection<Signer>(signers);
+                foreach (var (signerCount, signatureCount) in enumerable)
+                {
+                    LoadedSigners = signerCount;
+                    LoadedSignatures = signatureCount;
+                }
             });
             UpdateStatistics();
         }
-
-        isFilePickerOpen = false;
     });
-
-    private static void Update(ref (int min, int max) signatureCount, int count)
-    {
-        if (count < signatureCount.min) signatureCount.min = count;
-        if (count > signatureCount.max) signatureCount.max = count;
-    }
 
     private void UpdateStatistics()
     {
-        if (Signers == null || Signers.Count == 1) return;
+        Statistics statistics = signerService.CalculateStatistics(
+            selectedDBCategory.DBs,
+            selectedInputDeviceCategory.InputDevices,
+            selectedSplitCategory.Splits
+        );
 
-        int signerCount = 0;
-        (int min, int max) signatureCount = (int.MaxValue, int.MinValue);
-        (int min, int max) genuineSignatureCount = (int.MaxValue, int.MinValue);
-        (int min, int max) forgedSignatureCount = (int.MaxValue, int.MinValue);
-        foreach (var signer in Signers)
-        {
-            var signatures = signer.Signatures.Where((signature) =>
-            {
-                var svc2021Signature = signature as SVC2021.Entities.Svc2021Signature;
-                return selectedDBCategory.DBs.Contains(svc2021Signature.DB)
-                    && selectedInputDeviceCategory.InputDevices.Contains(svc2021Signature.InputDevice)
-                    && selectedSplitCategory.Splits.Contains(svc2021Signature.Split);
-            });
-
-            int count = signatures.Count();
-            int genuine = signatures.Count(signature => signature.Origin == Origin.Genuine);
-            int forged = signatures.Count(signature => signature.Origin == Origin.Forged);
-
-            if (count == 0) continue;
-
-            signerCount++;
-
-            Update(ref signatureCount, count);
-            Update(ref genuineSignatureCount, genuine);
-            Update(ref forgedSignatureCount, forged);
-        }
-
-        Statistics.SignerCount = signerCount;
-        Statistics.SignatureCountPerSigner = signatureCount != (int.MaxValue, int.MinValue) ? signatureCount : (0, 0);
-        Statistics.GenuineSignatureCountPerSigner = genuineSignatureCount != (int.MaxValue, int.MinValue) ? genuineSignatureCount : (0, 0);
-        Statistics.ForgedSignatureCountPerSigner = forgedSignatureCount != (int.MaxValue, int.MinValue) ? forgedSignatureCount : (0, 0);
+        StatisticsViewModel.SetStatistics(statistics);
     }
 }
