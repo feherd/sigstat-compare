@@ -2,7 +2,7 @@ using System.Globalization;
 
 namespace SigStatCompare.Views;
 
-public partial class StatisticsView : VerticalStackLayout
+public partial class StatisticsView : ContentView
 {
 	public StatisticsView()
 	{
