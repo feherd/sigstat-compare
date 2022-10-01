@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:compat="clr-namespace:Microsoft.Maui.Controls.Compatibility;assembly=Microsoft.Maui.Controls"
              xmlns:local="clr-namespace:SigStatCompare"
              xmlns:views="clr-namespace:SigStatCompare.Views"
              xmlns:viewmodels="clr-namespace:SigStatCompare.ViewModels"
@@ -96,43 +95,41 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <compat:RelativeLayout Grid.Row="1" Grid.Column="2">
-            <views:SignatureVisualizer compat:RelativeLayout.WidthConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width}"
-                                       compat:RelativeLayout.HeightConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Height}"
-                                       Padding="80"
+        <Grid Grid.Row="1" Grid.Column="2"
+              RowDefinitions="40,*"
+              ColumnDefinitions="200,*,70">
+            <views:SignatureVisualizer Grid.Row="0" Grid.Column="0"
+                                       Grid.RowSpan="2" Grid.ColumnSpan="3"
                                        Signature="{Binding FirstSelectedSignature}"
                                        x:Name="FirstSignature" />
 
-            <Slider compat:RelativeLayout.XConstraint="10"
-                    compat:RelativeLayout.WidthConstraint="200"
+            <Slider Grid.Row="0" Grid.Column="0"
                     Value="{Binding Source={x:Reference FirstSignature}, Path=Zoom, FallbackValue=1.0}"
                     Minimum="0.25"
                     Maximum="100" />
 
-            <Button Text="Select"
-                    compat:RelativeLayout.XConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width, Constant=-70}"
-                    compat:RelativeLayout.WidthConstraint="70"
+            <Button Grid.Row="0" Grid.Column="2"
+                    Text="Select"
                     Command="{Binding SelectFirstSignatureCommand}" />
-        </compat:RelativeLayout>
+        </Grid>
 
-        <compat:RelativeLayout Grid.Row="2" Grid.Column="2">
-            <views:SignatureVisualizer compat:RelativeLayout.WidthConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width}"
-                                       compat:RelativeLayout.HeightConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Height}"
-                                       Padding="80"
+        <Grid Grid.Row="2" Grid.Column="2"
+              RowDefinitions="40,*"
+              ColumnDefinitions="200,*,70">
+            <views:SignatureVisualizer Grid.Row="0" Grid.Column="0"
+                                       Grid.RowSpan="2" Grid.ColumnSpan="3"
                                        Signature="{Binding SecondSelectedSignature}"
                                        x:Name="SecondSignature" />
 
-            <Slider compat:RelativeLayout.XConstraint="10"
-                    compat:RelativeLayout.WidthConstraint="200"
+            <Slider Grid.Row="0" Grid.Column="0"
                     Value="{Binding Source={x:Reference SecondSignature}, Path=Zoom, FallbackValue=1.0}"
                     Minimum="0.25"
                     Maximum="100" />
 
-            <Button Text="Select"
-                    compat:RelativeLayout.XConstraint="{compat:ConstraintExpression Type=RelativeToParent, Property=Width, Constant=-70}"
-                    compat:RelativeLayout.WidthConstraint="70"
+            <Button Grid.Row="0" Grid.Column="2"
+                    Text="Select"
                     Command="{Binding SelectSecondSignatureCommand}" />
-        </compat:RelativeLayout>
+        </Grid>
 
         <views:DtwVisualizer Grid.Row="1" Grid.Column="3"
                              Grid.RowSpan="2"
