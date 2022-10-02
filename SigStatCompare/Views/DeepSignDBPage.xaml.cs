@@ -10,6 +10,18 @@ public partial class DeepSignDBPage : ContentPage
         viewModel.LoadCommand.Execute(null);
     }
 
+    public void SaveToCSV(object sender, EventArgs e)
+    {
+        var viewModel = BindingContext as DeepSignDBViewModel;
+        viewModel.SaveToCSV.Execute(null);
+    }
+
+    public void SaveToXLSX(object sender, EventArgs e)
+    {
+        var viewModel = BindingContext as DeepSignDBViewModel;
+        viewModel.SaveToXLSX.Execute(null);
+    }
+
     public DeepSignDBPage()
     {
         InitializeComponent();

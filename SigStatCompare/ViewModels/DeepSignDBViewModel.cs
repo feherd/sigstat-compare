@@ -108,6 +108,10 @@ public partial class DeepSignDBViewModel : ObservableObject
         }
     });
 
+    public Command SaveToCSV => new(() => {});
+
+    public Command SaveToXLSX => new(() => {});
+
     private void UpdateStatistics()
     {
         Statistics statistics = datasetGenerator.CalculateStatistics(

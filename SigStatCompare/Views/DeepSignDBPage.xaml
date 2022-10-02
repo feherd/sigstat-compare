@@ -14,6 +14,10 @@
     <ContentPage.MenuBarItems>
         <MenuBarItem Text="File">
             <MenuFlyoutItem Text="Load" Clicked="LoadDeepSignDB"/>
+            <MenuFlyoutSubItem Text="Generate pairs">
+                <MenuFlyoutItem Text="Save to CSV" Clicked="SaveToCSV" />
+                <MenuFlyoutItem Text="Save to XLSX" Clicked="SaveToXLSX" />
+            </MenuFlyoutSubItem>
         </MenuBarItem>
     </ContentPage.MenuBarItems>
 
