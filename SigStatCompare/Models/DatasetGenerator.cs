@@ -3,7 +3,7 @@ using SVC2021;
 
 namespace SigStatCompare.Models;
 
-class SignerService
+class DatasetGenerator
 {
     private IEnumerable<Signer> signers;
 

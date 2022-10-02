@@ -8,7 +8,7 @@ using SVC2021;
 
 public partial class DeepSignDBViewModel : ObservableObject
 {
-    private readonly SignerService signerService = new SignerService();
+    private readonly DatasetGenerator datasetGenerator = new DatasetGenerator();
 
     [ObservableProperty]
     private int loadedSignatures;
@@ -95,7 +95,7 @@ public partial class DeepSignDBViewModel : ObservableObject
 
         if (fileResult is not null)
         {
-            var enumerable = signerService.LoadSignatures(fileResult.FullPath);
+            var enumerable = datasetGenerator.LoadSignatures(fileResult.FullPath);
             await Task.Run(() =>
             {
                 foreach (var (signerCount, signatureCount) in enumerable)
@@ -110,7 +110,7 @@ public partial class DeepSignDBViewModel : ObservableObject
 
     private void UpdateStatistics()
     {
-        Statistics statistics = signerService.CalculateStatistics(
+        Statistics statistics = datasetGenerator.CalculateStatistics(
             selectedDBCategory.DBs,
             selectedInputDeviceCategory.InputDevices,
             selectedSplitCategory.Splits
