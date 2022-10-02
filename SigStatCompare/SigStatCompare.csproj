@@ -51,6 +51,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Views\DataSetParameters.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\DeepSignDBPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

@@ -32,5 +32,6 @@
                 SelectedItem="{Binding SelectedSplitCategory}"
                 ItemDisplayBinding="{Binding Name}"/>
         <views:StatisticsView BindingContext="{Binding StatisticsViewModel}"/>
+        <views:DataSetParameters/>
     </VerticalStackLayout>
 </ContentPage>
