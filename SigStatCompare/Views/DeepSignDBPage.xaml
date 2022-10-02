@@ -16,22 +16,31 @@
         </MenuBarItem>
     </ContentPage.MenuBarItems>
 
-    <VerticalStackLayout Margin="8">
-        <Label Text="{Binding LoadedSigners, StringFormat='Loaded {0} signers'}"/>
-        <Label Text="{Binding LoadedSignatures, StringFormat='Loaded {0} signatures'}"/>
-        <Picker Title="DB"
+    <Grid RowDefinitions="auto,auto"
+          ColumnDefinitions="auto, auto"
+          RowSpacing="16"
+          ColumnSpacing="16">
+        <VerticalStackLayout Grid.Row="0" Grid.Column="0"
+                             Margin="8">
+            <Label Text="{Binding LoadedSigners, StringFormat='Loaded {0} signers'}"/>
+            <Label Text="{Binding LoadedSignatures, StringFormat='Loaded {0} signatures'}"/>
+            <Picker Title="DB"
                 ItemsSource="{x:Static viewmodels:DeepSignDBViewModel.dbCategories}"
                 SelectedItem="{Binding SelectedDBCategory}"
                 ItemDisplayBinding="{Binding Name}"/>
-        <Picker Title="InputDevice"
+            <Picker Title="InputDevice"
                 ItemsSource="{x:Static viewmodels:DeepSignDBViewModel.inputDeviceCategories}"
                 SelectedItem="{Binding SelectedInputDeviceCategory}"
                 ItemDisplayBinding="{Binding Name}"/>
-        <Picker Title="Split"
+            <Picker Title="Split"
                 ItemsSource="{x:Static viewmodels:DeepSignDBViewModel.splitCategories}"
                 SelectedItem="{Binding SelectedSplitCategory}"
                 ItemDisplayBinding="{Binding Name}"/>
-        <views:StatisticsView BindingContext="{Binding StatisticsViewModel}"/>
-        <views:DataSetParameters/>
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+        <views:StatisticsView Grid.Row="0" Grid.Column="1" BindingContext="{Binding StatisticsViewModel}"/>
+        <views:DataSetParameters Grid.Row="1" Grid.Column="0"
+                                 BindingContext="{Binding TrainingSetParameters}"/>
+        <views:DataSetParameters Grid.Row="1" Grid.Column="1"
+                                 BindingContext="{Binding TestSetParameters}"/>
+    </Grid>
 </ContentPage>

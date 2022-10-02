@@ -61,6 +61,18 @@ public partial class DeepSignDBViewModel : ObservableObject
     private readonly StatisticsViewModel statisticsViewModel = new();
     public StatisticsViewModel StatisticsViewModel => statisticsViewModel;
 
+    private readonly DataSetParametersViewModel trainingSetParameters = new()
+    {
+        Name = "Training:"
+    };
+    public DataSetParametersViewModel TrainingSetParameters => trainingSetParameters;
+
+    private readonly DataSetParametersViewModel testSetParameters = new()
+    {
+        Name = "Test:"
+    };
+    public DataSetParametersViewModel TestSetParameters => testSetParameters;
+
     private readonly object filePickerLock = new();
     private bool isFilePickerOpen = false;
 
