@@ -5,7 +5,7 @@ namespace SigStatCompare.Models;
 
 class DatasetGenerator
 {
-    private IEnumerable<Signer> signers;
+    private IList<Signer> signers;
 
     internal IEnumerable<(int, int)> LoadSignatures(string path)
     {
@@ -77,23 +77,51 @@ class DatasetGenerator
         };
     }
 
-    IList<(Signature, Signature)> GeneratePairs()
+    IEnumerable<(Signature, Signature)> GenuinePairs(Signer signer, Random random)
     {
-        // TODO
+        var signatures = signer.Signatures;
+        var n = signatures.Count;
 
-        return new List<(Signature, Signature)>();
+        var pairIndices = Enumerable
+            .Range(0, n * (n - 1))
+            .Select(i => (i / n, i % n))
+            .Where(p => p.Item1 < p.Item2)
+            .ToList();
+
+        while (pairIndices.Count > 1)
+        {
+            int index = random.Next(pairIndices.Count);
+            (int firstSignatureIndex, int secondSignatureIndex) = pairIndices[index];
+            pairIndices.RemoveAt(index);
+
+            yield return (
+                signatures[firstSignatureIndex],
+                signatures[secondSignatureIndex]
+            );
+        }
     }
 
-    internal void SaveToCSV()
+    IList<(Signature, Signature)> GeneratePairs(int signerCount)
     {
-        GeneratePairs();
+        Random random = new Random();
+
+        var genuineSignaturePairs = GenuinePairs(signers[0], random)
+            .Take(signerCount)
+            .ToList();
+
+        return genuineSignaturePairs;
+    }
+
+    internal void SaveToCSV(int signerCount)
+    {
+        GeneratePairs(signerCount);
 
         // TODO
     }
 
-    internal void SaveToXLSX()
+    internal void SaveToXLSX(int signerCount)
     {
-        GeneratePairs();
+        GeneratePairs(signerCount);
 
         // TODO
     }

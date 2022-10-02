@@ -108,9 +108,9 @@ public partial class DeepSignDBViewModel : ObservableObject
         }
     });
 
-    public Command SaveToCSV => new(() => datasetGenerator.SaveToCSV());
+    public Command SaveToCSV => new(() => datasetGenerator.SaveToCSV(trainingSetParameters.SignerCount));
 
-    public Command SaveToXLSX => new(() => datasetGenerator.SaveToXLSX());
+    public Command SaveToXLSX => new(() => datasetGenerator.SaveToXLSX(trainingSetParameters.SignerCount));
 
     private void UpdateStatistics()
     {
