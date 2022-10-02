@@ -10,16 +10,44 @@
         <views:TupleToStringConverter x:Key="tupleToString" />
     </ContentView.Resources>
 
-    <VerticalStackLayout>
-        <Label Text="Statistics:"
-        FontSize="Medium" />
+    <Grid Grid.RowDefinitions="auto,auto,auto,auto,auto,auto,auto"
+          Grid.ColumnDefinitions="auto,100"
+          ColumnSpacing="8">
 
-        <Label Text="{Binding SignerCount, StringFormat='Signer count: {0}'}" />
-        <Label Text="{Binding SignatureCountPerSigner, StringFormat='Signature count per signer: {0}', Converter={StaticResource tupleToString}}" />
-        <Label Text="{Binding GenuineSignatureCountPerSigner, StringFormat='Genuine signature count per signer: {0}', Converter={StaticResource tupleToString}}" />
-        <Label Text="{Binding ForgedSignatureCountPerSigner, StringFormat='Forged signature count per signer: {0}', Converter={StaticResource tupleToString}}" />
-        <Label Text="{Binding MaxGenuinePairCountPerSigner, StringFormat='Max genuine pair count per signer: {0}'}" />
-        <Label Text="{Binding MaxForgedPairCountPerSigner, StringFormat='Max forged pair count per signer: {0}'}" />
-    </VerticalStackLayout>
+        <Label Grid.Row="0" Grid.Column="0"
+               Text="Statistics:"
+               FontSize="Medium" />
+
+        <Label Grid.Row="1" Grid.Column="0"
+               Text="Signer count" />
+        <Label Grid.Row="1" Grid.Column="1"
+               Text="{Binding SignerCount}" />
+
+        <Label Grid.Row="2" Grid.Column="0"
+               Text="Signature count per signer" />
+        <Label Grid.Row="2" Grid.Column="1"
+               Text="{Binding SignatureCountPerSigner, Converter={StaticResource tupleToString}}" />
+
+        <Label Grid.Row="3" Grid.Column="0"
+               Text="Genuine signature count per signer" />
+        <Label Grid.Row="3" Grid.Column="1"
+               Text="{Binding GenuineSignatureCountPerSigner, Converter={StaticResource tupleToString}}" />
+
+        <Label Grid.Row="4" Grid.Column="0"
+               Text="Forged signature count per signer" />
+        <Label Grid.Row="4" Grid.Column="1"
+               Text="{Binding ForgedSignatureCountPerSigner, Converter={StaticResource tupleToString}}" />
+
+        <Label Grid.Row="5" Grid.Column="0"
+               Text="Max genuine pair count per signer" />
+        <Label Grid.Row="5" Grid.Column="1"
+               Text="{Binding MaxGenuinePairCountPerSigner}" />
+
+        <Label Grid.Row="6" Grid.Column="0"
+               Text="Max forged pair count per signer" />
+        <Label Grid.Row="6" Grid.Column="1"
+               Text="{Binding MaxForgedPairCountPerSigner}" />
+
+    </Grid>
 
 </ContentView>

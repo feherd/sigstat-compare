@@ -6,7 +6,10 @@
              xmlns:viewmodels="clr-namespace:SigStatCompare.ViewModels"
              x:Class="SigStatCompare.Views.DataSetParameters">
     
-    <Grid ColumnDefinitions="auto,100" RowDefinitions="auto,auto,auto,auto,auto">
+    <Grid RowDefinitions="auto,auto,auto,auto,auto"
+          ColumnDefinitions="auto,100"
+          ColumnSpacing="8"
+          Margin="8">
         <Label Grid.Row="0" Grid.Column="0"
                Text="{Binding Name}"
                FontSize="Medium" />
