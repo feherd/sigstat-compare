@@ -76,4 +76,25 @@ class DatasetGenerator
             ForgedSignatureCountPerSigner = forgedSignatureCount != (int.MaxValue, int.MinValue) ? forgedSignatureCount : (0, 0)
         };
     }
+
+    IList<(Signature, Signature)> GeneratePairs()
+    {
+        // TODO
+
+        return new List<(Signature, Signature)>();
+    }
+
+    internal void SaveToCSV()
+    {
+        GeneratePairs();
+
+        // TODO
+    }
+
+    internal void SaveToXLSX()
+    {
+        GeneratePairs();
+
+        // TODO
+    }
 }
