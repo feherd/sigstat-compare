@@ -1,6 +1,7 @@
 using SigStat.Common;
 using SigStat.Common.PipelineItems.Transforms.Preprocessing;
 using SVC2021;
+using SVC2021.Entities;
 
 namespace SigStatCompare.Models;
 
@@ -155,7 +156,7 @@ class DatasetGenerator
         {
             var signatures = signer.Signatures.Where((signature) =>
             {
-                var svc2021Signature = signature as SVC2021.Entities.Svc2021Signature;
+                var svc2021Signature = signature as Svc2021Signature;
                 return dbs.Contains(svc2021Signature.DB)
                     && inputDevices.Contains(svc2021Signature.InputDevice)
                     && splits.Contains(svc2021Signature.Split);
@@ -216,6 +217,25 @@ class DatasetGenerator
             .ToList();
 
         return genuineSignaturePairs;
+    }
+
+    static IList<SignaturePairStatistics> CalculatePairStatistics(IList<(Signature, Signature)> pairs)
+    {
+        var signaturePairStatisticsList = new List<SignaturePairStatistics>();
+
+        foreach ((Signature signature1, Signature signature2) pair in pairs)
+        {
+            var statistics = new SignaturePairStatistics()
+            {
+                referenceSignature = pair.signature1,
+                questionedSignature = pair.signature2,
+                expectedPrediction = pair.signature1.Origin == Origin.Genuine && pair.signature2.Origin == Origin.Genuine ? 1 : 0
+            };
+
+            signaturePairStatisticsList.Add(statistics);
+        }
+
+        return signaturePairStatisticsList;
     }
 
     internal void SaveToCSV(int signerCount)
