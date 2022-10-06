@@ -1,4 +1,5 @@
 using SigStat.Common;
+using SigStat.Common.Pipeline;
 using SigStat.Common.PipelineItems.Transforms.Preprocessing;
 using SVC2021;
 using SVC2021.Entities;
@@ -37,7 +38,7 @@ class DatasetGenerator
     };
     public static readonly ITransformation Scale1Pressure = new Scale()
     {
-        InputFeature = Features.Pressure,
+        InputFeature = Svc2021.Pressure,
         OutputFeature = Features.Pressure,
         Mode = ScalingMode.Scaling1
     };
@@ -110,6 +111,18 @@ class DatasetGenerator
         InputY = Features.Y,
         OutputX = Features.X,
         OutputY = Features.Y
+    };
+
+    private readonly SequentialTransformPipeline sequentialTransformPipeline = new()
+    {
+        Items = new List<ITransformation>()
+        {
+            new IntToDoubleConverterTransformation(Svc2021.X, Features.X),
+            new IntToDoubleConverterTransformation(Svc2021.Y, Features.Y),
+            Scale1X,
+            Scale1Y,
+            Scale1Pressure
+        }
     };
 
     private IList<Signer> signers;
