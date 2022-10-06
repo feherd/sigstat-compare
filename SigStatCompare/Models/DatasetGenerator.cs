@@ -221,13 +221,20 @@ class DatasetGenerator
         }
     }
 
-    IList<(Signature, Signature)> GeneratePairs(int signerCount)
+    IList<(Signature, Signature)> GeneratePairs(DataSetParameters dataSetParameters)
     {
-        Random random = new Random();
+        var random = new Random();
 
-        var genuineSignaturePairs = GenuinePairs(signers[0], random)
-            .Take(signerCount)
-            .ToList();
+        var genuineSignaturePairs = new List<(Signature, Signature)>();
+
+        foreach (var signer in signers.Take(dataSetParameters.signerCount))
+        {
+            genuineSignaturePairs.AddRange(
+                GenuinePairs(signer, random)
+                    .Take(dataSetParameters.genuinePairCountPerSigner)
+            );
+        }
+
 
         return genuineSignaturePairs;
     }
@@ -253,14 +260,22 @@ class DatasetGenerator
 
     internal void SaveToCSV(int signerCount)
     {
-        GeneratePairs(signerCount);
+        IList<(Signature, Signature)> pairs = GeneratePairs(new DataSetParameters()
+        {
+            signerCount = 3,
+            genuinePairCountPerSigner = 10
+        });
 
         // TODO
     }
 
     internal void SaveToXLSX(int signerCount)
     {
-        GeneratePairs(signerCount);
+        GeneratePairs(new DataSetParameters()
+        {
+            signerCount = 3,
+            genuinePairCountPerSigner = 10
+        });
 
         // TODO
     }
