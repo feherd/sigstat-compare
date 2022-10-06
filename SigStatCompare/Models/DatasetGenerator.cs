@@ -1,10 +1,116 @@
 using SigStat.Common;
+using SigStat.Common.PipelineItems.Transforms.Preprocessing;
 using SVC2021;
 
 namespace SigStatCompare.Models;
 
 class DatasetGenerator
 {
+    public static readonly ITransformation Filter = new FilterPoints
+    {
+        InputFeatures = new List<FeatureDescriptor<List<double>>> { Features.X, Features.Y, Features.T },
+        OutputFeatures = new List<FeatureDescriptor<List<double>>> { Features.X, Features.Y, Features.T },
+        KeyFeatureInput = Features.Pressure,
+        KeyFeatureOutput = Features.Pressure
+    };
+
+    public static readonly ITransformation Filter2 = new FilterPoints2
+    {
+        InputFeatures = new List<FeatureDescriptor<List<double>>> { Features.X, Features.Y, Features.T },
+        OutputFeatures = new List<FeatureDescriptor<List<double>>> { Features.X, Features.Y, Features.T },
+        KeyFeatureInput = Features.Pressure,
+        KeyFeatureOutput = Features.Pressure
+    };
+
+    public static readonly ITransformation Scale1X = new Scale()
+    {
+        InputFeature = Features.X,
+        OutputFeature = Features.X,
+        Mode = ScalingMode.Scaling1
+    };
+    public static readonly ITransformation Scale1Y = new Scale()
+    {
+        InputFeature = Features.Y,
+        OutputFeature = Features.Y,
+        Mode = ScalingMode.Scaling1
+    };
+    public static readonly ITransformation Scale1Pressure = new Scale()
+    {
+        InputFeature = Features.Pressure,
+        OutputFeature = Features.Pressure,
+        Mode = ScalingMode.Scaling1
+    };
+
+    public static readonly ITransformation SvcScale1X = new SvcScale()
+    {
+        InputFeature = Features.X,
+        OutputFeature = Features.X,
+        Mode = ScalingMode.Scaling1
+    };
+    public static readonly ITransformation SvcScale1Y = new SvcScale()
+    {
+        InputFeature = Features.Y,
+        OutputFeature = Features.Y,
+        Mode = ScalingMode.Scaling1
+    };
+    public static readonly ITransformation SvcScale1Pressure = new SvcScale()
+    {
+        InputFeature = Features.Pressure,
+        OutputFeature = Features.Pressure,
+        Mode = ScalingMode.Scaling1
+    };
+
+    public static readonly ITransformation ScaleSX = new Scale()
+    {
+        InputFeature = Features.X,
+        OutputFeature = Features.X,
+        Mode = ScalingMode.ScalingS
+    };
+    public static readonly ITransformation ScaleSY = new Scale()
+    {
+        InputFeature = Features.Y,
+        OutputFeature = Features.Y,
+        Mode = ScalingMode.ScalingS
+    };
+    public static readonly ITransformation ScaleSPressure = new Scale()
+    {
+        InputFeature = Features.Pressure,
+        OutputFeature = Features.Pressure,
+        Mode = ScalingMode.ScalingS
+    };
+
+    public static readonly ITransformation TranslateCogX = new TranslatePreproc(OriginType.CenterOfGravity)
+    {
+        InputFeature = Features.X,
+        OutputFeature = Features.X
+    };
+    public static readonly ITransformation TranslateCogY = new TranslatePreproc(OriginType.CenterOfGravity)
+    {
+        InputFeature = Features.Y,
+        OutputFeature = Features.Y
+    };
+    public static readonly ITransformation TranslateCogPressure = new TranslatePreproc(OriginType.CenterOfGravity)
+    {
+        InputFeature = Features.Pressure,
+        OutputFeature = Features.Pressure
+    };
+
+    public static readonly ITransformation Rotation1 = new NormalizeRotation()
+    {
+        InputX = Features.X,
+        InputY = Features.Y,
+        OutputX = Features.X,
+        OutputY = Features.Y,
+        InputT = Features.T
+    };
+    public static readonly ITransformation Rotation2 = new NormalizeRotation2()
+    {
+        InputX = Features.X,
+        InputY = Features.Y,
+        OutputX = Features.X,
+        OutputY = Features.Y
+    };
+
     private IList<Signer> signers;
 
     internal IEnumerable<(int, int)> LoadSignatures(string path)
