@@ -310,7 +310,70 @@ class DatasetGenerator
             genuinePairCountPerSigner = 10
         });
 
-        // TODO
+        string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        string sigStatComparePath = Path.Combine(documentsPath, "SigStatCompare");
+
+
+        Directory.CreateDirectory(sigStatComparePath);
+
+        using var file = new StreamWriter(Path.Combine(sigStatComparePath, "test.csv"));
+
+        file.WriteLine(
+            "ReferenceSignatureFile,"
+            + "ReferenceSigner,"
+            + "ReferenceInput,"
+            + "QuestionedSignatureFile,"
+            + "QuestionedSigner,"
+            + "QuestionedInput,"
+            + "Origin,"
+            + "ExpectedPrediction,"
+            + "stdevX1,"
+            + "stdevY1,"
+            + "stdevP1,"
+            + "count1,"
+            + "duration1,"
+            + "stdevX2,"
+            + "stdevY2,"
+            + "stdevP2,"
+            + "count2,"
+            + "duration2,"
+            + "diffDTW,"
+            + "diffX,"
+            + "diffY,"
+            + "diffP,"
+            + "diffCount,"
+            + "diffDuration"
+        );
+
+        foreach (var statistics in CalculatePairStatistics(pairs))
+        {
+            file.WriteLine(string.Join(',',
+                statistics.referenceSignature.ID,
+                statistics.referenceSignature.Signer.ID,
+                (statistics.referenceSignature as Svc2021Signature).InputDevice,
+                statistics.questionedSignature.ID,
+                statistics.questionedSignature.Signer.ID,
+                (statistics.questionedSignature as Svc2021Signature).InputDevice,
+                statistics.origin,
+                statistics.expectedPrediction,
+                statistics.signatureStatistics1.stdevX,
+                statistics.signatureStatistics1.stdevY,
+                statistics.signatureStatistics1.stdevP,
+                statistics.signatureStatistics1.count,
+                statistics.signatureStatistics1.duration,
+                statistics.signatureStatistics2.stdevX,
+                statistics.signatureStatistics2.stdevY,
+                statistics.signatureStatistics2.stdevP,
+                statistics.signatureStatistics2.count,
+                statistics.signatureStatistics2.duration,
+                statistics.diffDtw,
+                statistics.diffX,
+                statistics.diffY,
+                statistics.diffP,
+                statistics.diffCount,
+                statistics.diffDuration
+            ));
+        }
     }
 
     internal void SaveToXLSX(int signerCount)
