@@ -6,5 +6,5 @@ struct SignatureStatistics
     public double stdevY;
     public double stdevP;
     public int count;
-    public int duration;
+    public long duration;
 }

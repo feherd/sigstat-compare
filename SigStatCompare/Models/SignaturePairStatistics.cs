@@ -6,7 +6,7 @@ struct SignaturePairStatistics
 {
     public Signature referenceSignature;
     public Signature questionedSignature;
-    public int origin;
+    public SignaturePairOrigin origin;
     public double expectedPrediction;
     public SignatureStatistics signatureStatistics1;
     public SignatureStatistics signatureStatistics2;
