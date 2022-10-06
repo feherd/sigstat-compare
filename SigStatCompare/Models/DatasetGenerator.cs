@@ -221,13 +221,26 @@ class DatasetGenerator
         }
     }
 
+    IEnumerable<Signer> RandomSigners(Random random)
+    {
+        var signers1 = new List<Signer>(signers);
+
+        while (signers1.Count > 0)
+        {
+            int index = random.Next(signers1.Count);
+            Signer signer = signers1[index];
+
+            yield return signer;
+        }
+    }
+
     IList<(Signature, Signature)> GeneratePairs(DataSetParameters dataSetParameters)
     {
         var random = new Random();
 
         var genuineSignaturePairs = new List<(Signature, Signature)>();
 
-        foreach (var signer in signers.Take(dataSetParameters.signerCount))
+        foreach (var signer in RandomSigners(random).Take(dataSetParameters.signerCount))
         {
             genuineSignaturePairs.AddRange(
                 GenuinePairs(signer, random)
