@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:SigStatCompare"
              xmlns:views="clr-namespace:SigStatCompare.Views"
              xmlns:viewmodels="clr-namespace:SigStatCompare.ViewModels"
-             x:Class="SigStatCompare.Views.DataSetParameters">
+             x:Class="SigStatCompare.Views.DataSetParametersView">
     
     <Grid RowDefinitions="auto,auto,auto,auto,auto"
           ColumnDefinitions="auto,100"

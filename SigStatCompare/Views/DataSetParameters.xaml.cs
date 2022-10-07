@@ -1,8 +1,8 @@
 namespace SigStatCompare.Views;
 
-public partial class DataSetParameters : ContentView
+public partial class DataSetParametersView : ContentView
 {
-	public DataSetParameters()
+	public DataSetParametersView()
 	{
 		InitializeComponent();
 	}

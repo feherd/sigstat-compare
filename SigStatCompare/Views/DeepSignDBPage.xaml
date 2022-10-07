@@ -44,11 +44,11 @@
         
         <views:StatisticsView Grid.Row="0" Grid.Column="1" BindingContext="{Binding StatisticsViewModel}"/>
         
-        <views:DataSetParameters Grid.Row="1" Grid.Column="0"
-                                 BindingContext="{Binding TrainingSetParameters}"/>
+        <views:DataSetParametersView Grid.Row="1" Grid.Column="0"
+                                     BindingContext="{Binding TrainingSetParameters}"/>
         
-        <views:DataSetParameters Grid.Row="1" Grid.Column="1"
-                                 BindingContext="{Binding TestSetParameters}"/>
+        <views:DataSetParametersView Grid.Row="1" Grid.Column="1"
+                                     BindingContext="{Binding TestSetParameters}"/>
     </Grid>
     
 </ContentPage>
