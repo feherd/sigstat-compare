@@ -296,6 +296,14 @@ class DatasetGenerator
                 signatureStatistics2 = CalculateSignatureStatistics(pair.signature2)
             };
 
+            statistics.diffCount = Math.Abs(
+                ((double)statistics.signatureStatistics2.count / statistics.signatureStatistics1.count) - 1
+            );
+
+            statistics.diffDuration = Math.Abs(
+                ((double)statistics.signatureStatistics2.duration / statistics.signatureStatistics1.duration) - 1
+            );
+
             signaturePairStatisticsList.Add(statistics);
         }
 
