@@ -1,7 +1,7 @@
 using SigStat.Common;
 using SigStat.Common.Pipeline;
 
-namespace SigStatCompare.Models;
+namespace SigStatCompare.Models.Transformations;
 
 class IntToDoubleConverterTransformation : PipelineBase, ITransformation
 {

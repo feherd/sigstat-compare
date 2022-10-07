@@ -5,6 +5,7 @@ using SigStat.Common.PipelineItems.Transforms.Preprocessing;
 using SVC2021;
 using SVC2021.Entities;
 using SigStat.Common.Helpers;
+using SigStatCompare.Models.Transformations;
 
 namespace SigStatCompare.Models;
 
