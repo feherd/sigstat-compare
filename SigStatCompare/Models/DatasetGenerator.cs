@@ -230,7 +230,7 @@ class DatasetGenerator
 
         var pairIndices = Enumerable
             .Range(0, n * m)
-            .Select(i => (i / n, i % n))
+            .Select(i => (i / m, i % m))
             .ToList();
 
         while (pairIndices.Count > 1)
