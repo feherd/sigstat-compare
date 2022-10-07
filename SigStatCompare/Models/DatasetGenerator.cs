@@ -412,32 +412,7 @@ class DatasetGenerator
 
         foreach (var statistics in CalculatePairStatistics(pairs))
         {
-            file.WriteLine(string.Join(',',
-                statistics.referenceSignature.ID,
-                statistics.referenceSignature.Signer.ID,
-                (statistics.referenceSignature as Svc2021Signature).InputDevice,
-                statistics.questionedSignature.ID,
-                statistics.questionedSignature.Signer.ID,
-                (statistics.questionedSignature as Svc2021Signature).InputDevice,
-                statistics.origin,
-                statistics.expectedPrediction,
-                statistics.signatureStatistics1.stdevX,
-                statistics.signatureStatistics1.stdevY,
-                statistics.signatureStatistics1.stdevP,
-                statistics.signatureStatistics1.count,
-                statistics.signatureStatistics1.duration,
-                statistics.signatureStatistics2.stdevX,
-                statistics.signatureStatistics2.stdevY,
-                statistics.signatureStatistics2.stdevP,
-                statistics.signatureStatistics2.count,
-                statistics.signatureStatistics2.duration,
-                statistics.diffDtw,
-                statistics.diffX,
-                statistics.diffY,
-                statistics.diffP,
-                statistics.diffCount,
-                statistics.diffDuration
-            ));
+            file.WriteLine(string.Join(',', statistics.ToList()));
         }
     }
 
@@ -456,32 +431,7 @@ class DatasetGenerator
         var excelWorksheet = excelPackage.Workbook.Worksheets.Add("Test");
 
         var data = CalculatePairStatistics(pairs)
-            .Select(statistics => new List<object>(){
-                statistics.referenceSignature.ID,
-                statistics.referenceSignature.Signer.ID,
-                (statistics.referenceSignature as Svc2021Signature).InputDevice,
-                statistics.questionedSignature.ID,
-                statistics.questionedSignature.Signer.ID,
-                (statistics.questionedSignature as Svc2021Signature).InputDevice,
-                statistics.origin,
-                statistics.expectedPrediction,
-                statistics.signatureStatistics1.stdevX,
-                statistics.signatureStatistics1.stdevY,
-                statistics.signatureStatistics1.stdevP,
-                statistics.signatureStatistics1.count,
-                statistics.signatureStatistics1.duration,
-                statistics.signatureStatistics2.stdevX,
-                statistics.signatureStatistics2.stdevY,
-                statistics.signatureStatistics2.stdevP,
-                statistics.signatureStatistics2.count,
-                statistics.signatureStatistics2.duration,
-                statistics.diffDtw,
-                statistics.diffX,
-                statistics.diffY,
-                statistics.diffP,
-                statistics.diffCount,
-                statistics.diffDuration
-            });
+            .Select(statistics => statistics.ToList());
 
         IList<string> headers = new List<string>(){
             "ReferenceSignatureFile",
