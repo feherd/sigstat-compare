@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SigStatCompare.Views;
+using SigStatCompare.Models;
 
 namespace SigStatCompare.ViewModels;
 
@@ -19,4 +19,12 @@ public partial class DataSetParametersViewModel : ObservableObject
 
     [ObservableProperty]
     private int randomForgeryCountPerSigner;
+
+    internal DataSetParameters DataSetParameters => new()
+    {
+        signerCount = SignerCount,
+        genuinePairCountPerSigner = GenuinePairCountPerSigner,
+        skilledForgeryCountPerSigner = SkilledForgeryCountPerSigner,
+        randomForgeryCountPerSigner = RandomForgeryCountPerSigner,
+    };
 }

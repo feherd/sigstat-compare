@@ -310,13 +310,9 @@ class DatasetGenerator
         return signaturePairStatisticsList;
     }
 
-    internal void SaveToCSV(int signerCount)
+    internal void SaveToCSV(DataSetParameters dataSetParameters)
     {
-        IList<(Signature, Signature)> pairs = GeneratePairs(new DataSetParameters()
-        {
-            signerCount = 3,
-            genuinePairCountPerSigner = 10
-        });
+        IList<(Signature, Signature)> pairs = GeneratePairs(dataSetParameters);
 
         string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         string sigStatComparePath = Path.Combine(documentsPath, "SigStatCompare");
@@ -384,13 +380,9 @@ class DatasetGenerator
         }
     }
 
-    internal void SaveToXLSX(int signerCount)
+    internal void SaveToXLSX(DataSetParameters dataSetParameters)
     {
-        GeneratePairs(new DataSetParameters()
-        {
-            signerCount = 3,
-            genuinePairCountPerSigner = 10
-        });
+        GeneratePairs(dataSetParameters);
 
         // TODO
     }
