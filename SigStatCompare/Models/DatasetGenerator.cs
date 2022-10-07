@@ -199,7 +199,7 @@ class DatasetGenerator
 
     IEnumerable<(Signature, Signature)> GenuinePairs(Signer signer, Random random)
     {
-        var signatures = signer.Signatures;
+        var signatures = signer.Signatures.Where(sig => sig.Origin == Origin.Genuine).ToList();
         var n = signatures.Count;
 
         var pairIndices = Enumerable
