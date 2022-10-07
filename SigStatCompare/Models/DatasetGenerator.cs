@@ -1,8 +1,10 @@
+using OfficeOpenXml;
 using SigStat.Common;
 using SigStat.Common.Pipeline;
 using SigStat.Common.PipelineItems.Transforms.Preprocessing;
 using SVC2021;
 using SVC2021.Entities;
+using SigStat.Common.Helpers;
 
 namespace SigStatCompare.Models;
 
@@ -441,8 +443,78 @@ class DatasetGenerator
 
     internal void SaveToXLSX(DataSetParameters dataSetParameters)
     {
-        GeneratePairs(dataSetParameters);
+        IList<(Signature, Signature)> pairs = GeneratePairs(dataSetParameters);
 
-        // TODO
+        string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        string sigStatComparePath = Path.Combine(documentsPath, "SigStatCompare");
+
+
+        Directory.CreateDirectory(sigStatComparePath);
+
+        using var excelPackage = new ExcelPackage();
+
+        var excelWorksheet = excelPackage.Workbook.Worksheets.Add("Test");
+
+        var data = CalculatePairStatistics(pairs)
+            .Select(statistics => new List<object>(){
+                statistics.referenceSignature.ID,
+                statistics.referenceSignature.Signer.ID,
+                (statistics.referenceSignature as Svc2021Signature).InputDevice,
+                statistics.questionedSignature.ID,
+                statistics.questionedSignature.Signer.ID,
+                (statistics.questionedSignature as Svc2021Signature).InputDevice,
+                statistics.origin,
+                statistics.expectedPrediction,
+                statistics.signatureStatistics1.stdevX,
+                statistics.signatureStatistics1.stdevY,
+                statistics.signatureStatistics1.stdevP,
+                statistics.signatureStatistics1.count,
+                statistics.signatureStatistics1.duration,
+                statistics.signatureStatistics2.stdevX,
+                statistics.signatureStatistics2.stdevY,
+                statistics.signatureStatistics2.stdevP,
+                statistics.signatureStatistics2.count,
+                statistics.signatureStatistics2.duration,
+                statistics.diffDtw,
+                statistics.diffX,
+                statistics.diffY,
+                statistics.diffP,
+                statistics.diffCount,
+                statistics.diffDuration
+            });
+
+        IList<string> headers = new List<string>(){
+            "ReferenceSignatureFile",
+            "ReferenceSigner",
+            "ReferenceInput",
+            "QuestionedSignatureFile",
+            "QuestionedSigner",
+            "QuestionedInput",
+            "Origin",
+            "ExpectedPrediction",
+            "stdevX1",
+            "stdevY1",
+            "stdevP1",
+            "count1",
+            "duration1",
+            "stdevX2",
+            "stdevY2",
+            "stdevP2",
+            "count2",
+            "duration2",
+            "diffDTW",
+            "diffX",
+            "diffY",
+            "diffP",
+            "diffCount",
+            "diffDuration"
+        };
+        var excelRange = excelWorksheet.InsertTable(
+            1, 1,
+            data,
+            headers
+        );
+
+        excelPackage.SaveAs(new FileInfo(Path.Combine(sigStatComparePath, "test.xlsx")));
     }
 }
