@@ -32,7 +32,11 @@ public partial class DeepSignDBViewModel : ObservableObject
 
     [ObservableProperty]
     private DBCategory selectedDBCategory = dbCategories.First();
-    partial void OnSelectedDBCategoryChanged(DBCategory _) => UpdateStatistics();
+    partial void OnSelectedDBCategoryChanged(DBCategory value)
+    {
+        datasetGenerator.DBs = value.DBs;
+        UpdateStatistics();
+    }
 
     public static readonly List<InputDeviceCategory> inputDeviceCategories = new()
     {
@@ -44,7 +48,11 @@ public partial class DeepSignDBViewModel : ObservableObject
 
     [ObservableProperty]
     private InputDeviceCategory selectedInputDeviceCategory = inputDeviceCategories.First();
-    partial void OnSelectedInputDeviceCategoryChanged(InputDeviceCategory _) => UpdateStatistics();
+    partial void OnSelectedInputDeviceCategoryChanged(InputDeviceCategory value)
+    {
+        datasetGenerator.InputDevices = value.InputDevices;
+        UpdateStatistics();
+    }
 
     public static readonly List<SplitCategory> splitCategories = new()
     {
@@ -56,7 +64,11 @@ public partial class DeepSignDBViewModel : ObservableObject
 
     [ObservableProperty]
     private SplitCategory selectedSplitCategory = splitCategories.First();
-    partial void OnSelectedSplitCategoryChanged(SplitCategory _) => UpdateStatistics();
+    partial void OnSelectedSplitCategoryChanged(SplitCategory value)
+    {
+        datasetGenerator.Splits = value.Splits;
+        UpdateStatistics();
+    }
 
     private readonly StatisticsViewModel statisticsViewModel = new();
     public StatisticsViewModel StatisticsViewModel => statisticsViewModel;
@@ -107,6 +119,9 @@ public partial class DeepSignDBViewModel : ObservableObject
                     LoadedSignatures = signatureCount;
                 }
             });
+            datasetGenerator.DBs = selectedDBCategory.DBs;
+            datasetGenerator.InputDevices = selectedInputDeviceCategory.InputDevices;
+            datasetGenerator.Splits = selectedSplitCategory.Splits;
             UpdateStatistics();
         }
     });
@@ -117,11 +132,7 @@ public partial class DeepSignDBViewModel : ObservableObject
 
     private void UpdateStatistics()
     {
-        Statistics statistics = datasetGenerator.CalculateStatistics(
-            selectedDBCategory.DBs,
-            selectedInputDeviceCategory.InputDevices,
-            selectedSplitCategory.Splits
-        );
+        Statistics statistics = datasetGenerator.CalculateStatistics();
 
         StatisticsViewModel.SetStatistics(statistics);
     }

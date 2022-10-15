@@ -131,6 +131,10 @@ class DatasetGenerator
 
     private readonly DtwDistance dtwDistance = new();
 
+    public ISet<DB> DBs { get; set; } = new HashSet<DB>();
+    public ISet<InputDevice> InputDevices { get; set; } = new HashSet<InputDevice>();
+    public ISet<Split> Splits { get; set; } = new HashSet<Split>();
+
     private IList<Signer> signers;
 
     internal IEnumerable<(int, int)> LoadSignatures(string path)
@@ -160,10 +164,7 @@ class DatasetGenerator
         if (count > signatureCount.max) signatureCount.max = count;
     }
 
-    internal Statistics CalculateStatistics(
-        HashSet<DB> dbs,
-        HashSet<InputDevice> inputDevices,
-        HashSet<Split> splits)
+    internal Statistics CalculateStatistics()
     {
         if (signers == null) return new Statistics();
 
@@ -176,9 +177,9 @@ class DatasetGenerator
             var signatures = signer.Signatures.Where((signature) =>
             {
                 var svc2021Signature = signature as Svc2021Signature;
-                return dbs.Contains(svc2021Signature.DB)
-                    && inputDevices.Contains(svc2021Signature.InputDevice)
-                    && splits.Contains(svc2021Signature.Split);
+                return DBs.Contains(svc2021Signature.DB)
+                    && InputDevices.Contains(svc2021Signature.InputDevice)
+                    && Splits.Contains(svc2021Signature.Split);
             });
 
             int count = signatures.Count();
