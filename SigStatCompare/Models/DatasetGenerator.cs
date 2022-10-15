@@ -137,6 +137,8 @@ class DatasetGenerator
     public ISet<Split> Splits { get; set; } = new HashSet<Split>();
 
     private IList<Signer> signers;
+    
+    private Random random;
 
     internal IEnumerable<(int, int)> LoadSignatures(string path)
     {
@@ -210,7 +212,7 @@ class DatasetGenerator
         });
     }
 
-    IEnumerable<(Signature, Signature)> GenuinePairs(Signer signer, Random random)
+    IEnumerable<(Signature, Signature)> GenuinePairs(Signer signer)
     {
         var signatures = signer.Signatures.Where(sig => sig.Origin == Origin.Genuine).ToList();
         var n = signatures.Count;
@@ -226,7 +228,7 @@ class DatasetGenerator
             .Select(p => (signatures[p.Item1], signatures[p.Item2]));
     }
 
-    IEnumerable<(Signature, Signature)> ForgeryPairs(Signer signer, Random random)
+    IEnumerable<(Signature, Signature)> ForgeryPairs(Signer signer)
     {
         var genuineSignatures = signer.Signatures.Where(sig => sig.Origin == Origin.Genuine).ToList();
         var forgedSignatures = signer.Signatures.Where(sig => sig.Origin == Origin.Forged).ToList();
@@ -243,7 +245,7 @@ class DatasetGenerator
             .Select(p => (genuineSignatures[p.Item1], forgedSignatures[p.Item2]));
     }
 
-    IEnumerable<(Signature, Signature)> RandomPairs(Signer signer, Random random)
+    IEnumerable<(Signature, Signature)> RandomPairs(Signer signer)
     {
         var genuineSignatures = signer.Signatures.Where(sig => sig.Origin == Origin.Genuine).ToList();
         var randomSignatures = signers.Where(s => s != signer).SelectMany(s => s.Signatures).ToList();
@@ -264,7 +266,7 @@ class DatasetGenerator
 
     IList<(Signature, Signature)> GeneratePairs(DataSetParameters dataSetParameters, int seed)
     {
-        var random = new Random(seed);
+        random = new Random(seed);
 
         var signaturePairs = new List<(Signature, Signature)>();
 
@@ -275,17 +277,17 @@ class DatasetGenerator
         foreach (var signer in signatures)
         {
             signaturePairs.AddRange(
-                GenuinePairs(signer, random)
+                GenuinePairs(signer)
                     .Take(dataSetParameters.genuinePairCountPerSigner)
             );
 
             signaturePairs.AddRange(
-                ForgeryPairs(signer, random)
+                ForgeryPairs(signer)
                     .Take(dataSetParameters.skilledForgeryCountPerSigner)
             );
 
             signaturePairs.AddRange(
-                RandomPairs(signer, random)
+                RandomPairs(signer)
                     .Take(dataSetParameters.randomForgeryCountPerSigner)
             );
         }
