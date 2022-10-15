@@ -174,13 +174,7 @@ class DatasetGenerator
         (int min, int max) forgedSignatureCount = (int.MaxValue, int.MinValue);
         foreach (var signer in signers)
         {
-            var signatures = signer.Signatures.Where((signature) =>
-            {
-                var svc2021Signature = signature as Svc2021Signature;
-                return DBs.Contains(svc2021Signature.DB)
-                    && InputDevices.Contains(svc2021Signature.InputDevice)
-                    && Splits.Contains(svc2021Signature.Split);
-            });
+            IEnumerable<Signature> signatures = FilterSignatures(signer.Signatures);
 
             int count = signatures.Count();
             int genuine = signatures.Count(signature => signature.Origin == Origin.Genuine);
@@ -202,6 +196,17 @@ class DatasetGenerator
             GenuineSignatureCountPerSigner = genuineSignatureCount != (int.MaxValue, int.MinValue) ? genuineSignatureCount : (0, 0),
             ForgedSignatureCountPerSigner = forgedSignatureCount != (int.MaxValue, int.MinValue) ? forgedSignatureCount : (0, 0)
         };
+    }
+
+    private IEnumerable<Signature> FilterSignatures(IEnumerable<Signature> signatures)
+    {
+        return signatures.Where((signature) =>
+        {
+            var svc2021Signature = signature as Svc2021Signature;
+            return DBs.Contains(svc2021Signature.DB)
+                && InputDevices.Contains(svc2021Signature.InputDevice)
+                && Splits.Contains(svc2021Signature.Split);
+        });
     }
 
     IEnumerable<(Signature, Signature)> GenuinePairs(Signer signer, Random random)
@@ -286,6 +291,7 @@ class DatasetGenerator
         {
             int index = random.Next(signers1.Count);
             Signer signer = signers1[index];
+            signers1.RemoveAt(index);
 
             yield return signer;
         }
@@ -297,7 +303,11 @@ class DatasetGenerator
 
         var signaturePairs = new List<(Signature, Signature)>();
 
-        foreach (var signer in RandomSigners(random).Take(dataSetParameters.signerCount))
+        var signatures = RandomSigners(random)
+            .Where(signer => FilterSignatures(signer.Signatures).Any())
+            .Take(dataSetParameters.signerCount);
+
+        foreach (var signer in signatures)
         {
             signaturePairs.AddRange(
                 GenuinePairs(signer, random)
