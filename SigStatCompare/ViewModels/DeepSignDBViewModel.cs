@@ -126,9 +126,15 @@ public partial class DeepSignDBViewModel : ObservableObject
         }
     });
 
-    public Command SaveToCSV => new(() => datasetGenerator.SaveToCSV(trainingSetParameters.DataSetParameters, seed));
+    public Command SaveToCSV => new(async () =>
+    {
+        await Task.Run(() => datasetGenerator.SaveToCSV(trainingSetParameters.DataSetParameters, seed));
+    });
 
-    public Command SaveToXLSX => new(() => datasetGenerator.SaveToXLSX(trainingSetParameters.DataSetParameters, seed));
+    public Command SaveToXLSX => new(async () =>
+    {
+        await Task.Run(() => datasetGenerator.SaveToXLSX(trainingSetParameters.DataSetParameters, seed));
+    });
 
     private void UpdateStatistics()
     {
