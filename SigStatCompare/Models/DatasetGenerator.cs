@@ -7,6 +7,7 @@ using SVC2021.Entities;
 using SigStat.Common.Helpers;
 using SigStatCompare.Models.Transformations;
 using SigStat.Common.Algorithms.Distances;
+using SigStatCompare.Models.Helpers;
 
 namespace SigStatCompare.Models;
 
@@ -220,17 +221,9 @@ class DatasetGenerator
             .Where(p => p.Item1 < p.Item2)
             .ToList();
 
-        while (pairIndices.Count > 1)
-        {
-            int index = random.Next(pairIndices.Count);
-            (int firstSignatureIndex, int secondSignatureIndex) = pairIndices[index];
-            pairIndices.RemoveAt(index);
-
-            yield return (
-                signatures[firstSignatureIndex],
-                signatures[secondSignatureIndex]
-            );
-        }
+        return pairIndices
+            .RandomOrder(random)
+            .Select(p => (signatures[p.Item1], signatures[p.Item2]));
     }
 
     IEnumerable<(Signature, Signature)> ForgeryPairs(Signer signer, Random random)
@@ -245,17 +238,9 @@ class DatasetGenerator
             .Select(i => (i / m, i % m))
             .ToList();
 
-        while (pairIndices.Count > 1)
-        {
-            int index = random.Next(pairIndices.Count);
-            (int genuineSignatureIndex, int forgedSignatureIndex) = pairIndices[index];
-            pairIndices.RemoveAt(index);
-
-            yield return (
-                genuineSignatures[genuineSignatureIndex],
-                forgedSignatures[forgedSignatureIndex]
-            );
-        }
+        return pairIndices
+            .RandomOrder(random)
+            .Select(p => (genuineSignatures[p.Item1], forgedSignatures[p.Item2]));
     }
 
     IEnumerable<(Signature, Signature)> RandomPairs(Signer signer, Random random)
@@ -270,32 +255,12 @@ class DatasetGenerator
             .Select(i => (i / m, i % m))
             .ToList();
 
-        while (pairIndices.Count > 1)
-        {
-            int index = random.Next(pairIndices.Count);
-            (int genuineSignatureIndex, int randomSignatureIndex) = pairIndices[index];
-            pairIndices.RemoveAt(index);
-
-            yield return (
-                genuineSignatures[genuineSignatureIndex],
-                randomSignatures[randomSignatureIndex]
-            );
-        }
+        return pairIndices
+            .RandomOrder(random)
+            .Select(p => (genuineSignatures[p.Item1], randomSignatures[p.Item2]));
     }
 
-    IEnumerable<Signer> RandomSigners(Random random)
-    {
-        var signers1 = new List<Signer>(signers);
-
-        while (signers1.Count > 0)
-        {
-            int index = random.Next(signers1.Count);
-            Signer signer = signers1[index];
-            signers1.RemoveAt(index);
-
-            yield return signer;
-        }
-    }
+    IEnumerable<Signer> RandomSigners(Random random) => signers.RandomOrder(random);
 
     IList<(Signature, Signature)> GeneratePairs(DataSetParameters dataSetParameters, int seed)
     {
