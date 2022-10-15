@@ -5,7 +5,6 @@
              xmlns:views="clr-namespace:SigStatCompare.Views"
              xmlns:viewmodels="clr-namespace:SigStatCompare.ViewModels"
              x:Class="SigStatCompare.Views.DataSetParametersView">
-    
     <Grid RowDefinitions="auto,auto,auto,auto,auto"
           ColumnDefinitions="auto,100"
           ColumnSpacing="8"
@@ -43,4 +42,5 @@
                Text="{Binding RandomForgeryCountPerSigner}"/>
         
     </Grid>
+    
 </ContentView>

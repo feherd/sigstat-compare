@@ -287,9 +287,9 @@ class DatasetGenerator
         }
     }
 
-    IList<(Signature, Signature)> GeneratePairs(DataSetParameters dataSetParameters)
+    IList<(Signature, Signature)> GeneratePairs(DataSetParameters dataSetParameters, int seed)
     {
-        var random = new Random();
+        var random = new Random(seed);
 
         var signaturePairs = new List<(Signature, Signature)>();
 
@@ -372,9 +372,9 @@ class DatasetGenerator
         return signaturePairStatisticsList;
     }
 
-    internal void SaveToCSV(DataSetParameters dataSetParameters)
+    internal void SaveToCSV(DataSetParameters dataSetParameters, int seed)
     {
-        IList<(Signature, Signature)> pairs = GeneratePairs(dataSetParameters);
+        IList<(Signature, Signature)> pairs = GeneratePairs(dataSetParameters, seed);
 
         string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         string sigStatComparePath = Path.Combine(documentsPath, "SigStatCompare");
@@ -417,9 +417,9 @@ class DatasetGenerator
         }
     }
 
-    internal void SaveToXLSX(DataSetParameters dataSetParameters)
+    internal void SaveToXLSX(DataSetParameters dataSetParameters, int seed)
     {
-        IList<(Signature, Signature)> pairs = GeneratePairs(dataSetParameters);
+        IList<(Signature, Signature)> pairs = GeneratePairs(dataSetParameters, seed);
 
         string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         string sigStatComparePath = Path.Combine(documentsPath, "SigStatCompare");

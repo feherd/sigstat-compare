@@ -61,6 +61,9 @@ public partial class DeepSignDBViewModel : ObservableObject
     private readonly StatisticsViewModel statisticsViewModel = new();
     public StatisticsViewModel StatisticsViewModel => statisticsViewModel;
 
+    [ObservableProperty]
+    public int seed = 0;
+
     private readonly DataSetParametersViewModel trainingSetParameters = new()
     {
         Name = "Training:"
@@ -108,9 +111,9 @@ public partial class DeepSignDBViewModel : ObservableObject
         }
     });
 
-    public Command SaveToCSV => new(() => datasetGenerator.SaveToCSV(trainingSetParameters.DataSetParameters));
+    public Command SaveToCSV => new(() => datasetGenerator.SaveToCSV(trainingSetParameters.DataSetParameters, seed));
 
-    public Command SaveToXLSX => new(() => datasetGenerator.SaveToXLSX(trainingSetParameters.DataSetParameters));
+    public Command SaveToXLSX => new(() => datasetGenerator.SaveToXLSX(trainingSetParameters.DataSetParameters, seed));
 
     private void UpdateStatistics()
     {

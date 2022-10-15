@@ -6,7 +6,7 @@
              xmlns:viewmodels="clr-namespace:SigStatCompare.ViewModels"
              x:Class="SigStatCompare.Views.DeepSignDBPage"
              Title="{OnIdiom Default='DeepSignDBPage', Desktop=''}">
-    
+
     <ContentPage.BindingContext>
         <viewmodels:DeepSignDBViewModel/>
     </ContentPage.BindingContext>
@@ -23,7 +23,7 @@
 
     <Grid RowDefinitions="auto,auto"
           ColumnDefinitions="auto, auto">
-        
+
         <VerticalStackLayout Grid.Row="0" Grid.Column="0"
                              Margin="8">
             <Label Text="{Binding LoadedSigners, StringFormat='Loaded {0} signers'}"/>
@@ -40,15 +40,20 @@
                 ItemsSource="{x:Static viewmodels:DeepSignDBViewModel.splitCategories}"
                 SelectedItem="{Binding SelectedSplitCategory}"
                 ItemDisplayBinding="{Binding Name}"/>
+            <HorizontalStackLayout>
+                <Label Text="Seed"
+                       VerticalOptions="Center"/>
+                <Entry Text="{Binding Seed}"/>
+            </HorizontalStackLayout>
         </VerticalStackLayout>
-        
+
         <views:StatisticsView Grid.Row="0" Grid.Column="1" BindingContext="{Binding StatisticsViewModel}"/>
-        
+
         <views:DataSetParametersView Grid.Row="1" Grid.Column="0"
                                      BindingContext="{Binding TrainingSetParameters}"/>
-        
+
         <views:DataSetParametersView Grid.Row="1" Grid.Column="1"
                                      BindingContext="{Binding TestSetParameters}"/>
     </Grid>
-    
+
 </ContentPage>
