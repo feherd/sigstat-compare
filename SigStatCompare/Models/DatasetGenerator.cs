@@ -6,6 +6,7 @@ using SVC2021;
 using SVC2021.Entities;
 using SigStat.Common.Helpers;
 using SigStatCompare.Models.Transformations;
+using SigStat.Common.Algorithms.Distances;
 
 namespace SigStatCompare.Models;
 
@@ -127,6 +128,8 @@ class DatasetGenerator
             Scale1Pressure
         }
     };
+
+    private readonly DtwDistance dtwDistance = new();
 
     private IList<Signer> signers;
 
@@ -357,6 +360,30 @@ class DatasetGenerator
                 signatureStatistics1 = CalculateSignatureStatistics(pair.signature1),
                 signatureStatistics2 = CalculateSignatureStatistics(pair.signature2)
             };
+
+            {
+                var signature1Points = pair.signature1
+                    .GetAggregateFeature(new List<FeatureDescriptor>() { Features.X, Features.Y })
+                    .ToArray();
+
+                var signature2Points = pair.signature2
+                .GetAggregateFeature(new List<FeatureDescriptor>() { Features.X, Features.Y })
+                .ToArray();
+
+                statistics.diffDtw = dtwDistance.Calculate(signature1Points, signature2Points);
+            }
+
+            statistics.diffX = Math.Abs(
+                (statistics.signatureStatistics1.stdevX - statistics.signatureStatistics2.stdevX) / statistics.signatureStatistics1.stdevX
+            );
+
+            statistics.diffY = Math.Abs(
+                (statistics.signatureStatistics1.stdevY - statistics.signatureStatistics2.stdevY) / statistics.signatureStatistics1.stdevY
+            );
+
+            statistics.diffP = Math.Abs(
+                (statistics.signatureStatistics1.stdevP - statistics.signatureStatistics2.stdevP) / statistics.signatureStatistics1.stdevP
+            );
 
             statistics.diffCount = Math.Abs(
                 ((double)statistics.signatureStatistics2.count / statistics.signatureStatistics1.count) - 1
