@@ -283,17 +283,33 @@ class DatasetGenerator
     }
 
 
-    IEnumerable<(Signature, Signature)> GenerateTrainingAndTestPairs(DataSetParameters dataSetParameters, int seed)
+    (IEnumerable<(Signature, Signature)>, IEnumerable<(Signature, Signature)>) GenerateTrainingAndTestPairs(
+        DataSetParameters trainingSetParameters,
+        DataSetParameters testSetParameters,
+        int seed)
     {
         random = new Random(seed);
 
         var randomSigners = signers
             .Where(signer => FilterSignatures(signer.Signatures).Any())
-            .RandomOrder(random);
+            .RandomOrder(random)
+            .ToList();
 
-        var trainingPairs = GeneratePairs(randomSigners.Take(dataSetParameters.signerCount), dataSetParameters);
+        var trainingPairs = GeneratePairs(
+            randomSigners
+                .Take(trainingSetParameters.signerCount), trainingSetParameters
+        );
+        
+        var testPairs = GeneratePairs(
+            randomSigners
+                .Take(new Range(
+                    trainingSetParameters.signerCount,
+                    trainingSetParameters.signerCount + testSetParameters.signerCount)
+                ),
+            testSetParameters
+        );
 
-        return trainingPairs;
+        return (trainingPairs, testPairs);
     }
 
     SignatureStatistics CalculateSignatureStatistics(Signature signature)
@@ -384,8 +400,12 @@ class DatasetGenerator
         int seed,
         IDataSetExporter dataSetExporter)
     {
-        var pairs = GenerateTrainingAndTestPairs(trainingSetParameters, seed);
-        var dataSet = CalculatePairStatistics(pairs);
-        dataSetExporter.Export($"{seed}_training", dataSet);
+        var (trainingPairs, testPairs) = GenerateTrainingAndTestPairs(trainingSetParameters, testSetParameters, seed);
+        
+        var trainingSet = CalculatePairStatistics(trainingPairs);
+        dataSetExporter.Export($"{seed}_training", trainingSet);
+
+        var testSet = CalculatePairStatistics(testPairs);
+        dataSetExporter.Export($"{seed}_test", testSet);
     }
 }
