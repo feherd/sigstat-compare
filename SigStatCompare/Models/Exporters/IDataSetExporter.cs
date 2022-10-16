@@ -1,4 +1,4 @@
-namespace SigStatCompare.Models;
+namespace SigStatCompare.Models.Exporters;
 
 interface IDataSetExporter
 {
