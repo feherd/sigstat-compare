@@ -378,15 +378,10 @@ class DatasetGenerator
         return signaturePairStatisticsList;
     }
 
-    public IList<SignaturePairStatistics> GenerateDataSet(DataSetParameters dataSetParameters, int seed)
-    {
-        var pairs = GenerateTrainingAndTestPairs(dataSetParameters, seed);
-        return CalculatePairStatistics(pairs);
-    }
-
     internal void Save(DataSetParameters dataSetParameters, int seed, IDataSetExporter dataSetExporter)
     {
-        var dataSet = GenerateDataSet(dataSetParameters, seed);
+        var pairs = GenerateTrainingAndTestPairs(dataSetParameters, seed);
+        var dataSet = CalculatePairStatistics(pairs);
         dataSetExporter.Export("test", dataSet);
     }
 }
