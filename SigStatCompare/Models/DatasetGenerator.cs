@@ -299,7 +299,7 @@ class DatasetGenerator
             randomSigners
                 .Take(trainingSetParameters.signerCount), trainingSetParameters
         );
-        
+
         var testPairs = GeneratePairs(
             randomSigners
                 .Take(new Range(
@@ -317,26 +317,19 @@ class DatasetGenerator
         var statistics = new SignatureStatistics();
 
         sequentialTransformPipeline.Transform(signature);
-        {
-            var x = signature.GetFeature(Features.X);
-            var meanX = x.Average();
-            statistics.stdevX = Math.Sqrt(x.Select(d => (d - meanX) * (d - meanX)).Sum() / (x.Count - 1));
-        }
-        {
-            var y = signature.GetFeature(Features.Y);
-            var meanY = y.Average();
-            statistics.stdevY = Math.Sqrt(y.Select(d => (d - meanY) * (d - meanY)).Sum() / (y.Count - 1));
-        }
-        {
-            var p = signature.GetFeature(Features.Pressure);
-            var meanP = p.Average();
-            statistics.stdevP = Math.Sqrt(p.Select(d => (d - meanP) * (d - meanP)).Sum() / (p.Count - 1));
-        }
-        {
-            var t = signature.GetFeature(Svc2021.T);
-            statistics.count = t.Count;
-            statistics.duration = t.Last() - t.First();
-        }
+
+        var x = signature.GetFeature(Features.X);
+        statistics.stdevX = MathHelper.StdDiviation(x);
+
+        var y = signature.GetFeature(Features.Y);
+        statistics.stdevY = MathHelper.StdDiviation(y);
+
+        var p = signature.GetFeature(Features.Pressure);
+        statistics.stdevP = MathHelper.StdDiviation(p);
+
+        var t = signature.GetFeature(Svc2021.T);
+        statistics.count = t.Count;
+        statistics.duration = t.Last() - t.First();
 
         return statistics;
     }
@@ -401,7 +394,7 @@ class DatasetGenerator
         IDataSetExporter dataSetExporter)
     {
         var (trainingPairs, testPairs) = GenerateTrainingAndTestPairs(trainingSetParameters, testSetParameters, seed);
-        
+
         var trainingSet = CalculatePairStatistics(trainingPairs);
         dataSetExporter.Export($"{seed}_training", trainingSet);
 
