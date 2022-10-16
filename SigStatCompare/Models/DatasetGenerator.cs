@@ -277,22 +277,23 @@ class DatasetGenerator
             .Concat(randomPairs);
     }
 
+    IEnumerable<(Signature, Signature)> GeneratePairs(IEnumerable<Signer> signers, DataSetParameters dataSetParameters)
+    {
+        return signers.SelectMany(signer => GeneratePairs(signer, dataSetParameters));
+    }
+
+
     IList<(Signature, Signature)> GenerateTrainingAndTestPairs(DataSetParameters dataSetParameters, int seed)
     {
         random = new Random(seed);
-
-        var signaturePairs = new List<(Signature, Signature)>();
 
         var randomSigners = signers
             .Where(signer => FilterSignatures(signer.Signatures).Any())
             .RandomOrder(random);
 
-        foreach (var signer in randomSigners.Take(dataSetParameters.signerCount))
-        {
-            signaturePairs.AddRange(GeneratePairs(signer, dataSetParameters));
-        }
+        var trainingPairs = GeneratePairs(randomSigners.Take(dataSetParameters.signerCount), dataSetParameters);
 
-        return signaturePairs;
+        return trainingPairs.ToList();
     }
 
     SignatureStatistics CalculateSignatureStatistics(Signature signature)
