@@ -283,12 +283,11 @@ class DatasetGenerator
 
         var signaturePairs = new List<(Signature, Signature)>();
 
-        var signatures = signers
-            .RandomOrder(random)
+        var randomSigners = signers
             .Where(signer => FilterSignatures(signer.Signatures).Any())
-            .Take(dataSetParameters.signerCount);
+            .RandomOrder(random);
 
-        foreach (var signer in signatures)
+        foreach (var signer in randomSigners.Take(dataSetParameters.signerCount))
         {
             signaturePairs.AddRange(GeneratePairs(signer, dataSetParameters));
         }
