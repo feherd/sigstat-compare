@@ -137,8 +137,35 @@ class DatasetGenerator
     public ISet<Split> Splits { get; set; } = new HashSet<Split>();
 
     private IList<Signer> signers;
-    
+
     private Random random;
+
+    static readonly IList<string> headers = new List<string>(){
+            "ReferenceSignatureFile",
+            "ReferenceSigner",
+            "ReferenceInput",
+            "QuestionedSignatureFile",
+            "QuestionedSigner",
+            "QuestionedInput",
+            "Origin",
+            "ExpectedPrediction",
+            "stdevX1",
+            "stdevY1",
+            "stdevP1",
+            "count1",
+            "duration1",
+            "stdevX2",
+            "stdevY2",
+            "stdevP2",
+            "count2",
+            "duration2",
+            "diffDTW",
+            "diffX",
+            "diffY",
+            "diffP",
+            "diffCount",
+            "diffDuration"
+        };
 
     internal IEnumerable<(int, int)> LoadSignatures(string path)
     {
@@ -384,38 +411,11 @@ class DatasetGenerator
         string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         string sigStatComparePath = Path.Combine(documentsPath, "SigStatCompare");
 
-
         Directory.CreateDirectory(sigStatComparePath);
 
         using var file = new StreamWriter(Path.Combine(sigStatComparePath, "test.csv"));
 
-        file.WriteLine(
-            "ReferenceSignatureFile,"
-            + "ReferenceSigner,"
-            + "ReferenceInput,"
-            + "QuestionedSignatureFile,"
-            + "QuestionedSigner,"
-            + "QuestionedInput,"
-            + "Origin,"
-            + "ExpectedPrediction,"
-            + "stdevX1,"
-            + "stdevY1,"
-            + "stdevP1,"
-            + "count1,"
-            + "duration1,"
-            + "stdevX2,"
-            + "stdevY2,"
-            + "stdevP2,"
-            + "count2,"
-            + "duration2,"
-            + "diffDTW,"
-            + "diffX,"
-            + "diffY,"
-            + "diffP,"
-            + "diffCount,"
-            + "diffDuration"
-        );
-
+        file.WriteLine(string.Join(',', headers));
         foreach (var statistics in CalculatePairStatistics(pairs))
         {
             file.WriteLine(string.Join(',', statistics.ToList()));
@@ -439,32 +439,6 @@ class DatasetGenerator
         var data = CalculatePairStatistics(pairs)
             .Select(statistics => statistics.ToList());
 
-        IList<string> headers = new List<string>(){
-            "ReferenceSignatureFile",
-            "ReferenceSigner",
-            "ReferenceInput",
-            "QuestionedSignatureFile",
-            "QuestionedSigner",
-            "QuestionedInput",
-            "Origin",
-            "ExpectedPrediction",
-            "stdevX1",
-            "stdevY1",
-            "stdevP1",
-            "count1",
-            "duration1",
-            "stdevX2",
-            "stdevY2",
-            "stdevP2",
-            "count2",
-            "duration2",
-            "diffDTW",
-            "diffX",
-            "diffY",
-            "diffP",
-            "diffCount",
-            "diffDuration"
-        };
         var excelRange = excelWorksheet.InsertTable(
             1, 1,
             data,
