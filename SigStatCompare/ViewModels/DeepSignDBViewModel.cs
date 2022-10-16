@@ -41,7 +41,6 @@ public partial class DeepSignDBViewModel : ObservableObject
 
     public static readonly List<InputDeviceCategory> inputDeviceCategories = new()
     {
-        new InputDeviceCategory("All", Enum.GetValues<InputDevice>().ToHashSet()),
         new InputDeviceCategory(InputDevice.Unkown.ToString(), new HashSet<InputDevice>{InputDevice.Unkown}),
         new InputDeviceCategory(InputDevice.Finger.ToString(), new HashSet<InputDevice>{InputDevice.Finger}),
         new InputDeviceCategory(InputDevice.Stylus.ToString(), new HashSet<InputDevice>{InputDevice.Stylus})
