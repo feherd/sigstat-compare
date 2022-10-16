@@ -261,15 +261,14 @@ class DatasetGenerator
             .Select(p => (genuineSignatures[p.Item1], randomSignatures[p.Item2]));
     }
 
-    IEnumerable<Signer> RandomSigners(Random random) => signers.RandomOrder(random);
-
     IList<(Signature, Signature)> GeneratePairs(DataSetParameters dataSetParameters, int seed)
     {
         random = new Random(seed);
 
         var signaturePairs = new List<(Signature, Signature)>();
 
-        var signatures = RandomSigners(random)
+        var signatures = signers
+            .RandomOrder(random)
             .Where(signer => FilterSignatures(signer.Signatures).Any())
             .Take(dataSetParameters.signerCount);
 
