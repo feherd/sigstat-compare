@@ -404,9 +404,15 @@ class DatasetGenerator
         return signaturePairStatisticsList;
     }
 
-    internal void SaveToCSV(DataSetParameters dataSetParameters, int seed)
+    public IList<SignaturePairStatistics> GenerateDataSet(DataSetParameters dataSetParameters, int seed)
     {
         IList<(Signature, Signature)> pairs = GeneratePairs(dataSetParameters, seed);
+        return CalculatePairStatistics(pairs);
+    }
+
+    internal void SaveToCSV(DataSetParameters dataSetParameters, int seed)
+    {
+        var dataSet = GenerateDataSet(dataSetParameters, seed);
 
         string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         string sigStatComparePath = Path.Combine(documentsPath, "SigStatCompare");
@@ -416,7 +422,7 @@ class DatasetGenerator
         using var file = new StreamWriter(Path.Combine(sigStatComparePath, "test.csv"));
 
         file.WriteLine(string.Join(',', headers));
-        foreach (var statistics in CalculatePairStatistics(pairs))
+        foreach (var statistics in dataSet)
         {
             file.WriteLine(string.Join(',', statistics.ToList()));
         }
@@ -424,11 +430,10 @@ class DatasetGenerator
 
     internal void SaveToXLSX(DataSetParameters dataSetParameters, int seed)
     {
-        IList<(Signature, Signature)> pairs = GeneratePairs(dataSetParameters, seed);
+        var dataSet = GenerateDataSet(dataSetParameters, seed);
 
         string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         string sigStatComparePath = Path.Combine(documentsPath, "SigStatCompare");
-
 
         Directory.CreateDirectory(sigStatComparePath);
 
@@ -436,7 +441,7 @@ class DatasetGenerator
 
         var excelWorksheet = excelPackage.Workbook.Worksheets.Add("Test");
 
-        var data = CalculatePairStatistics(pairs)
+        var data = dataSet
             .Select(statistics => statistics.ToList());
 
         var excelRange = excelWorksheet.InsertTable(
