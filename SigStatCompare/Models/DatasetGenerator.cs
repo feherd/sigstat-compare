@@ -370,7 +370,7 @@ class DatasetGenerator
                 }
                 else
                 {
-                    statistics.origin = SignaturePairOrigin.Skilled;
+                    statistics.origin = SignaturePairOrigin.Forged;
                     statistics.expectedPrediction = 0;
                 }
             }
