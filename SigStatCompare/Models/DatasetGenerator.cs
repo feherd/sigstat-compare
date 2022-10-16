@@ -128,6 +128,19 @@ class DatasetGenerator
             Scale1Pressure
         }
     };
+    private readonly SequentialTransformPipeline zNormalizationPipeline = new()
+    {
+        Items = {
+            new ZNormalization(){
+                InputFeature = Features.X,
+                OutputFeature = Features.X
+            },
+            new ZNormalization(){
+                InputFeature = Features.Y,
+                OutputFeature = Features.Y
+            }
+        }
+    };
 
     private readonly DtwDistance dtwDistance = new();
 
@@ -350,6 +363,9 @@ class DatasetGenerator
             };
 
             {
+                zNormalizationPipeline.Transform(signature1);
+                zNormalizationPipeline.Transform(signature2);
+
                 var signature1Points = signature1
                     .GetAggregateFeature(new List<FeatureDescriptor>() { Features.X, Features.Y })
                     .ToArray();
