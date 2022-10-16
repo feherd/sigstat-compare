@@ -277,7 +277,7 @@ class DatasetGenerator
             .Concat(randomPairs);
     }
 
-    IList<(Signature, Signature)> GeneratePairs(DataSetParameters dataSetParameters, int seed)
+    IList<(Signature, Signature)> GenerateTrainingAndTestPairs(DataSetParameters dataSetParameters, int seed)
     {
         random = new Random(seed);
 
@@ -380,7 +380,7 @@ class DatasetGenerator
 
     public IList<SignaturePairStatistics> GenerateDataSet(DataSetParameters dataSetParameters, int seed)
     {
-        IList<(Signature, Signature)> pairs = GeneratePairs(dataSetParameters, seed);
+        IList<(Signature, Signature)> pairs = GenerateTrainingAndTestPairs(dataSetParameters, seed);
         return CalculatePairStatistics(pairs);
     }
 
