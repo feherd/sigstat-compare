@@ -329,25 +329,25 @@ class DatasetGenerator
     {
         var signaturePairStatisticsList = new List<SignaturePairStatistics>();
 
-        foreach ((Signature signature1, Signature signature2) pair in pairs)
+        foreach ((Signature signature1, Signature signature2) in pairs)
         {
             var statistics = new SignaturePairStatistics()
             {
-                referenceSignature = pair.signature1,
-                questionedSignature = pair.signature2,
-                expectedPrediction = pair.signature1.Origin == Origin.Genuine && pair.signature2.Origin == Origin.Genuine ? 1 : 0,
-                signatureStatistics1 = CalculateSignatureStatistics(pair.signature1),
-                signatureStatistics2 = CalculateSignatureStatistics(pair.signature2)
+                referenceSignature = signature1,
+                questionedSignature = signature2,
+                expectedPrediction = signature1.Origin == Origin.Genuine && signature2.Origin == Origin.Genuine ? 1 : 0,
+                signatureStatistics1 = CalculateSignatureStatistics(signature1),
+                signatureStatistics2 = CalculateSignatureStatistics(signature2)
             };
 
             {
-                var signature1Points = pair.signature1
+                var signature1Points = signature1
                     .GetAggregateFeature(new List<FeatureDescriptor>() { Features.X, Features.Y })
                     .ToArray();
 
-                var signature2Points = pair.signature2
-                .GetAggregateFeature(new List<FeatureDescriptor>() { Features.X, Features.Y })
-                .ToArray();
+                var signature2Points = signature2
+                    .GetAggregateFeature(new List<FeatureDescriptor>() { Features.X, Features.Y })
+                    .ToArray();
 
                 statistics.diffDtw = dtwDistance.Calculate(signature1Points, signature2Points);
             }
