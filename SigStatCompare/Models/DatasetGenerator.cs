@@ -261,6 +261,22 @@ class DatasetGenerator
             .Select(p => (genuineSignatures[p.Item1], randomSignatures[p.Item2]));
     }
 
+    IEnumerable<(Signature, Signature)> GeneratePairs(Signer signer, DataSetParameters dataSetParameters)
+    {
+        var genuinePairs = GenuinePairs(signer)
+                .Take(dataSetParameters.genuinePairCountPerSigner);
+
+        var forgeryPairs = ForgeryPairs(signer)
+                .Take(dataSetParameters.skilledForgeryCountPerSigner);
+
+        var randomPairs = RandomPairs(signer)
+                .Take(dataSetParameters.randomForgeryCountPerSigner);
+
+        return genuinePairs
+            .Concat(forgeryPairs)
+            .Concat(randomPairs);
+    }
+
     IList<(Signature, Signature)> GeneratePairs(DataSetParameters dataSetParameters, int seed)
     {
         random = new Random(seed);
@@ -274,20 +290,7 @@ class DatasetGenerator
 
         foreach (var signer in signatures)
         {
-            signaturePairs.AddRange(
-                GenuinePairs(signer)
-                    .Take(dataSetParameters.genuinePairCountPerSigner)
-            );
-
-            signaturePairs.AddRange(
-                ForgeryPairs(signer)
-                    .Take(dataSetParameters.skilledForgeryCountPerSigner)
-            );
-
-            signaturePairs.AddRange(
-                RandomPairs(signer)
-                    .Take(dataSetParameters.randomForgeryCountPerSigner)
-            );
+            signaturePairs.AddRange(GeneratePairs(signer, dataSetParameters));
         }
 
         return signaturePairs;
