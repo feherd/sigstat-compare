@@ -1,13 +1,12 @@
-using OfficeOpenXml;
 using SigStat.Common;
 using SigStat.Common.Pipeline;
 using SigStat.Common.PipelineItems.Transforms.Preprocessing;
 using SVC2021;
 using SVC2021.Entities;
-using SigStat.Common.Helpers;
 using SigStatCompare.Models.Transformations;
 using SigStat.Common.Algorithms.Distances;
 using SigStatCompare.Models.Helpers;
+using SigStatCompare.Models.Exporters;
 
 namespace SigStatCompare.Models;
 
@@ -139,33 +138,6 @@ class DatasetGenerator
     private IList<Signer> signers;
 
     private Random random;
-
-    static readonly IList<string> headers = new List<string>(){
-            "ReferenceSignatureFile",
-            "ReferenceSigner",
-            "ReferenceInput",
-            "QuestionedSignatureFile",
-            "QuestionedSigner",
-            "QuestionedInput",
-            "Origin",
-            "ExpectedPrediction",
-            "stdevX1",
-            "stdevY1",
-            "stdevP1",
-            "count1",
-            "duration1",
-            "stdevX2",
-            "stdevY2",
-            "stdevP2",
-            "count2",
-            "duration2",
-            "diffDTW",
-            "diffX",
-            "diffY",
-            "diffP",
-            "diffCount",
-            "diffDuration"
-        };
 
     internal IEnumerable<(int, int)> LoadSignatures(string path)
     {
@@ -413,43 +385,14 @@ class DatasetGenerator
     internal void SaveToCSV(DataSetParameters dataSetParameters, int seed)
     {
         var dataSet = GenerateDataSet(dataSetParameters, seed);
-
-        string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        string sigStatComparePath = Path.Combine(documentsPath, "SigStatCompare");
-
-        Directory.CreateDirectory(sigStatComparePath);
-
-        using var file = new StreamWriter(Path.Combine(sigStatComparePath, "test.csv"));
-
-        file.WriteLine(string.Join(',', headers));
-        foreach (var statistics in dataSet)
-        {
-            file.WriteLine(string.Join(',', statistics.ToList()));
-        }
+        var csvExporter = new CSVExporter();
+        csvExporter.Export("test", dataSet);
     }
 
     internal void SaveToXLSX(DataSetParameters dataSetParameters, int seed)
     {
         var dataSet = GenerateDataSet(dataSetParameters, seed);
-
-        string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        string sigStatComparePath = Path.Combine(documentsPath, "SigStatCompare");
-
-        Directory.CreateDirectory(sigStatComparePath);
-
-        using var excelPackage = new ExcelPackage();
-
-        var excelWorksheet = excelPackage.Workbook.Worksheets.Add("Test");
-
-        var data = dataSet
-            .Select(statistics => statistics.ToList());
-
-        var excelRange = excelWorksheet.InsertTable(
-            1, 1,
-            data,
-            headers
-        );
-
-        excelPackage.SaveAs(new FileInfo(Path.Combine(sigStatComparePath, "test.xlsx")));
+        var xlsxExporter = new XLSXExporter();
+        xlsxExporter.Export("test", dataSet);
     }
 }
