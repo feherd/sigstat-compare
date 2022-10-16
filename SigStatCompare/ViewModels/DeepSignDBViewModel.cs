@@ -41,7 +41,6 @@ public partial class DeepSignDBViewModel : ObservableObject
 
     public static readonly List<InputDeviceCategory> inputDeviceCategories = new()
     {
-        new InputDeviceCategory(InputDevice.Unkown.ToString(), new HashSet<InputDevice>{InputDevice.Unkown}),
         new InputDeviceCategory(InputDevice.Finger.ToString(), new HashSet<InputDevice>{InputDevice.Finger}),
         new InputDeviceCategory(InputDevice.Stylus.ToString(), new HashSet<InputDevice>{InputDevice.Stylus})
     };
@@ -57,7 +56,6 @@ public partial class DeepSignDBViewModel : ObservableObject
     public static readonly List<SplitCategory> splitCategories = new()
     {
         new SplitCategory("All", Enum.GetValues<Split>().ToHashSet()),
-        new SplitCategory(Split.Unkonwn.ToString(), new HashSet<Split>{Split.Unkonwn}),
         new SplitCategory(Split.Development.ToString(), new HashSet<Split>{Split.Development}),
         new SplitCategory(Split.Evaluation.ToString(), new HashSet<Split>{Split.Evaluation})
     };
