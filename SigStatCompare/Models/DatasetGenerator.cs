@@ -283,7 +283,7 @@ class DatasetGenerator
     }
 
 
-    IList<(Signature, Signature)> GenerateTrainingAndTestPairs(DataSetParameters dataSetParameters, int seed)
+    IEnumerable<(Signature, Signature)> GenerateTrainingAndTestPairs(DataSetParameters dataSetParameters, int seed)
     {
         random = new Random(seed);
 
@@ -293,7 +293,7 @@ class DatasetGenerator
 
         var trainingPairs = GeneratePairs(randomSigners.Take(dataSetParameters.signerCount), dataSetParameters);
 
-        return trainingPairs.ToList();
+        return trainingPairs;
     }
 
     SignatureStatistics CalculateSignatureStatistics(Signature signature)
@@ -325,7 +325,7 @@ class DatasetGenerator
         return statistics;
     }
 
-    IList<SignaturePairStatistics> CalculatePairStatistics(IList<(Signature, Signature)> pairs)
+    IList<SignaturePairStatistics> CalculatePairStatistics(IEnumerable<(Signature, Signature)> pairs)
     {
         var signaturePairStatisticsList = new List<SignaturePairStatistics>();
 
@@ -380,7 +380,7 @@ class DatasetGenerator
 
     public IList<SignaturePairStatistics> GenerateDataSet(DataSetParameters dataSetParameters, int seed)
     {
-        IList<(Signature, Signature)> pairs = GenerateTrainingAndTestPairs(dataSetParameters, seed);
+        var pairs = GenerateTrainingAndTestPairs(dataSetParameters, seed);
         return CalculatePairStatistics(pairs);
     }
 
