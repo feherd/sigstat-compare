@@ -382,17 +382,9 @@ class DatasetGenerator
         return CalculatePairStatistics(pairs);
     }
 
-    internal void SaveToCSV(DataSetParameters dataSetParameters, int seed)
+    internal void Save(DataSetParameters dataSetParameters, int seed, IDataSetExporter dataSetExporter)
     {
         var dataSet = GenerateDataSet(dataSetParameters, seed);
-        var csvExporter = new CSVExporter();
-        csvExporter.Export("test", dataSet);
-    }
-
-    internal void SaveToXLSX(DataSetParameters dataSetParameters, int seed)
-    {
-        var dataSet = GenerateDataSet(dataSetParameters, seed);
-        var xlsxExporter = new XLSXExporter();
-        xlsxExporter.Export("test", dataSet);
+        dataSetExporter.Export("test", dataSet);
     }
 }

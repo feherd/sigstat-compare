@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SigStat.Common;
 using SigStatCompare.Models;
+using SigStatCompare.Models.Exporters;
 using SVC2021;
 
 public partial class DeepSignDBViewModel : ObservableObject
@@ -126,14 +127,18 @@ public partial class DeepSignDBViewModel : ObservableObject
         }
     });
 
+    private readonly CSVExporter csvExporter = new();
+    private readonly XLSXExporter xlsxExporter = new();
+
+
     public Command SaveToCSV => new(async () =>
     {
-        await Task.Run(() => datasetGenerator.SaveToCSV(trainingSetParameters.DataSetParameters, seed));
+        await Task.Run(() => datasetGenerator.Save(trainingSetParameters.DataSetParameters, seed, csvExporter));
     });
 
     public Command SaveToXLSX => new(async () =>
     {
-        await Task.Run(() => datasetGenerator.SaveToXLSX(trainingSetParameters.DataSetParameters, seed));
+        await Task.Run(() => datasetGenerator.Save(trainingSetParameters.DataSetParameters, seed, xlsxExporter));
     });
 
     private void UpdateStatistics()
