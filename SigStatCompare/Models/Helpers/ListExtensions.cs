@@ -2,7 +2,7 @@ namespace SigStatCompare.Models.Helpers;
 
 static class ListExtensions {
     
-    public static IEnumerable<T> RandomOrder<T>(this IList<T> list, Random random) {
+    public static IEnumerable<T> RandomOrder<T>(this IEnumerable<T> list, Random random) {
         var listCopy = new List<T>(list);
 
         while (listCopy.Count > 0)
