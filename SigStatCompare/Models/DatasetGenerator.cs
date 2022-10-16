@@ -226,8 +226,9 @@ class DatasetGenerator
 
     IEnumerable<(Signature, Signature)> GenuinePairs(Signer signer)
     {
-        var signatures = signer.Signatures.Where(sig => sig.Origin == Origin.Genuine).ToList();
-        var n = signatures.Count;
+        var signatures = FilterSignatures(signer.Signatures);
+        var genuineSignatures = signatures.Where(sig => sig.Origin == Origin.Genuine).ToList();
+        var n = genuineSignatures.Count;
 
         var pairIndices = Enumerable
             .Range(0, n * (n - 1))
@@ -237,13 +238,14 @@ class DatasetGenerator
 
         return pairIndices
             .RandomOrder(random)
-            .Select(p => (signatures[p.Item1], signatures[p.Item2]));
+            .Select(p => (genuineSignatures[p.Item1], genuineSignatures[p.Item2]));
     }
 
     IEnumerable<(Signature, Signature)> ForgeryPairs(Signer signer)
     {
-        var genuineSignatures = signer.Signatures.Where(sig => sig.Origin == Origin.Genuine).ToList();
-        var forgedSignatures = signer.Signatures.Where(sig => sig.Origin == Origin.Forged).ToList();
+        var signatures = FilterSignatures(signer.Signatures);
+        var genuineSignatures = signatures.Where(sig => sig.Origin == Origin.Genuine).ToList();
+        var forgedSignatures = signatures.Where(sig => sig.Origin == Origin.Forged).ToList();
         var n = genuineSignatures.Count;
         var m = forgedSignatures.Count;
 
@@ -259,8 +261,12 @@ class DatasetGenerator
 
     IEnumerable<(Signature, Signature)> RandomPairs(Signer signer)
     {
-        var genuineSignatures = signer.Signatures.Where(sig => sig.Origin == Origin.Genuine).ToList();
-        var randomSignatures = signers.Where(s => s != signer).SelectMany(s => s.Signatures).ToList();
+        var signatures = FilterSignatures(signer.Signatures);
+        var genuineSignatures = signatures.Where(sig => sig.Origin == Origin.Genuine).ToList();
+        
+        var otherSignatures = signers.Where(s => s != signer).SelectMany(s => s.Signatures);
+        var randomSignatures = FilterSignatures(otherSignatures).ToList();
+        
         var n = genuineSignatures.Count;
         var m = randomSignatures.Count;
 
