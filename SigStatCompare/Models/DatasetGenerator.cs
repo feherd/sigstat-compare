@@ -357,10 +357,28 @@ class DatasetGenerator
             {
                 referenceSignature = signature1,
                 questionedSignature = signature2,
-                expectedPrediction = signature1.Origin == Origin.Genuine && signature2.Origin == Origin.Genuine ? 1 : 0,
                 signatureStatistics1 = CalculateSignatureStatistics(signature1),
                 signatureStatistics2 = CalculateSignatureStatistics(signature2)
             };
+
+            if (signature1.Signer == signature2.Signer)
+            {
+                if (signature2.Origin == Origin.Genuine)
+                {
+                    statistics.origin = SignaturePairOrigin.Genuine;
+                    statistics.expectedPrediction = 1;
+                }
+                else
+                {
+                    statistics.origin = SignaturePairOrigin.Skilled;
+                    statistics.expectedPrediction = 0;
+                }
+            }
+            else
+            {
+                statistics.origin = SignaturePairOrigin.Random;
+                statistics.expectedPrediction = 0;
+            }
 
             {
                 zNormalizationPipeline.Transform(signature1);
