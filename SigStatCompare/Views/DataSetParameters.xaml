@@ -6,7 +6,8 @@
              xmlns:viewmodels="clr-namespace:SigStatCompare.ViewModels"
              x:Class="SigStatCompare.Views.DataSetParametersView">
     <Grid RowDefinitions="auto,auto,auto,auto,auto"
-          ColumnDefinitions="auto,100"
+          ColumnDefinitions="auto,80"
+          RowSpacing="8"
           ColumnSpacing="8"
           Margin="8">
         <Label Grid.Row="0" Grid.Column="0"
@@ -18,28 +19,32 @@
                VerticalOptions="Center"/>
         <Entry Grid.Row="1" Grid.Column="1"
                Keyboard="Numeric"
-               Text="{Binding SignerCount}"/>
+               Text="{Binding SignerCount}"
+               HorizontalTextAlignment="End"/>
         
         <Label Grid.Row="2" Grid.Column="0"
                Text="Genuine pair count per signer"
                VerticalOptions="Center"/>
         <Entry Grid.Row="2" Grid.Column="1"
                Keyboard="Numeric"
-               Text="{Binding GenuinePairCountPerSigner}"/>
+               Text="{Binding GenuinePairCountPerSigner}"
+               HorizontalTextAlignment="End"/>
         
         <Label Grid.Row="3" Grid.Column="0"
                Text="Skilled forgery count per signer"
                VerticalOptions="Center"/>
         <Entry Grid.Row="3" Grid.Column="1"
                Keyboard="Numeric"
-               Text="{Binding SkilledForgeryCountPerSigner}"/>
+               Text="{Binding SkilledForgeryCountPerSigner}"
+               HorizontalTextAlignment="End"/>
         
         <Label Grid.Row="4" Grid.Column="0"
                Text="Random forgery count per signer"
                VerticalOptions="Center"/>
         <Entry Grid.Row="4" Grid.Column="1"
                Keyboard="Numeric"
-               Text="{Binding RandomForgeryCountPerSigner}"/>
+               Text="{Binding RandomForgeryCountPerSigner}"
+               HorizontalTextAlignment="End"/>
         
     </Grid>
     

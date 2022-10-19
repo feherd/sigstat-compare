@@ -21,38 +21,56 @@
         </MenuBarItem>
     </ContentPage.MenuBarItems>
 
-    <Grid RowDefinitions="auto,auto"
-          ColumnDefinitions="auto, auto">
+    <Grid RowDefinitions="auto,auto,auto,auto"
+          ColumnDefinitions="auto,auto"
+          Margin="8">
 
         <VerticalStackLayout Grid.Row="0" Grid.Column="0"
+                             Grid.RowSpan="2"
+                             Spacing="8"
+                             Margin="8">
+            <Picker Title="DB"
+                    ItemsSource="{x:Static viewmodels:DeepSignDBViewModel.dbCategories}"
+                    SelectedItem="{Binding SelectedDBCategory}"
+                    ItemDisplayBinding="{Binding Name}"
+                    HorizontalOptions="Start"
+                    WidthRequest="200"/>
+            <Picker Title="InputDevice"
+                    ItemsSource="{x:Static viewmodels:DeepSignDBViewModel.inputDeviceCategories}"
+                    SelectedItem="{Binding SelectedInputDeviceCategory}"
+                    ItemDisplayBinding="{Binding Name}"
+                    HorizontalOptions="Start"
+                    WidthRequest="200"/>
+            <Picker Title="Split"
+                    ItemsSource="{x:Static viewmodels:DeepSignDBViewModel.splitCategories}"
+                    SelectedItem="{Binding SelectedSplitCategory}"
+                    ItemDisplayBinding="{Binding Name}"
+                    HorizontalOptions="Start"
+                    WidthRequest="200"/>
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Row="0" Grid.Column="1"
                              Margin="8">
             <Label Text="{Binding LoadedSigners, StringFormat='Loaded {0} signers'}"/>
             <Label Text="{Binding LoadedSignatures, StringFormat='Loaded {0} signatures'}"/>
-            <Picker Title="DB"
-                ItemsSource="{x:Static viewmodels:DeepSignDBViewModel.dbCategories}"
-                SelectedItem="{Binding SelectedDBCategory}"
-                ItemDisplayBinding="{Binding Name}"/>
-            <Picker Title="InputDevice"
-                ItemsSource="{x:Static viewmodels:DeepSignDBViewModel.inputDeviceCategories}"
-                SelectedItem="{Binding SelectedInputDeviceCategory}"
-                ItemDisplayBinding="{Binding Name}"/>
-            <Picker Title="Split"
-                ItemsSource="{x:Static viewmodels:DeepSignDBViewModel.splitCategories}"
-                SelectedItem="{Binding SelectedSplitCategory}"
-                ItemDisplayBinding="{Binding Name}"/>
-            <HorizontalStackLayout>
-                <Label Text="Seed"
-                       VerticalOptions="Center"/>
-                <Entry Text="{Binding Seed}"/>
-            </HorizontalStackLayout>
         </VerticalStackLayout>
 
-        <views:StatisticsView Grid.Row="0" Grid.Column="1" BindingContext="{Binding StatisticsViewModel}"/>
+        <views:StatisticsView Grid.Row="1" Grid.Column="1"
+                              BindingContext="{Binding StatisticsViewModel}"/>
 
-        <views:DataSetParametersView Grid.Row="1" Grid.Column="0"
+        <HorizontalStackLayout Grid.Row="3" Grid.Column="0"
+                               Spacing="8"
+                               Margin="8">
+            <Label Text="Seed"
+                   VerticalOptions="Center"/>
+            <Entry Text="{Binding Seed}"
+                   HorizontalTextAlignment="End"/>
+        </HorizontalStackLayout>
+
+        <views:DataSetParametersView Grid.Row="2" Grid.Column="0"
                                      BindingContext="{Binding TrainingSetParameters}"/>
 
-        <views:DataSetParametersView Grid.Row="1" Grid.Column="1"
+        <views:DataSetParametersView Grid.Row="2" Grid.Column="1"
                                      BindingContext="{Binding TestSetParameters}"/>
     </Grid>
 

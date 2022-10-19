@@ -11,8 +11,10 @@
     </ContentView.Resources>
 
     <Grid Grid.RowDefinitions="auto,auto,auto,auto,auto,auto,auto"
-          Grid.ColumnDefinitions="auto,100"
-          ColumnSpacing="8">
+          Grid.ColumnDefinitions="auto,*"
+          RowSpacing="4"
+          ColumnSpacing="8"
+          Margin="8">
 
         <Label Grid.Row="0" Grid.Column="0"
                Text="Statistics:"
@@ -21,32 +23,38 @@
         <Label Grid.Row="1" Grid.Column="0"
                Text="Signer count" />
         <Label Grid.Row="1" Grid.Column="1"
-               Text="{Binding SignerCount}" />
+               Text="{Binding SignerCount}"
+               HorizontalTextAlignment="End"/>
 
         <Label Grid.Row="2" Grid.Column="0"
                Text="Signature count per signer" />
         <Label Grid.Row="2" Grid.Column="1"
-               Text="{Binding SignatureCountPerSigner, Converter={StaticResource tupleToString}}" />
+               Text="{Binding SignatureCountPerSigner, Converter={StaticResource tupleToString}}"
+               HorizontalTextAlignment="End"/>
 
         <Label Grid.Row="3" Grid.Column="0"
                Text="Genuine signature count per signer" />
         <Label Grid.Row="3" Grid.Column="1"
-               Text="{Binding GenuineSignatureCountPerSigner, Converter={StaticResource tupleToString}}" />
+               Text="{Binding GenuineSignatureCountPerSigner, Converter={StaticResource tupleToString}}"
+               HorizontalTextAlignment="End"/>
 
         <Label Grid.Row="4" Grid.Column="0"
                Text="Forged signature count per signer" />
         <Label Grid.Row="4" Grid.Column="1"
-               Text="{Binding ForgedSignatureCountPerSigner, Converter={StaticResource tupleToString}}" />
+               Text="{Binding ForgedSignatureCountPerSigner, Converter={StaticResource tupleToString}}"
+               HorizontalTextAlignment="End"/>
 
         <Label Grid.Row="5" Grid.Column="0"
                Text="Max genuine pair count per signer" />
         <Label Grid.Row="5" Grid.Column="1"
-               Text="{Binding MaxGenuinePairCountPerSigner}" />
+               Text="{Binding MaxGenuinePairCountPerSigner}"
+               HorizontalTextAlignment="End"/>
 
         <Label Grid.Row="6" Grid.Column="0"
                Text="Max forged pair count per signer" />
         <Label Grid.Row="6" Grid.Column="1"
-               Text="{Binding MaxForgedPairCountPerSigner}" />
+               Text="{Binding MaxForgedPairCountPerSigner}"
+               HorizontalTextAlignment="End"/>
 
     </Grid>
 
