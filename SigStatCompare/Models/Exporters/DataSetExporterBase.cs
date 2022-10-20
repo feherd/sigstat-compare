@@ -29,18 +29,19 @@ abstract class DataSetExporterBase : IDataSetExporter
         "diffDuration"
     };
 
-    public abstract void Export(string filename, IList<SignaturePairStatistics> pairStatistics);
+    public abstract void Export(string foldername, string filename, IList<SignaturePairStatistics> pairStatistics);
 
     public void SaveInfo(
+        string foldername,
         string filename,
         DataSetParameters trainingSetParameters,
         DataSetParameters testSetParameters,
         int seed
     )
     {
-        string sigStatComparePath = CreateDirectory();
+        string folderPath = CreateDirectory(foldername);
 
-        using var file = new StreamWriter(Path.Combine(sigStatComparePath, filename + ".txt"));
+        using var file = new StreamWriter(Path.Combine(folderPath, filename + ".txt"));
 
         file.WriteLine("Training:");
         file.WriteLine($"Signer count: {trainingSetParameters.signerCount}");
@@ -57,12 +58,16 @@ abstract class DataSetExporterBase : IDataSetExporter
         file.WriteLine($"Seed {seed}");
     }
 
-    protected static string CreateDirectory()
+    protected string CreateDirectory(string foldername)
     {
         string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         string sigStatComparePath = Path.Combine(documentsPath, "SigStatCompare");
 
         Directory.CreateDirectory(sigStatComparePath);
-        return sigStatComparePath;
+        Directory.CreateDirectory(Path.Combine(sigStatComparePath, foldername));
+
+        string folderPath = Path.Combine(sigStatComparePath, foldername);
+
+        return folderPath;
     }
 }

@@ -433,14 +433,14 @@ class DatasetGenerator
         int seed,
         IDataSetExporter dataSetExporter)
     {
-        dataSetExporter.SaveInfo($"{seed}_info", trainingSetParameters, testSetParameters, seed);
+        dataSetExporter.SaveInfo(seed.ToString(), "info", trainingSetParameters, testSetParameters, seed);
 
         var (trainingPairs, testPairs) = GenerateTrainingAndTestPairs(trainingSetParameters, testSetParameters, seed);
 
         var trainingSet = CalculatePairStatistics(trainingPairs);
-        dataSetExporter.Export($"{seed}_training", trainingSet);
+        dataSetExporter.Export(seed.ToString(), "training", trainingSet);
 
         var testSet = CalculatePairStatistics(testPairs);
-        dataSetExporter.Export($"{seed}_test", testSet);
+        dataSetExporter.Export(seed.ToString(), "test", testSet);
     }
 }

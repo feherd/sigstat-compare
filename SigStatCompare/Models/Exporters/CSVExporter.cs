@@ -2,13 +2,11 @@ namespace SigStatCompare.Models.Exporters;
 
 class CSVExporter : DataSetExporterBase
 {
-    public override void Export(string filename, IList<SignaturePairStatistics> pairStatistics)
+    public override void Export(string foldername, string filename, IList<SignaturePairStatistics> pairStatistics)
     {
-        string sigStatComparePath = CreateDirectory();
+        string folderPath = CreateDirectory(foldername);
 
-        Directory.CreateDirectory(sigStatComparePath);
-
-        using var file = new StreamWriter(Path.Combine(sigStatComparePath, filename + ".csv"));
+        using var file = new StreamWriter(Path.Combine(folderPath, filename + ".csv"));
 
         file.WriteLine(string.Join(',', Headers));
         foreach (var statistics in pairStatistics)

@@ -5,9 +5,9 @@ namespace SigStatCompare.Models.Exporters;
 
 class XLSXExporter : DataSetExporterBase
 {
-    public override void Export(string filename, IList<SignaturePairStatistics> pairStatistics)
+    public override void Export(string foldername, string filename, IList<SignaturePairStatistics> pairStatistics)
     {
-        string sigStatComparePath = CreateDirectory();
+        string folderPath = CreateDirectory(foldername);
 
         using var excelPackage = new ExcelPackage();
 
@@ -18,6 +18,6 @@ class XLSXExporter : DataSetExporterBase
 
         var excelRange = excelWorksheet.InsertTable(1, 1, data, Headers);
 
-        excelPackage.SaveAs(new FileInfo(Path.Combine(sigStatComparePath, filename + ".xlsx")));
+        excelPackage.SaveAs(new FileInfo(Path.Combine(folderPath, filename + ".xlsx")));
     }
 }
