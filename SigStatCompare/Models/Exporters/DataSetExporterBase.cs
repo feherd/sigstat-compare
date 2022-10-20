@@ -29,7 +29,7 @@ abstract class DataSetExporterBase : IDataSetExporter
         "diffDuration"
     };
 
-    public abstract void Export(string foldername, string filename, IList<SignaturePairStatistics> pairStatistics);
+    public abstract void Export(string foldername, string filename, IEnumerable<SignaturePairStatistics> pairStatistics);
 
     public void SaveInfo(
         string foldername,

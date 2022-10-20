@@ -2,7 +2,7 @@ namespace SigStatCompare.Models.Exporters;
 
 class CSVExporter : DataSetExporterBase
 {
-    public override void Export(string foldername, string filename, IList<SignaturePairStatistics> pairStatistics)
+    public override void Export(string foldername, string filename, IEnumerable<SignaturePairStatistics> pairStatistics)
     {
         string folderPath = CreateDirectory(foldername);
 

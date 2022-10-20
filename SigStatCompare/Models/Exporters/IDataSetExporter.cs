@@ -2,7 +2,7 @@ namespace SigStatCompare.Models.Exporters;
 
 interface IDataSetExporter
 {
-    void Export(string foldername, string filename, IList<SignaturePairStatistics> pairStatistics);
+    void Export(string foldername, string filename, IEnumerable<SignaturePairStatistics> pairStatistics);
 
     void SaveInfo(
         string foldername,
