@@ -433,7 +433,7 @@ class DatasetGenerator
         int seed,
         IDataSetExporter dataSetExporter)
     {
-        dataSetExporter.SaveInfo(seed.ToString(), "info", trainingSetParameters, testSetParameters, seed);
+        dataSetExporter.SaveInfo(seed.ToString(), trainingSetParameters, testSetParameters, seed);
 
         var (trainingPairs, testPairs) = GenerateTrainingAndTestPairs(trainingSetParameters, testSetParameters, seed);
 

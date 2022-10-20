@@ -33,7 +33,6 @@ abstract class DataSetExporterBase : IDataSetExporter
 
     public void SaveInfo(
         string foldername,
-        string filename,
         DataSetParameters trainingSetParameters,
         DataSetParameters testSetParameters,
         int seed
@@ -41,7 +40,7 @@ abstract class DataSetExporterBase : IDataSetExporter
     {
         string folderPath = CreateDirectory(foldername);
 
-        using var file = new StreamWriter(Path.Combine(folderPath, filename + ".txt"));
+        using var file = new StreamWriter(Path.Combine(folderPath, "info.txt"));
 
         file.WriteLine("Training:");
         file.WriteLine($"Signer count: {trainingSetParameters.signerCount}");

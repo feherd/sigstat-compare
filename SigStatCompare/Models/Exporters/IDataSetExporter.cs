@@ -6,7 +6,6 @@ interface IDataSetExporter
 
     void SaveInfo(
         string foldername,
-        string filename,
         DataSetParameters trainingSetParameters,
         DataSetParameters testSetParameters,
         int seed
