@@ -58,6 +58,12 @@
         <views:StatisticsView Grid.Row="1" Grid.Column="1"
                               BindingContext="{Binding StatisticsViewModel}"/>
 
+        <views:DataSetParametersView Grid.Row="2" Grid.Column="0"
+                                     BindingContext="{Binding TrainingSetParameters}"/>
+
+        <views:DataSetParametersView Grid.Row="2" Grid.Column="1"
+                                     BindingContext="{Binding TestSetParameters}"/>
+
         <HorizontalStackLayout Grid.Row="3" Grid.Column="0"
                                Spacing="8"
                                Margin="8">
@@ -67,11 +73,17 @@
                    HorizontalTextAlignment="End"/>
         </HorizontalStackLayout>
 
-        <views:DataSetParametersView Grid.Row="2" Grid.Column="0"
-                                     BindingContext="{Binding TrainingSetParameters}"/>
+        <Label Grid.Row="3" Grid.Column="1"
+               VerticalTextAlignment="Center"
+               Margin="8">
+            <Label.Text>
+                <MultiBinding StringFormat="Progress: {0:P1} Remaining: {1:0.}s">
+                    <Binding Path="ExportProgress" />
+                    <Binding Path="Remaining.TotalSeconds" />
+                </MultiBinding>
+            </Label.Text>
+        </Label>
 
-        <views:DataSetParametersView Grid.Row="2" Grid.Column="1"
-                                     BindingContext="{Binding TestSetParameters}"/>
     </Grid>
 
 </ContentPage>

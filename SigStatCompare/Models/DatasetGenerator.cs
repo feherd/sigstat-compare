@@ -7,6 +7,7 @@ using SigStatCompare.Models.Transformations;
 using SigStat.Common.Algorithms.Distances;
 using SigStatCompare.Models.Helpers;
 using SigStatCompare.Models.Exporters;
+using SigStat.Common.Helpers;
 
 namespace SigStatCompare.Models;
 
@@ -426,16 +427,30 @@ class DatasetGenerator
         DataSetParameters trainingSetParameters,
         DataSetParameters testSetParameters,
         int seed,
-        IDataSetExporter dataSetExporter)
+        IDataSetExporter dataSetExporter,
+        Action<ProgressHelper> progress)
     {
+        int maximum = trainingSetParameters.SigatureCount + testSetParameters.SigatureCount;
+        var progressHelper = ProgressHelper.StartNew(maximum, 1, progress);
+
         dataSetExporter.SaveInfo(seed.ToString(), trainingSetParameters, testSetParameters, seed);
 
         var (trainingPairs, testPairs) = GenerateTrainingAndTestPairs(trainingSetParameters, testSetParameters, seed);
 
-        var trainingSet = trainingPairs.Select(p => CalculatePairStatistics(p));
+        var trainingSet = trainingPairs.Select(p =>
+        {
+            var signaturePairStatistics = CalculatePairStatistics(p);
+            progressHelper.IncrementValue();
+            return signaturePairStatistics;
+        });
         dataSetExporter.Export(seed.ToString(), trainingSetParameters.name, trainingSet);
 
-        var testSet = testPairs.Select(p => CalculatePairStatistics(p));
+        var testSet = testPairs.Select(p =>
+        {
+            var signaturePairStatistics = CalculatePairStatistics(p);
+            progressHelper.IncrementValue();
+            return signaturePairStatistics;
+        });
         dataSetExporter.Export(seed.ToString(), testSetParameters.name, testSet);
     }
 }

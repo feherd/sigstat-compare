@@ -7,4 +7,10 @@ struct DataSetParameters
     public int genuinePairCountPerSigner;
     public int skilledForgeryCountPerSigner;
     public int randomForgeryCountPerSigner;
+
+    public int SigatureCount => signerCount * (
+        genuinePairCountPerSigner
+        + skilledForgeryCountPerSigner
+        + randomForgeryCountPerSigner
+    );
 }
