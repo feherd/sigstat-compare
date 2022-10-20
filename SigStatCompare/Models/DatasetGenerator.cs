@@ -263,10 +263,10 @@ class DatasetGenerator
     {
         var signatures = FilterSignatures(signer.Signatures);
         var genuineSignatures = signatures.Where(sig => sig.Origin == Origin.Genuine).ToList();
-        
+
         var otherSignatures = signers.Where(s => s != signer).SelectMany(s => s.Signatures);
         var randomSignatures = FilterSignatures(otherSignatures).ToList();
-        
+
         var n = genuineSignatures.Count;
         var m = randomSignatures.Count;
 
@@ -353,78 +353,73 @@ class DatasetGenerator
         return statistics;
     }
 
-    IList<SignaturePairStatistics> CalculatePairStatistics(IEnumerable<(Signature, Signature)> pairs)
+    SignaturePairStatistics CalculatePairStatistics((Signature, Signature) pair)
     {
-        var signaturePairStatisticsList = new List<SignaturePairStatistics>();
+        (Signature signature1, Signature signature2) = pair;
 
-        foreach ((Signature signature1, Signature signature2) in pairs)
+        var statistics = new SignaturePairStatistics()
         {
-            var statistics = new SignaturePairStatistics()
-            {
-                referenceSignature = signature1,
-                questionedSignature = signature2,
-                signatureStatistics1 = CalculateSignatureStatistics(signature1),
-                signatureStatistics2 = CalculateSignatureStatistics(signature2)
-            };
+            referenceSignature = signature1,
+            questionedSignature = signature2,
+            signatureStatistics1 = CalculateSignatureStatistics(signature1),
+            signatureStatistics2 = CalculateSignatureStatistics(signature2)
+        };
 
-            if (signature1.Signer == signature2.Signer)
+        if (signature1.Signer == signature2.Signer)
+        {
+            if (signature2.Origin == Origin.Genuine)
             {
-                if (signature2.Origin == Origin.Genuine)
-                {
-                    statistics.origin = SignaturePairOrigin.Genuine;
-                    statistics.expectedPrediction = 1;
-                }
-                else
-                {
-                    statistics.origin = SignaturePairOrigin.Forged;
-                    statistics.expectedPrediction = 0;
-                }
+                statistics.origin = SignaturePairOrigin.Genuine;
+                statistics.expectedPrediction = 1;
             }
             else
             {
-                statistics.origin = SignaturePairOrigin.Random;
+                statistics.origin = SignaturePairOrigin.Forged;
                 statistics.expectedPrediction = 0;
             }
-
-            {
-                zNormalizationPipeline.Transform(signature1);
-                zNormalizationPipeline.Transform(signature2);
-
-                var signature1Points = signature1
-                    .GetAggregateFeature(new List<FeatureDescriptor>() { Features.X, Features.Y })
-                    .ToArray();
-
-                var signature2Points = signature2
-                    .GetAggregateFeature(new List<FeatureDescriptor>() { Features.X, Features.Y })
-                    .ToArray();
-
-                statistics.diffDtw = dtwDistance.Calculate(signature1Points, signature2Points);
-            }
-
-            statistics.diffX = Math.Abs(
-                (statistics.signatureStatistics1.stdevX - statistics.signatureStatistics2.stdevX) / statistics.signatureStatistics1.stdevX
-            );
-
-            statistics.diffY = Math.Abs(
-                (statistics.signatureStatistics1.stdevY - statistics.signatureStatistics2.stdevY) / statistics.signatureStatistics1.stdevY
-            );
-
-            statistics.diffP = Math.Abs(
-                (statistics.signatureStatistics1.stdevP - statistics.signatureStatistics2.stdevP) / statistics.signatureStatistics1.stdevP
-            );
-
-            statistics.diffCount = Math.Abs(
-                ((double)statistics.signatureStatistics2.count / statistics.signatureStatistics1.count) - 1
-            );
-
-            statistics.diffDuration = Math.Abs(
-                ((double)statistics.signatureStatistics2.duration / statistics.signatureStatistics1.duration) - 1
-            );
-
-            signaturePairStatisticsList.Add(statistics);
+        }
+        else
+        {
+            statistics.origin = SignaturePairOrigin.Random;
+            statistics.expectedPrediction = 0;
         }
 
-        return signaturePairStatisticsList;
+        {
+            zNormalizationPipeline.Transform(signature1);
+            zNormalizationPipeline.Transform(signature2);
+
+            var signature1Points = signature1
+                .GetAggregateFeature(new List<FeatureDescriptor>() { Features.X, Features.Y })
+                .ToArray();
+
+            var signature2Points = signature2
+                .GetAggregateFeature(new List<FeatureDescriptor>() { Features.X, Features.Y })
+                .ToArray();
+
+            statistics.diffDtw = dtwDistance.Calculate(signature1Points, signature2Points);
+        }
+
+        statistics.diffX = Math.Abs(
+            (statistics.signatureStatistics1.stdevX - statistics.signatureStatistics2.stdevX) / statistics.signatureStatistics1.stdevX
+        );
+
+        statistics.diffY = Math.Abs(
+            (statistics.signatureStatistics1.stdevY - statistics.signatureStatistics2.stdevY) / statistics.signatureStatistics1.stdevY
+        );
+
+        statistics.diffP = Math.Abs(
+            (statistics.signatureStatistics1.stdevP - statistics.signatureStatistics2.stdevP) / statistics.signatureStatistics1.stdevP
+        );
+
+        statistics.diffCount = Math.Abs(
+            ((double)statistics.signatureStatistics2.count / statistics.signatureStatistics1.count) - 1
+        );
+
+        statistics.diffDuration = Math.Abs(
+            ((double)statistics.signatureStatistics2.duration / statistics.signatureStatistics1.duration) - 1
+        );
+
+        return statistics;
     }
 
     internal void Save(
@@ -437,10 +432,10 @@ class DatasetGenerator
 
         var (trainingPairs, testPairs) = GenerateTrainingAndTestPairs(trainingSetParameters, testSetParameters, seed);
 
-        var trainingSet = CalculatePairStatistics(trainingPairs);
+        var trainingSet = trainingPairs.Select(p => CalculatePairStatistics(p));
         dataSetExporter.Export(seed.ToString(), trainingSetParameters.name, trainingSet);
 
-        var testSet = CalculatePairStatistics(testPairs);
+        var testSet = testPairs.Select(p => CalculatePairStatistics(p));
         dataSetExporter.Export(seed.ToString(), testSetParameters.name, testSet);
     }
 }
