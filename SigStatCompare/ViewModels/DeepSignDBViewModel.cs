@@ -108,14 +108,13 @@ public partial class DeepSignDBViewModel : ObservableObject
 
         if (fileResult is not null)
         {
-            var enumerable = datasetGenerator.LoadSignatures(fileResult.FullPath);
             await Task.Run(() =>
             {
-                foreach (var (signerCount, signatureCount) in enumerable)
+                datasetGenerator.LoadSignatures(fileResult.FullPath, (signerCount, signatureCount) =>
                 {
                     LoadedSigners = signerCount;
                     LoadedSignatures = signatureCount;
-                }
+                });
             });
             datasetGenerator.DBs = selectedDBCategory.DBs;
             datasetGenerator.InputDevices = selectedInputDeviceCategory.InputDevices;

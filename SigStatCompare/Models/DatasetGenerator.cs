@@ -152,7 +152,7 @@ class DatasetGenerator
 
     private Random random;
 
-    internal IEnumerable<(int, int)> LoadSignatures(string path)
+    internal void LoadSignatures(string path, Action<int, int> progress)
     {
         var loader = new Svc2021Loader(path, false);
 
@@ -167,7 +167,7 @@ class DatasetGenerator
             signerCount++;
             signatureCount += signer.Signatures.Count;
 
-            yield return (signerCount, signatureCount);
+            progress(signerCount, signatureCount);
         }
 
         this.signers = signers;
