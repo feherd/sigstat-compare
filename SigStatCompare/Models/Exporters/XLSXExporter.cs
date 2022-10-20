@@ -3,9 +3,9 @@ using SigStat.Common.Helpers;
 
 namespace SigStatCompare.Models.Exporters;
 
-class XLSXExporter : IDataSetExporter
+class XLSXExporter : DataSetExporterBase
 {
-    public void Export(string filename, IList<SignaturePairStatistics> pairStatistics)
+    public override void Export(string filename, IList<SignaturePairStatistics> pairStatistics)
     {
         string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         string sigStatComparePath = Path.Combine(documentsPath, "SigStatCompare");
@@ -20,11 +20,7 @@ class XLSXExporter : IDataSetExporter
         var data = pairStatistics
             .Select(statistics => statistics.ToList());
 
-        var excelRange = excelWorksheet.InsertTable(
-            1, 1,
-            data,
-            IDataSetExporter.Headers
-        );
+        var excelRange = excelWorksheet.InsertTable(1, 1, data, Headers);
 
         excelPackage.SaveAs(new FileInfo(Path.Combine(sigStatComparePath, filename + ".xlsx")));
     }
