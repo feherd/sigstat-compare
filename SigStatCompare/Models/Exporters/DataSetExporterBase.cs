@@ -38,10 +38,7 @@ abstract class DataSetExporterBase : IDataSetExporter
         int seed
     )
     {
-        string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        string sigStatComparePath = Path.Combine(documentsPath, "SigStatCompare");
-
-        Directory.CreateDirectory(sigStatComparePath);
+        string sigStatComparePath = CreateDirectory();
 
         using var file = new StreamWriter(Path.Combine(sigStatComparePath, filename + ".txt"));
 
@@ -58,5 +55,14 @@ abstract class DataSetExporterBase : IDataSetExporter
         file.WriteLine($"Random forgery count per signer: {testSetParameters.randomForgeryCountPerSigner}");
         file.WriteLine();
         file.WriteLine($"Seed {seed}");
+    }
+
+    protected static string CreateDirectory()
+    {
+        string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        string sigStatComparePath = Path.Combine(documentsPath, "SigStatCompare");
+
+        Directory.CreateDirectory(sigStatComparePath);
+        return sigStatComparePath;
     }
 }

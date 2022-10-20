@@ -4,8 +4,7 @@ class CSVExporter : DataSetExporterBase
 {
     public override void Export(string filename, IList<SignaturePairStatistics> pairStatistics)
     {
-        string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        string sigStatComparePath = Path.Combine(documentsPath, "SigStatCompare");
+        string sigStatComparePath = CreateDirectory();
 
         Directory.CreateDirectory(sigStatComparePath);
 

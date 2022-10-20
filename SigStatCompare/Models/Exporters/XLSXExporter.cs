@@ -7,11 +7,7 @@ class XLSXExporter : DataSetExporterBase
 {
     public override void Export(string filename, IList<SignaturePairStatistics> pairStatistics)
     {
-        string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        string sigStatComparePath = Path.Combine(documentsPath, "SigStatCompare");
-
-
-        Directory.CreateDirectory(sigStatComparePath);
+        string sigStatComparePath = CreateDirectory();
 
         using var excelPackage = new ExcelPackage();
 
