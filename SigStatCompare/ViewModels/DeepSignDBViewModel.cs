@@ -76,13 +76,13 @@ public partial class DeepSignDBViewModel : ObservableObject
 
     private readonly DataSetParametersViewModel trainingSetParameters = new()
     {
-        Name = "Training:"
+        Name = "Training"
     };
     public DataSetParametersViewModel TrainingSetParameters => trainingSetParameters;
 
     private readonly DataSetParametersViewModel testSetParameters = new()
     {
-        Name = "Test:"
+        Name = "Test"
     };
     public DataSetParametersViewModel TestSetParameters => testSetParameters;
 

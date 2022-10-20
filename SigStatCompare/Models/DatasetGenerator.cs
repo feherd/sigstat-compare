@@ -438,9 +438,9 @@ class DatasetGenerator
         var (trainingPairs, testPairs) = GenerateTrainingAndTestPairs(trainingSetParameters, testSetParameters, seed);
 
         var trainingSet = CalculatePairStatistics(trainingPairs);
-        dataSetExporter.Export(seed.ToString(), "training", trainingSet);
+        dataSetExporter.Export(seed.ToString(), trainingSetParameters.name, trainingSet);
 
         var testSet = CalculatePairStatistics(testPairs);
-        dataSetExporter.Export(seed.ToString(), "test", testSet);
+        dataSetExporter.Export(seed.ToString(), testSetParameters.name, testSet);
     }
 }

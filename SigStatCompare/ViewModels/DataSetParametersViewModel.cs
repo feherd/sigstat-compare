@@ -22,6 +22,7 @@ public partial class DataSetParametersViewModel : ObservableObject
 
     internal DataSetParameters DataSetParameters => new()
     {
+        name = name.ToLower(),
         signerCount = SignerCount,
         genuinePairCountPerSigner = GenuinePairCountPerSigner,
         skilledForgeryCountPerSigner = SkilledForgeryCountPerSigner,
