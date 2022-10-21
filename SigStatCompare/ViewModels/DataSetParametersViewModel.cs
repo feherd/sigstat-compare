@@ -23,9 +23,9 @@ public partial class DataSetParametersViewModel : ObservableObject
     internal DataSetParameters DataSetParameters => new()
     {
         name = name.ToLower(),
-        signerCount = SignerCount,
-        genuinePairCountPerSigner = GenuinePairCountPerSigner,
-        skilledForgeryCountPerSigner = SkilledForgeryCountPerSigner,
-        randomForgeryCountPerSigner = RandomForgeryCountPerSigner,
+        signerCount = Math.Clamp(SignerCount, 0, int.MaxValue),
+        genuinePairCountPerSigner = Math.Clamp(GenuinePairCountPerSigner, 0, int.MaxValue),
+        skilledForgeryCountPerSigner = Math.Clamp(SkilledForgeryCountPerSigner, 0, int.MaxValue),
+        randomForgeryCountPerSigner = Math.Clamp(RandomForgeryCountPerSigner, 0, int.MaxValue),
     };
 }
