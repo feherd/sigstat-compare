@@ -166,4 +166,9 @@ public partial class DeepSignDBViewModel : ObservableObject
 
         StatisticsViewModel.SetStatistics(statistics);
     }
+
+    public DeepSignDBViewModel(){
+        var random = new Random();
+        seed = random.Next();
+    }
 }

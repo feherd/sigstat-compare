@@ -433,7 +433,9 @@ class DatasetGenerator
         int maximum = trainingSetParameters.SigatureCount + testSetParameters.SigatureCount;
         var progressHelper = ProgressHelper.StartNew(maximum, 1, progress);
 
-        dataSetExporter.SaveInfo(seed.ToString(), trainingSetParameters, testSetParameters, seed);
+        string foldername = $"{seed:0000000000}";
+        
+        dataSetExporter.SaveInfo(foldername, trainingSetParameters, testSetParameters, seed);
 
         var (trainingPairs, testPairs) = GenerateTrainingAndTestPairs(trainingSetParameters, testSetParameters, seed);
 
@@ -443,7 +445,7 @@ class DatasetGenerator
             progressHelper.IncrementValue();
             return signaturePairStatistics;
         });
-        dataSetExporter.Export(seed.ToString(), trainingSetParameters.name, trainingSet);
+        dataSetExporter.Export(foldername, trainingSetParameters.name, trainingSet);
 
         var testSet = testPairs.Select(p =>
         {
@@ -451,6 +453,6 @@ class DatasetGenerator
             progressHelper.IncrementValue();
             return signaturePairStatistics;
         });
-        dataSetExporter.Export(seed.ToString(), testSetParameters.name, testSet);
+        dataSetExporter.Export(foldername, testSetParameters.name, testSet);
     }
 }
