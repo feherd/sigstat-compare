@@ -149,7 +149,7 @@ class DatasetGenerator
     public ISet<InputDevice> InputDevices { get; set; } = new HashSet<InputDevice>();
     public ISet<Split> Splits { get; set; } = new HashSet<Split>();
 
-    private IList<Signer> signers;
+    internal IList<Signer> signers;
 
     private Random random;
 

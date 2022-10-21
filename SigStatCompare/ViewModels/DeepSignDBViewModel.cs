@@ -124,8 +124,8 @@ public partial class DeepSignDBViewModel : ObservableObject
         }
     });
 
-    private readonly CSVExporter csvExporter = new();
-    private readonly XLSXExporter xlsxExporter = new();
+    internal readonly CSVExporter csvExporter = new();
+    internal readonly XLSXExporter xlsxExporter = new();
 
 
     [ObservableProperty]
@@ -134,25 +134,15 @@ public partial class DeepSignDBViewModel : ObservableObject
     [ObservableProperty]
     public TimeSpan remaining;
 
-    public Command SaveToCSV => new(async () =>
+    public Command SaveCommand => new(async (exporter) =>
     {
         await Task.Run(() => datasetGenerator.Save(
             trainingSetParameters.DataSetParameters,
             testSetParameters.DataSetParameters,
             seed,
-            csvExporter,
+            exporter as IDataSetExporter,
             UpdateProgress));
-    });
-
-    public Command SaveToXLSX => new(async () =>
-    {
-        await Task.Run(() => datasetGenerator.Save(
-            trainingSetParameters.DataSetParameters,
-            testSetParameters.DataSetParameters,
-            seed,
-            xlsxExporter,
-            UpdateProgress));
-    });
+    }, o => datasetGenerator.signers != null);
 
     private void UpdateProgress(ProgressHelper progressHelper)
     {
