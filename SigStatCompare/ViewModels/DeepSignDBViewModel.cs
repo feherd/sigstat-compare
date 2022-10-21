@@ -100,7 +100,17 @@ public partial class DeepSignDBViewModel : ObservableObject
 
         var databaseDir = Environment.GetEnvironmentVariable("SigStatDB");
 
-        FileResult fileResult = await FilePicker.PickAsync();
+        var customFileType = new FilePickerFileType(
+                new Dictionary<DevicePlatform, IEnumerable<string>>
+                {
+                    { DevicePlatform.WinUI, new[] { ".zip" } }
+                });
+
+        PickOptions options = new()
+        {
+            FileTypes = customFileType,
+        };
+        FileResult fileResult = await FilePicker.PickAsync(options);
 
         lock (filePickerLock)
         {
@@ -111,11 +121,18 @@ public partial class DeepSignDBViewModel : ObservableObject
         {
             await Task.Run(() =>
             {
-                datasetGenerator.LoadSignatures(fileResult.FullPath, (signerCount, signatureCount) =>
+                try
                 {
-                    LoadedSigners = signerCount;
-                    LoadedSignatures = signatureCount;
-                });
+                    datasetGenerator.LoadSignatures(fileResult.FullPath, (signerCount, signatureCount) =>
+                    {
+                        LoadedSigners = signerCount;
+                        LoadedSignatures = signatureCount;
+                    });
+                }
+                catch (ArgumentException)
+                {
+                    // TODO
+                }
             });
             datasetGenerator.DBs = selectedDBCategory.DBs;
             datasetGenerator.InputDevices = selectedInputDeviceCategory.InputDevices;
@@ -157,7 +174,8 @@ public partial class DeepSignDBViewModel : ObservableObject
         StatisticsViewModel.SetStatistics(statistics);
     }
 
-    public DeepSignDBViewModel(){
+    public DeepSignDBViewModel()
+    {
         var random = new Random();
         seed = random.Next();
     }

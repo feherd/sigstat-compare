@@ -244,17 +244,19 @@ public class Svc2021Loader : DataSetLoader
         this.LogInformation("Enumerating signers started.");
         using (ZipArchive zip = ZipFile.OpenRead(DatabasePath))
         {
-            IEnumerable<IGrouping<string, SignatureFile>> signatureGroups = null;
-            if (DatabasePath.EndsWith("DeepSignDB.zip"))
+            IEnumerable<IGrouping<string, SignatureFile>> signatureGroups = DatabasePath switch
             {
-                //cut names if the files are in directories
-                signatureGroups = zip.Entries.Where(f => f.FullName.StartsWith("DeepSignDB") && f.Name.EndsWith(".txt")).Select(f => new SignatureFile(f.FullName)).GroupBy(sf => sf.SignerID);
-            }
-            else if (DatabasePath.EndsWith("SVC2021_EvalDB.zip"))
-            {
-                signatureGroups = zip.Entries.Where(f => f.Name.EndsWith(".txt")).Select(f => new SignatureFile(f.FullName)).GroupBy(sf => sf.SignerID);
+                var s when s.EndsWith("DeepSignDB.zip") => zip.Entries
+                    .Where(f => f.FullName.StartsWith("DeepSignDB") && f.Name.EndsWith(".txt"))
+                    .Select(f => new SignatureFile(f.FullName))
+                    .GroupBy(sf => sf.SignerID),
+                var s when s.EndsWith("SVC2021_EvalDB.zip") => zip.Entries
+                    .Where(f => f.Name.EndsWith(".txt"))
+                    .Select(f => new SignatureFile(f.FullName))
+                    .GroupBy(sf => sf.SignerID),
+                _ => throw new ArgumentException()
+            };
 
-            }
             using (var progress = ProgressHelper.StartNew(signatureGroups.Count(), 10))
             {
                 foreach (var group in signatureGroups)
