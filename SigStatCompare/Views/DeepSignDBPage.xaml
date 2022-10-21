@@ -70,7 +70,10 @@
             <Label Text="Seed"
                    VerticalOptions="Center"/>
             <Entry Text="{Binding Seed}"
-                   HorizontalTextAlignment="End"/>
+                   HorizontalTextAlignment="End"
+                   WidthRequest="120"/>
+            <Button Text="New"
+                    Command="{Binding NewSeedCommand}"/>
         </HorizontalStackLayout>
 
         <Label Grid.Row="3" Grid.Column="1"

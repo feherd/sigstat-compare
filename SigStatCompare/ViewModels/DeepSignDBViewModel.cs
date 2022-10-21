@@ -167,6 +167,11 @@ public partial class DeepSignDBViewModel : ObservableObject
         Remaining = progressHelper.Remaining;
     }
 
+    public Command NewSeedCommand => new(() => {
+        var random = new Random();
+        Seed = random.Next();
+    });
+
     private void UpdateStatistics()
     {
         Statistics statistics = datasetGenerator.CalculateStatistics();
@@ -176,7 +181,6 @@ public partial class DeepSignDBViewModel : ObservableObject
 
     public DeepSignDBViewModel()
     {
-        var random = new Random();
-        seed = random.Next();
+        NewSeedCommand.Execute(null);
     }
 }
