@@ -26,7 +26,7 @@ public class Statistics
         {
             int genuineMin = GenuineSignatureCountPerSigner.min;
             int forgedMin = ForgedSignatureCountPerSigner.min;
-            return genuineMin * forgedMin / 2;
+            return genuineMin * forgedMin;
         }
     }
 }
