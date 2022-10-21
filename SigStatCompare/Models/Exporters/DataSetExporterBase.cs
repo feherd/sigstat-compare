@@ -33,6 +33,9 @@ abstract class DataSetExporterBase : IDataSetExporter
 
     public void SaveInfo(
         string foldername,
+        ISet<SVC2021.DB> dBs,
+        ISet<SVC2021.InputDevice> inputDevices,
+        ISet<SVC2021.Split> splits,
         DataSetParameters trainingSetParameters,
         DataSetParameters testSetParameters,
         int seed
@@ -42,6 +45,11 @@ abstract class DataSetExporterBase : IDataSetExporter
 
         using var file = new StreamWriter(Path.Combine(folderPath, "info.txt"));
 
+        const string Separator = ", ";
+        file.WriteLine($"DB: {string.Join(Separator, dBs)}");
+        file.WriteLine($"InputDevice: {string.Join(Separator, inputDevices)}");
+        file.WriteLine($"Split: {string.Join(Separator, splits)}");
+        file.WriteLine();
         file.WriteLine("Training:");
         file.WriteLine($"Signer count: {trainingSetParameters.signerCount}");
         file.WriteLine($"Genuine pair count per signer: {trainingSetParameters.genuinePairCountPerSigner}");

@@ -435,7 +435,15 @@ class DatasetGenerator
 
         string foldername = $"{seed:0000000000}";
         
-        dataSetExporter.SaveInfo(foldername, trainingSetParameters, testSetParameters, seed);
+        dataSetExporter.SaveInfo(
+            foldername,
+            DBs,
+            InputDevices,
+            Splits,
+            trainingSetParameters,
+            testSetParameters,
+            seed
+        );
 
         var (trainingPairs, testPairs) = GenerateTrainingAndTestPairs(trainingSetParameters, testSetParameters, seed);
 

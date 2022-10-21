@@ -6,6 +6,9 @@ interface IDataSetExporter
 
     void SaveInfo(
         string foldername,
+        ISet<SVC2021.DB> dBs,
+        ISet<SVC2021.InputDevice> inputDevices,
+        ISet<SVC2021.Split> splits,
         DataSetParameters trainingSetParameters,
         DataSetParameters testSetParameters,
         int seed
