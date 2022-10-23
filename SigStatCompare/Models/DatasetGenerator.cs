@@ -180,38 +180,41 @@ class DatasetGenerator
         if (count > signatureCount.max) signatureCount.max = count;
     }
 
-    internal Statistics CalculateStatistics()
+    internal Statistics Statistics
     {
-        if (signers == null) return new Statistics();
-
-        int signerCount = 0;
-        (int min, int max) signatureCount = (int.MaxValue, int.MinValue);
-        (int min, int max) genuineSignatureCount = (int.MaxValue, int.MinValue);
-        (int min, int max) forgedSignatureCount = (int.MaxValue, int.MinValue);
-        foreach (var signer in signers)
+        get
         {
-            IEnumerable<Signature> signatures = FilterSignatures(signer.Signatures);
+            if (signers == null) return new Statistics();
 
-            int count = signatures.Count();
-            int genuine = signatures.Count(signature => signature.Origin == Origin.Genuine);
-            int forged = signatures.Count(signature => signature.Origin == Origin.Forged);
+            int signerCount = 0;
+            (int min, int max) signatureCount = (int.MaxValue, int.MinValue);
+            (int min, int max) genuineSignatureCount = (int.MaxValue, int.MinValue);
+            (int min, int max) forgedSignatureCount = (int.MaxValue, int.MinValue);
+            foreach (var signer in signers)
+            {
+                IEnumerable<Signature> signatures = FilterSignatures(signer.Signatures);
 
-            if (count == 0) continue;
+                int count = signatures.Count();
+                int genuine = signatures.Count(signature => signature.Origin == Origin.Genuine);
+                int forged = signatures.Count(signature => signature.Origin == Origin.Forged);
 
-            signerCount++;
+                if (count == 0) continue;
 
-            Update(ref signatureCount, count);
-            Update(ref genuineSignatureCount, genuine);
-            Update(ref forgedSignatureCount, forged);
+                signerCount++;
+
+                Update(ref signatureCount, count);
+                Update(ref genuineSignatureCount, genuine);
+                Update(ref forgedSignatureCount, forged);
+            }
+
+            return new Statistics()
+            {
+                SignerCount = signerCount,
+                SignatureCountPerSigner = signatureCount != (int.MaxValue, int.MinValue) ? signatureCount : (0, 0),
+                GenuineSignatureCountPerSigner = genuineSignatureCount != (int.MaxValue, int.MinValue) ? genuineSignatureCount : (0, 0),
+                ForgedSignatureCountPerSigner = forgedSignatureCount != (int.MaxValue, int.MinValue) ? forgedSignatureCount : (0, 0)
+            };
         }
-
-        return new Statistics()
-        {
-            SignerCount = signerCount,
-            SignatureCountPerSigner = signatureCount != (int.MaxValue, int.MinValue) ? signatureCount : (0, 0),
-            GenuineSignatureCountPerSigner = genuineSignatureCount != (int.MaxValue, int.MinValue) ? genuineSignatureCount : (0, 0),
-            ForgedSignatureCountPerSigner = forgedSignatureCount != (int.MaxValue, int.MinValue) ? forgedSignatureCount : (0, 0)
-        };
     }
 
     private IEnumerable<Signature> FilterSignatures(IEnumerable<Signature> signatures)

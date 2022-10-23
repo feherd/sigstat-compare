@@ -174,7 +174,7 @@ public partial class DeepSignDBViewModel : ObservableObject
 
     private void UpdateStatistics()
     {
-        Statistics statistics = datasetGenerator.CalculateStatistics();
+        Statistics statistics = datasetGenerator.Statistics;
 
         StatisticsViewModel.SetStatistics(statistics);
     }
