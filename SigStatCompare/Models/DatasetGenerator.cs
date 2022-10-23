@@ -433,11 +433,15 @@ class DatasetGenerator
         IDataSetExporter dataSetExporter,
         Action<ProgressHelper> progress)
     {
+        var statistics = Statistics;
+        trainingSetParameters = Clamp(trainingSetParameters, statistics);
+        testSetParameters = Clamp(testSetParameters, statistics);
+
         int maximum = trainingSetParameters.SigatureCount + testSetParameters.SigatureCount;
-        var progressHelper = ProgressHelper.StartNew(maximum, 1, progress);
+        using var progressHelper = ProgressHelper.StartNew(maximum, 1, progress);
 
         string foldername = $"{seed:0000000000}";
-        
+
         dataSetExporter.SaveInfo(
             foldername,
             DBs,
@@ -465,5 +469,24 @@ class DatasetGenerator
             return signaturePairStatistics;
         });
         dataSetExporter.Export(foldername, testSetParameters.name, testSet);
+
+        progressHelper.Value = progressHelper.Maximum;
+    }
+
+    private static DataSetParameters Clamp(DataSetParameters dataSetParameters, Statistics statistics)
+    {
+        return new DataSetParameters()
+        {
+            signerCount = dataSetParameters.signerCount,
+            genuinePairCountPerSigner = Math.Clamp(
+                dataSetParameters.genuinePairCountPerSigner,
+                0,
+                statistics.MaxGenuinePairCountPerSigner),
+            skilledForgeryCountPerSigner = Math.Clamp(
+                dataSetParameters.skilledForgeryCountPerSigner,
+                0,
+                statistics.MaxForgedPairCountPerSigner),
+            randomForgeryCountPerSigner = dataSetParameters.randomForgeryCountPerSigner
+        };
     }
 }
