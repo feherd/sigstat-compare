@@ -477,6 +477,7 @@ class DatasetGenerator
     {
         return new DataSetParameters()
         {
+            name = dataSetParameters.name,
             signerCount = dataSetParameters.signerCount,
             genuinePairCountPerSigner = Math.Clamp(
                 dataSetParameters.genuinePairCountPerSigner,
